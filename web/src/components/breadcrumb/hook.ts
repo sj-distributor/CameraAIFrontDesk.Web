@@ -1,20 +1,17 @@
-import { useMemo } from "react";
-
 import { useAuth } from "@/hooks/use-auth";
 import KEYS from "@/i18n/keys/main-page";
 
 export const useAction = () => {
-  const { t, locationPathname, navigate, parseQueryParams, language } =
-    useAuth();
+  const { t, locationPathname, navigate, parseQueryParams } = useAuth();
 
-  const items = useMemo(() => {
+  const items = () => {
     const splitArr = locationPathname
       .split("/")
       .filter((str) => str.trim().length > 0);
 
     const data = [
       {
-        title: "首頁",
+        title: t(KEYS.HOME, { ns: "main" }),
         path: "/home",
         className: "text-xl",
       },
@@ -23,7 +20,7 @@ export const useAction = () => {
     switch (splitArr[0]) {
       case "monitoring":
         data.push({
-          title: "實時監控",
+          title: t(KEYS.REALTIME_MONITORING, { ns: "main" }),
           path: "/monitoring/list",
           className: "text-xl",
         });
@@ -41,7 +38,7 @@ export const useAction = () => {
         break;
       case "replay":
         data.push({
-          title: "視頻回放",
+          title: t(KEYS.VIDEO_REPLAY, { ns: "main" }),
           path: "/replay/list",
           className: "text-xl",
         });
@@ -49,7 +46,7 @@ export const useAction = () => {
         break;
       case "warning":
         data.push({
-          title: "預警列表",
+          title: t(KEYS.WARNING_LIST, { ns: "main" }),
           path: "/warning/list",
           className: "text-xl",
         });
@@ -57,7 +54,7 @@ export const useAction = () => {
         break;
       case "feedback":
         data.push({
-          title: "反饋列表",
+          title: t(KEYS.FEEDBACK_LIST, { ns: "main" }),
           path: "/feedback/list",
           className: "text-xl",
         });
@@ -66,7 +63,7 @@ export const useAction = () => {
     }
 
     return data;
-  }, [locationPathname, language]);
+  };
 
   return { items, navigate };
 };

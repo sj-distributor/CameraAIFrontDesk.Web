@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { IUserInfo } from "@/entity/types";
@@ -21,6 +21,20 @@ export const useAction = () => {
   const onLogin = () => {
     navigate("/home");
   };
+
+  const getwidth = () => {
+    console.log(document.body.clientWidth);
+  };
+
+  useEffect(() => {
+    getwidth();
+
+    window.addEventListener("resize", getwidth);
+
+    return () => {
+      window.removeEventListener("resize", getwidth);
+    };
+  }, []);
 
   return { userInfo, updateUserInfo, onLogin };
 };

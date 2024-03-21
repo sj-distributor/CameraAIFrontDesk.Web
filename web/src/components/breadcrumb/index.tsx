@@ -21,6 +21,10 @@ export const BreadcrumbComponent = () => {
   }
 
   return (
-    <Breadcrumb itemRender={itemRender} items={items} className="select-none" />
+    <Breadcrumb
+      itemRender={itemRender}
+      items={items()}
+      className="select-none"
+    />
   );
 };
