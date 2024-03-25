@@ -39,7 +39,15 @@ export const useAction = () => {
 
   const [isMark, setIsMark] = useState<boolean>(false);
 
-  const [isOpenMarkModel, setIsOpenmMarkModel] = useState<boolean>(false);
+  const [markModelDto, setMarkModelDto] = useState<{
+    open: boolean;
+    status: boolean;
+    exceptionReason: string;
+  }>({
+    open: false,
+    status: false,
+    exceptionReason: "",
+  });
 
   const [timeDto, setTimeDto] = useState<{
     startTime: null | string | Dayjs;
@@ -200,12 +208,12 @@ export const useAction = () => {
     selectValues,
     searchKeyWord,
     warningHeaderRef,
-    isOpenMarkModel,
+    markModelDto,
     handleOnExportDebounceFn,
     setTimeDto,
     setKeyWord,
     onTypeClick,
     onStatusClick,
-    setIsOpenmMarkModel,
+    setMarkModelDto,
   };
 };

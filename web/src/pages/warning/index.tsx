@@ -1,5 +1,5 @@
 import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Modal } from "antd";
+import { Button, Input, Modal, Radio } from "antd";
 import { createContext } from "react";
 import { useOutlet } from "react-router-dom";
 
@@ -119,14 +119,18 @@ export const Warning = () => {
       </div>
 
       <Modal
-        className="abc"
         open={true}
         centered={true}
         title={<span className="select-none">狀態標記</span>}
         closeIcon={false}
         footer={null}
       >
-        <div className="bg-red-300 w-full h-full">123</div>
+        <div className="bg-red-300 w-full h-full">
+          <Radio.Group>
+            <Radio value={1}>A</Radio>
+            <Radio value={2}>B</Radio>
+          </Radio.Group>
+        </div>
         {/* <div className="min-h-24">123</div> */}
       </Modal>
     </div>
