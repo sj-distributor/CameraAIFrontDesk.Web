@@ -75,14 +75,9 @@ const columns = [
   },
   {
     title: "異常原因",
-    dataIndex: "error",
-    key: "error",
+    dataIndex: "exceptionReason",
+    key: "exceptionReason",
     width: 308,
-    // 需要后端补充字段
-    render: () => {
-      // text: any
-      return <div>沒有正確識別到人員</div>;
-    },
   },
   {
     title: "開始時間",
@@ -107,7 +102,9 @@ const columns = [
     render: (text: number) => {
       return text ? (
         <span className="select-none">
-          {Math.round(text / 60)}m{text % 60 > 0 ? `${text % 60}s` : ""}
+          {`${String(Math.round(text / 60)).padStart(2, "0")}:${String(
+            text % 60
+          ).padStart(2, "0")}`}
         </span>
       ) : (
         ""

@@ -22,3 +22,20 @@ export interface ICameraItem {
   isDeleted: boolean;
   createdTime: string;
 }
+
+export interface IEquipmentOnlineCountItem {
+  total: number;
+  online: number;
+  equipmentTypeName: string;
+}
+
+export interface IRecordTop5CountListResponse {
+  thisMouthRecordCount: number;
+  todayRecordCount: number;
+  topCount: ITopCountItem[];
+}
+
+export interface ITopCountItem {
+  monitorTypeName: string;
+  monitorRecordCount: number;
+}

@@ -18,6 +18,7 @@ export const Feedback = () => {
     selectValues,
     timeDto,
     height,
+    handleOnExportDebounceFn,
     onTypeClick,
     setTimeDto,
   } = useAction();
@@ -51,6 +52,7 @@ export const Feedback = () => {
           <Button
             icon={<img src="/src/assets/import.png" />}
             className="h-12 w-[100px] text-white bg-[#2866F1] !rounded-[56px] hover:!text-white flex items-center justify-center"
+            onClick={handleOnExportDebounceFn}
           >
             導出
           </Button>

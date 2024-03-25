@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 
+import { useAuth } from "@/hooks/use-auth";
 import { GetRecordList } from "@/services/api/default";
 import {
   IPageDto,
@@ -18,6 +19,8 @@ export const useAction = () => {
   const { status, selectValues, timeDto, searchKeyWord } = useContext(
     WarningSearchDataContext
   );
+
+  const { navigate } = useAuth();
 
   const [height, setHeight] = useState<number | null>(null);
 
@@ -119,6 +122,7 @@ export const useAction = () => {
     height,
     dto,
     isShowQuickJumper,
+    navigate,
     updateData,
   };
 };

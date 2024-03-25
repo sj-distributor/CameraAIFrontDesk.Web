@@ -12,7 +12,9 @@ export const Img = (props: IImgProps) => {
         className={`absolute py-1 px-3 border border-solid rounded-lg top-7 left-6 select-none ${
           type === CssType.Area
             ? "border-[#FAC15B] bg-[#FFF5E2] text-[#F49B45]"
-            : "border-[#96F6F6] bg-[#E7FFFF] text-[#04B6B5]"
+            : type === CssType.Equipment
+            ? "border-[#96F6F6] bg-[#E7FFFF] text-[#04B6B5]"
+            : "border-[#E9EDF2] bg-[#F4F5FC] text-[#18283C]"
         } max-w-64 truncate`}
       >
         {title}

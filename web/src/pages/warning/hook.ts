@@ -27,7 +27,7 @@ const keyName: IKey = {
 };
 
 export const useAction = () => {
-  const { location } = useAuth();
+  const { location, message } = useAuth();
 
   const warningHeaderRef = useRef<HTMLDivElement>(null);
 
@@ -36,6 +36,10 @@ export const useAction = () => {
   const [status, setStatus] = useState<IStatusType>(IStatusType.All);
 
   const [selectValues, setSelectValues] = useState<string[]>([]);
+
+  const [isMark, setIsMark] = useState<boolean>(false);
+
+  const [isOpenMarkModel, setIsOpenmMarkModel] = useState<boolean>(false);
 
   const [timeDto, setTimeDto] = useState<{
     startTime: null | string | Dayjs;
@@ -132,15 +136,15 @@ export const useAction = () => {
           ? dayjs(item.occurrenceTime).format("YYYY-MM-DD HH:mm:ss")
           : "",
         settingDuration: item.settingDuration
-          ? Math.round(item.settingDuration / 60) +
+          ? String(item.settingDuration / 60).padStart(2, "0") +
             "m" +
             (item.settingDuration % 60 !== 0
-              ? `${item.settingDuration % 60}s`
+              ? String(item.settingDuration % 60).padStart(2, "0") + "s"
               : "")
           : "",
       }));
 
-      const header = Object.keys(column).map((item) => ({
+      const header = Object.keys(column[0]).map((item) => ({
         title: keyName[item as keyof IKey],
         key: item,
         width: 200,
@@ -148,6 +152,7 @@ export const useAction = () => {
 
       onDownLoadWorkbook(header, column);
     } else {
+      message.warning("暂无数据需要导出");
     }
   };
 
@@ -175,7 +180,18 @@ export const useAction = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const state = location.state as {
+      isMark: boolean;
+    };
+
+    if (state && (state.isMark !== null || state.isMark !== undefined)) {
+      setIsMark(state.isMark);
+    }
+  }, [location.pathname]);
+
   return {
+    isMark,
     status,
     height,
     timeDto,
@@ -184,10 +200,12 @@ export const useAction = () => {
     selectValues,
     searchKeyWord,
     warningHeaderRef,
+    isOpenMarkModel,
     handleOnExportDebounceFn,
     setTimeDto,
     setKeyWord,
     onTypeClick,
     onStatusClick,
+    setIsOpenmMarkModel,
   };
 };

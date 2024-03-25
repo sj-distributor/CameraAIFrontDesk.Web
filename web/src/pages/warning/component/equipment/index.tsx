@@ -178,7 +178,9 @@ export const Equipment = () => {
 
   return (
     <div className="w-full h-full bg-red-300 flex flex-col space-y-2">
-      <div className="bg-white w-full rounded-lg box-border px-6 py-6 space-y-4 select-none">
+      <div>1</div>
+      <div>2</div>
+      {/* <div className="bg-white w-full rounded-lg box-border px-6 py-6 space-y-4 select-none">
         <div className="flex flex-wrap text-base space-x-8">
           <div className="flex space-x-3 min-w-80 bg-red-300">
             <span className="text-[#8B98AD]">設備名稱</span>
@@ -254,7 +256,7 @@ export const Equipment = () => {
 
           <div className="progress-time select-none">00:00/00:00</div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

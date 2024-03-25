@@ -8,4 +8,5 @@ export interface IImgProps {
 export enum CssType {
   Area,
   Equipment,
+  None,
 }

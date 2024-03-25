@@ -1,5 +1,5 @@
 import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input } from "antd";
+import { Button, Input, Modal } from "antd";
 import { createContext } from "react";
 import { useOutlet } from "react-router-dom";
 
@@ -16,6 +16,7 @@ export const WarningSearchDataContext =
 
 export const Warning = () => {
   const {
+    isMark,
     height,
     status,
     timeDto,
@@ -24,11 +25,13 @@ export const Warning = () => {
     selectValues,
     keyWord,
     searchKeyWord,
+    isOpenMarkModel,
     handleOnExportDebounceFn,
     setTimeDto,
     setKeyWord,
     onTypeClick,
     onStatusClick,
+    setIsOpenmMarkModel,
   } = useAction();
 
   const outlet = useOutlet();
@@ -84,13 +87,15 @@ export const Warning = () => {
                 導出
               </Button>
             </>
-          ) : (
+          ) : isMark ? (
             <Button
               icon={<img src="/src/assets/pin.png" />}
-              className="h-12 w-[100px] text-[#2866F1] bg-[#C2D5FF] !rounded-[56px] hover:!text-[#2866F1] hover:!border-[#C2D5FF]"
+              className="h-12 w-[100px] text-[#2866F1] bg-[#C2D5FF] !rounded-[56px] hover:!text-[#2866F1] hover:!border-[#C2D5FF] flex justify-center items-center"
             >
               標記
             </Button>
+          ) : (
+            <></>
           )}
         </div>
       </div>
@@ -112,6 +117,18 @@ export const Warning = () => {
           {outlet}
         </WarningSearchDataContext.Provider>
       </div>
+
+      <Modal
+        className="abc"
+        open={true}
+        centered={true}
+        title={<span className="select-none">狀態標記</span>}
+        closeIcon={false}
+        footer={null}
+      >
+        <div className="bg-red-300 w-full h-full">123</div>
+        {/* <div className="min-h-24">123</div> */}
+      </Modal>
     </div>
   );
 };

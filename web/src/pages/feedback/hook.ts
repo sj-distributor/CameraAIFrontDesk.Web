@@ -1,8 +1,34 @@
-import { Dayjs } from "dayjs";
+import { useDebounceFn } from "ahooks";
+import dayjs, { Dayjs } from "dayjs";
 import { clone } from "ramda";
 import { useEffect, useRef, useState } from "react";
 
+import { useAuth } from "@/hooks/use-auth";
+import { GetRecordList } from "@/services/api/default";
+import { IRecordRequest, IStatusType } from "@/services/dtos/default";
+import { onDownLoadWorkbook } from "@/utils";
+
+interface IKey {
+  equipmentName: string;
+  monitorTypeName: string;
+  monitorContent: string;
+  exceptionReason: string;
+  occurrenceTime: string;
+  settingDuration: string;
+}
+
+const keyName: IKey = {
+  equipmentName: "設備名稱",
+  monitorTypeName: "預警類型",
+  monitorContent: "預警內容",
+  exceptionReason: "異常原因",
+  occurrenceTime: "開始時間",
+  settingDuration: "持續時間",
+};
+
 export const useAction = () => {
+  const { message } = useAuth();
+
   const feedbackHeaderRef = useRef<HTMLDivElement>(null);
 
   const [height, setHeight] = useState<number | null>(null);
@@ -29,6 +55,61 @@ export const useAction = () => {
       return newData;
     });
   };
+
+  // 导出最大数字 2147483647
+  const exportData = async () => {
+    const data: IRecordRequest = {
+      PageIndex: 1,
+      PageSize: 2147483647,
+      Status: IStatusType.Exception,
+    };
+
+    if (timeDto.startTime && timeDto.endTime) {
+      data.StartTime = timeDto.startTime as string;
+      data.EndTime = timeDto.endTime as string;
+    }
+
+    if (selectValues.length > 0) {
+      data.MonitorTypeIds = selectValues;
+    }
+
+    const { records } = await GetRecordList(data);
+
+    const newData = clone(records);
+
+    if (newData.length > 0) {
+      const column = newData.map((item) => ({
+        equipmentName: item.equipmentName,
+        monitorTypeName: item.monitorTypeName,
+        monitorContent: `${item.equipmentName},${item.monitorTypeName}（${item.plateNumber}）出現超過 ${item.monitorDuration} 秒`,
+        exceptionReason: item.exceptionReason,
+        occurrenceTime: item.occurrenceTime
+          ? dayjs(item.occurrenceTime).format("YYYY-MM-DD HH:mm:ss")
+          : "",
+        settingDuration: item.settingDuration
+          ? String(item.settingDuration / 60).padStart(2, "0") +
+            "m" +
+            (item.settingDuration % 60 !== 0
+              ? String(item.settingDuration % 60).padStart(2, "0") + "s"
+              : "")
+          : "",
+      }));
+
+      const header = Object.keys(column[0]).map((item) => ({
+        title: keyName[item as keyof IKey],
+        key: item,
+        width: 200,
+      }));
+
+      onDownLoadWorkbook(header, column);
+    } else {
+      message.warning("暂无数据需要导出");
+    }
+  };
+
+  const { run: handleOnExportDebounceFn } = useDebounceFn(exportData, {
+    wait: 300,
+  });
 
   const getHeight = () => {
     if (feedbackHeaderRef.current) {
@@ -66,6 +147,7 @@ export const useAction = () => {
     selectValues,
     timeDto,
     height,
+    handleOnExportDebounceFn,
     onTypeClick,
     setTimeDto,
   };

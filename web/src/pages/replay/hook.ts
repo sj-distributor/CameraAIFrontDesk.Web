@@ -1,28 +1,62 @@
+import { useDebounceEffect } from "ahooks";
+import { Dayjs } from "dayjs";
+import { clone } from "ramda";
 import { useEffect, useRef, useState } from "react";
 
-import { StatusType } from "@/entity/enum";
 import { useAuth } from "@/hooks/use-auth";
 
 export const useAction = () => {
-  const headerRef = useRef<HTMLDivElement>(null);
+  const replayHeaderRef = useRef<HTMLDivElement>(null);
 
   const { location } = useAuth();
 
-  const [status, setStatus] = useState<StatusType | null>(null);
+  const [timeDto, setTimeDto] = useState<{
+    startTime: null | string | Dayjs;
+    endTime: null | string | Dayjs;
+  }>({
+    startTime: null,
+    endTime: null,
+  });
 
-  const [data, setData] = useState<string[]>([]);
+  const [selectValues, setSelectValues] = useState<string[]>([]);
 
-  const updateData = (value: string[]) => {
-    setData(value);
-  };
+  const [keyWord, setKeyWord] = useState<string>("");
 
-  const updateStatus = (value: any) => {
-    setStatus(value as StatusType);
+  const [searchKeyWord, setSearchKeyWord] = useState<string>("");
+
+  const [height, setHeight] = useState<number | null>(null);
+
+  const onTypeClick = (id: number) => {
+    setSelectValues((prev) => {
+      let newData = clone(prev);
+
+      const isExist = newData.findIndex((item) => Number(item) === id) !== -1;
+
+      if (isExist) newData = newData.filter((item) => Number(item) !== id);
+      else newData.push(id.toString());
+
+      return newData;
+    });
   };
 
   const getHeight = () => {
-    if (headerRef.current) {
-      console.log(headerRef.current.clientHeight);
+    if (replayHeaderRef.current) {
+      setHeight(
+        document.body.clientHeight -
+          64 -
+          replayHeaderRef.current?.clientHeight -
+          40 - // 1.25rem * 2
+          16 - // space-y-4
+          8 <
+          200
+          ? 200
+          : document.body.clientHeight -
+              64 -
+              replayHeaderRef.current?.clientHeight -
+              40 - // 1.25rem * 2
+              16 - // space-y-4
+              8
+      );
     }
   };
 
@@ -36,12 +70,26 @@ export const useAction = () => {
     };
   }, []);
 
+  useDebounceEffect(
+    () => {
+      setSearchKeyWord(keyWord);
+    },
+    [keyWord],
+    {
+      wait: 1000,
+    }
+  );
+
   return {
-    headerRef,
-    data,
-    updateData,
-    status,
-    updateStatus,
+    height,
+    keyWord,
+    timeDto,
     location,
+    replayHeaderRef,
+    selectValues,
+    searchKeyWord,
+    setKeyWord,
+    onTypeClick,
+    setTimeDto,
   };
 };

@@ -9,17 +9,6 @@ export const Monitoring = () => {
     <div className="w-full h-full box-border px-5 pt-5 pb-5">
       <div className="w-full h-full flex flex-col space-y-2">
         <BreadcrumbComponent />
-        {/* <div
-          ref={divRef}
-          className="flex-grow overflow-auto no-scrollbar scroll-smooth"
-          onScroll={onScroll}
-        >
-          <ScrollContext.Provider
-            value={{ scrollDto: scrollDto, setScrollDto: setScrollDto }}
-          >
-            {outlet}
-          </ScrollContext.Provider>
-        </div> */}
 
         <div className="h-[calc(100%-1.75rem)]">{outlet}</div>
       </div>

@@ -2,118 +2,14 @@ import "@/antd.css";
 
 import { DownOutlined, PlayCircleFilled } from "@ant-design/icons";
 import { Slider } from "antd";
-import * as echarts from "echarts";
 import EChartsReact from "echarts-for-react";
-import React, { useState } from "react";
+import React from "react";
 
 import KEYS from "@/i18n/keys/home-page";
 
 import { useAction } from "./hook";
 
-type EChartsOption = echarts.EChartsOption;
-
 export const Home = () => {
-  const option: EChartsOption = {
-    xAxis: {
-      type: "category",
-      data: ["XXX", "XXX", "XXX", "XXX", "XXXXX"],
-    },
-    yAxis: {
-      type: "value",
-    },
-    tooltip: {
-      show: true,
-      trigger: "item",
-      position: function (point, params: any) {
-        return [
-          params.name === "XXXXX" ? point[0] - 130 : point[0] + 10,
-          point[1] > 140 ? point[1] - 40 : point[1] + 20,
-        ];
-      },
-      confine: true,
-    },
-    series: [
-      {
-        data: [
-          {
-            value: 600,
-            itemStyle: {
-              color: "#ACF1F0",
-              opacity: 0.6,
-            },
-            emphasis: {
-              itemStyle: {
-                color: "#ACF1F0",
-                opacity: 1,
-              },
-            },
-          },
-          {
-            value: 120,
-            itemStyle: {
-              color: "#FFD599",
-              opacity: 0.6,
-            },
-            emphasis: {
-              itemStyle: {
-                color: "#FFD599",
-                opacity: 1,
-              },
-            },
-          },
-          {
-            value: 150,
-            itemStyle: {
-              color: "#FFB1AC",
-              opacity: 0.6,
-            },
-            emphasis: {
-              itemStyle: {
-                color: "#FFB1AC",
-                opacity: 1,
-              },
-            },
-          },
-          {
-            value: 60,
-            itemStyle: {
-              color: "#A8C5DA",
-              opacity: 0.6,
-            },
-            emphasis: {
-              itemStyle: {
-                color: "#A8C5DA",
-                opacity: 1,
-              },
-            },
-          },
-          {
-            value: 30,
-            itemStyle: {
-              color: "#95A4FC",
-              opacity: 0.6,
-            },
-            emphasis: {
-              itemStyle: {
-                color: "#95A4FC",
-                opacity: 1,
-              },
-            },
-          },
-        ],
-        type: "bar",
-        itemStyle: {
-          borderRadius: [5, 5, 0, 0],
-        },
-        label: {
-          show: true,
-          position: "top",
-          color: "#2866F1",
-        },
-      },
-    ],
-  };
-
   const {
     t,
     dropdownRef,
@@ -121,7 +17,10 @@ export const Home = () => {
     height,
     selectStatus,
     volume,
+    option,
     cameraList,
+    recordTop5Obj,
+    equipmentCountList,
     volumeSliderStatus,
     setVolumeSliderStatus,
     setVolume,
@@ -200,7 +99,7 @@ export const Home = () => {
             className="w-full rounded-lg relative"
             style={{ height: `${height}px` }}
           >
-            {/* <video className="w-full h-full object-fill" ref={videoRef}>
+            <video className="w-full h-full object-fill" ref={videoRef}>
               <source src="/src/assets/meeting_01.mp4" />
             </video>
             <div className="w-[calc(100%-8rem)] box-border h-12 absolute top-[85%] mx-16 rounded-[48px] bg-[#0F0F0F] bg-opacity-60 px-4 flex items-center">
@@ -252,11 +151,11 @@ export const Home = () => {
                 className="w-8 h-8 cursor-pointer img-no-darg"
                 onClick={videoFullScreen}
               />
-            </div> */}
-
-            <div className="w-full h-full bg-black text-white flex items-center justify-center select-none">
-              暫未播放
             </div>
+
+            {/* <div className="w-full h-full bg-black text-white flex items-center justify-center select-none">
+              暫未播放
+            </div> */}
           </div>
         )}
       </div>
@@ -280,13 +179,17 @@ export const Home = () => {
                 <span className="w-full px-1 text-wrap text-center">
                   {t(KEYS.MONTHLY_ALERT_COUNT, { ns: "home" })}
                 </span>
-                <strong className="text-[#2866F1] text-xl">166</strong>
+                <strong className="text-[#2866F1] text-xl">
+                  {recordTop5Obj.thisMouthRecordCount}
+                </strong>
               </div>
               <div className="bg-[#FAFAFB] flex flex-col items-center justify-center h-24 rounded-lg px-4 md:px-0 select-none">
                 <span className="w-full px-1 text-wrap text-center">
                   {t(KEYS.DAILY_ALERT_COUNT, { ns: "home" })}
                 </span>
-                <strong className="text-[#2866F1] text-xl">166</strong>
+                <strong className="text-[#2866F1] text-xl">
+                  {recordTop5Obj.todayRecordCount}
+                </strong>
               </div>
             </div>
           </div>
@@ -320,44 +223,19 @@ export const Home = () => {
             </div>
             <div className="w-full flex-1 overflow-y-auto no-scrollbar">
               <div className="grid grid-cols-4">
-                {[
-                  {
-                    name: "攝像頭",
-                    allCount: 0,
-                    onlineCount: 0,
-                    offlineCount: 0,
-                  },
-                  {
-                    name: "大聲公",
-                    allCount: 0,
-                    onlineCount: 0,
-                    offlineCount: 0,
-                  },
-                  {
-                    name: "感應器",
-                    allCount: 0,
-                    onlineCount: 0,
-                    offlineCount: 0,
-                  },
-                  {
-                    name: "感應器",
-                    allCount: 0,
-                    onlineCount: 0,
-                    offlineCount: 0,
-                  },
-                ].map((item, index) => (
+                {equipmentCountList.map((item, index) => (
                   <React.Fragment key={index}>
                     <div className="text-lg pl-4 py-4 truncate border-solid border-b-[1px]">
-                      {item?.name}
+                      {item?.equipmentTypeName}
                     </div>
                     <div className="text-lg pl-4 py-4 truncate border-solid border-b-[1px]">
-                      {item?.allCount}
+                      {item?.total}
                     </div>
                     <div className="text-lg pl-4 py-4 truncate border-solid border-b-[1px]">
-                      {item?.onlineCount}
+                      {item?.online}
                     </div>
                     <div className="text-lg pl-4 py-4 truncate border-solid border-b-[1px]">
-                      {item?.offlineCount}
+                      {item?.total ?? 0 - item?.online ?? 0}
                     </div>
                   </React.Fragment>
                 ))}

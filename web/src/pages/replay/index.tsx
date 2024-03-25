@@ -1,34 +1,42 @@
 import { SearchOutlined } from "@ant-design/icons";
-import { DatePicker, Input, TimeRangePickerProps } from "antd";
-import dayjs from "dayjs";
+import { Input } from "antd";
+import { createContext } from "react";
 import { useOutlet } from "react-router-dom";
 
 import { BreadcrumbComponent } from "@/components/breadcrumb";
-// import { FliterWarningComponent } from "@/components/fliterWarning";
-import { SelectComponent } from "@/components/select";
-import { StatusType } from "@/entity/enum";
+import { CheckBoxComponent } from "@/components/check-box";
+import { RangePickerComponent } from "@/components/date-range-picker";
 
 import { useAction } from "./hook";
+import { IReplaySearchDataContext } from "./props";
+
+export const ReplaySearchDataContext = createContext<IReplaySearchDataContext>(
+  null!
+);
 
 export const Replay = () => {
   const outlet = useOutlet();
 
-  const { headerRef, data, updateData, status, updateStatus, location } =
-    useAction();
-
-  const rangePresets: TimeRangePickerProps["presets"] = [
-    // { label: "Last 7 Days", value: [dayjs().add(-7, "d"), dayjs()] },
-    // { label: "Last 30 Days", value: [dayjs().add(-30, "d"), dayjs()] },
-    // { label: "Last 90 Days", value: [dayjs().add(-90, "d"), dayjs()] },
-    { label: "最近一週", value: [dayjs().add(-7, "d"), dayjs()] },
-    { label: "最近一個月", value: [dayjs().add(-30, "d"), dayjs()] },
-    { label: "最近三個月", value: [dayjs().add(-90, "d"), dayjs()] },
-  ];
+  const {
+    replayHeaderRef,
+    location,
+    timeDto,
+    selectValues,
+    keyWord,
+    height,
+    searchKeyWord,
+    onTypeClick,
+    setTimeDto,
+    setKeyWord,
+  } = useAction();
 
   return (
     <div className="w-full h-full box-border px-5 pt-5 pb-5 flex flex-col space-y-4">
-      <div className="flex flex-wrap items-center justify-between">
-        <div ref={headerRef}>
+      <div
+        className="flex flex-wrap items-center justify-between"
+        ref={replayHeaderRef}
+      >
+        <div>
           <BreadcrumbComponent />
           {location.pathname === "/replay/list" && (
             <div className="flex items-center flex-wrap space-x-4">
@@ -37,41 +45,16 @@ export const Replay = () => {
                   選擇日期時間：
                 </span>
 
-                <DatePicker.RangePicker
-                  bordered={false}
-                  presets={rangePresets}
-                  showTime={{
-                    hideDisabledOptions: false,
-                  }}
-                  format="YYYY-MM-DD HH:mm:ss"
-                  placeholder={["開始日期時間", "結束日期時間"]}
+                <RangePickerComponent
+                  timeDto={timeDto}
+                  setTimeDto={setTimeDto}
                 />
               </div>
-              {/* 需要替换 */}
-              {/* <FliterWarningComponent data={data} updateData={updateData} /> */}
-              {/* <SelectComponent
-                title="狀態："
-                value={status}
-                onChange={updateStatus}
-                options={[
-                  {
-                    label: "全部",
-                    value: StatusType.All,
-                  },
-                  {
-                    label: "待標記",
-                    value: StatusType.ToBeMarked,
-                  },
-                  {
-                    label: "通過",
-                    value: StatusType.Pass,
-                  },
-                  {
-                    label: "異常",
-                    value: StatusType.Abnormal,
-                  },
-                ]}
-              /> */}
+              <CheckBoxComponent
+                title="預警篩選："
+                selectValues={selectValues}
+                onClick={onTypeClick}
+              />
             </div>
           )}
         </div>
@@ -80,20 +63,29 @@ export const Replay = () => {
             <Input
               placeholder="搜索設備名稱"
               className="rounded-[48px] text-base w-[200px] h-12"
-              suffix={
-                <SearchOutlined className="" onClick={() => console.log(111)} />
-              }
+              suffix={<SearchOutlined className="" />}
+              value={keyWord}
+              onChange={(e) => setKeyWord(e.target.value)}
             />
           </div>
         )}
       </div>
 
       <div
-        className=""
-        // ref={divRef}
-        // className="flex-grow overflow-auto no-scrollbar scroll-smooth"
+        className="shrink-0"
+        style={{
+          height: height + "px",
+        }}
       >
-        {outlet}
+        <ReplaySearchDataContext.Provider
+          value={{
+            searchKeyWord: searchKeyWord,
+            timeDto: timeDto,
+            selectValues: selectValues,
+          }}
+        >
+          {outlet}
+        </ReplaySearchDataContext.Provider>
       </div>
     </div>
   );

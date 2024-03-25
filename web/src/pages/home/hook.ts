@@ -1,10 +1,20 @@
 import { useUpdateEffect } from "ahooks";
-import mpegtsJs from "mpegts.js";
-import { useEffect, useRef, useState } from "react";
+import * as echarts from "echarts";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useAuth } from "@/hooks/use-auth";
-import { GetCameraList } from "@/services/api/home";
-import { ICameraListResponse } from "@/services/dtos/home";
+import {
+  GetCameraList,
+  GetEquipmentOnlineList,
+  GetRecordTop5CountList,
+} from "@/services/api/home";
+import {
+  ICameraListResponse,
+  IEquipmentOnlineCountItem,
+  IRecordTop5CountListResponse,
+} from "@/services/dtos/home";
+
+type EChartsOption = echarts.EChartsOption;
 
 export const useAction = () => {
   const { t } = useAuth();
@@ -26,6 +36,17 @@ export const useAction = () => {
 
   // ICameraListResponse
   const [cameraList, setCameraList] = useState<ICameraListResponse[]>([]);
+
+  const [equipmentCountList, setEquipmentCountList] = useState<
+    IEquipmentOnlineCountItem[]
+  >([]);
+
+  const [recordTop5Obj, setRecordTop5Obj] =
+    useState<IRecordTop5CountListResponse>({
+      thisMouthRecordCount: 0,
+      todayRecordCount: 0,
+      topCount: [],
+    });
 
   const [volume, setVolume] = useState<number>(50);
 
@@ -113,11 +134,266 @@ export const useAction = () => {
     };
   }, []);
 
+  useEffect(() => {
+    GetEquipmentOnlineList()
+      .then((res) => {
+        if (res) setEquipmentCountList(res ?? []);
+      })
+      .catch(() => {
+        setEquipmentCountList([]);
+      });
+
+    GetRecordTop5CountList()
+      .then((res) => {
+        if (res) {
+          setRecordTop5Obj({
+            thisMouthRecordCount: res?.thisMouthRecordCount ?? 0,
+            todayRecordCount: res?.todayRecordCount ?? 0,
+            topCount: res?.topCount ?? [],
+          });
+        }
+      })
+      .catch(() => {
+        setRecordTop5Obj({
+          thisMouthRecordCount: 0,
+          todayRecordCount: 0,
+          topCount: [],
+        });
+      });
+  }, []);
+
   useUpdateEffect(() => {
     if (videoRef.current && volume >= 0) {
       videoRef.current.volume = volume * 0.01;
     }
   }, [volume]);
+
+  const option: EChartsOption = useMemo(() => {
+    const nameList = recordTop5Obj.topCount.map((item) => item.monitorTypeName);
+
+    const countList = recordTop5Obj.topCount.map(
+      (item) => item.monitorRecordCount
+    );
+
+    const data = [
+      {
+        value: 0,
+        itemStyle: {
+          color: "#ACF1F0",
+          opacity: 0.6,
+        },
+        emphasis: {
+          itemStyle: {
+            color: "#ACF1F0",
+            opacity: 1,
+          },
+        },
+      },
+      {
+        value: 0,
+        itemStyle: {
+          color: "#FFD599",
+          opacity: 0.6,
+        },
+        emphasis: {
+          itemStyle: {
+            color: "#FFD599",
+            opacity: 1,
+          },
+        },
+      },
+      {
+        value: 0,
+        itemStyle: {
+          color: "#FFB1AC",
+          opacity: 0.6,
+        },
+        emphasis: {
+          itemStyle: {
+            color: "#FFB1AC",
+            opacity: 1,
+          },
+        },
+      },
+      {
+        value: 0,
+        itemStyle: {
+          color: "#A8C5DA",
+          opacity: 0.6,
+        },
+        emphasis: {
+          itemStyle: {
+            color: "#A8C5DA",
+            opacity: 1,
+          },
+        },
+      },
+      {
+        value: 0,
+        itemStyle: {
+          color: "#95A4FC",
+          opacity: 0.6,
+        },
+        emphasis: {
+          itemStyle: {
+            color: "#95A4FC",
+            opacity: 1,
+          },
+        },
+      },
+    ];
+
+    const seriesData: any[] = [];
+
+    countList.map((outItem, outIndex) => {
+      data.map((inItem, inIndex) => {
+        if (outIndex === inIndex) {
+          seriesData.push({
+            ...inItem,
+            value: outItem,
+          });
+        }
+      });
+    });
+
+    return {
+      yAxis: {
+        type: "value",
+      },
+      xAxis: {
+        type: "category",
+        data: nameList,
+      },
+      tooltip: {
+        show: true,
+        trigger: "item",
+        position: function (point, params: any) {
+          return [
+            params.name === nameList[nameList.length - 1]
+              ? point[0] - 130
+              : point[0] + 10,
+            point[1] > 140 ? point[1] - 40 : point[1] + 20,
+          ];
+        },
+        confine: true,
+      },
+      series: [
+        {
+          data: seriesData,
+          type: "bar",
+          itemStyle: {
+            borderRadius: [5, 5, 0, 0],
+          },
+          label: {
+            show: true,
+            position: "top",
+            color: "#2866F1",
+          },
+        },
+      ],
+    };
+
+    // return {
+    //   xAxis: {
+    //     type: "category",
+    //     data: ["XXX", "XXX", "XXX", "XXX", "XXXXX"],
+    //   },
+    //   yAxis: {
+    //     type: "value",
+    //   },
+    //   tooltip: {
+    //     show: true,
+    //     trigger: "item",
+    //     position: function (point, params: any) {
+    //       return [
+    //         params.name === "XXXXX" ? point[0] - 130 : point[0] + 10,
+    //         point[1] > 140 ? point[1] - 40 : point[1] + 20,
+    //       ];
+    //     },
+    //     confine: true,
+    //   },
+    //   series: [
+    //     {
+    //       data: [
+    //         {
+    //           value: 600,
+    //           itemStyle: {
+    //             color: "#ACF1F0",
+    //             opacity: 0.6,
+    //           },
+    //           emphasis: {
+    //             itemStyle: {
+    //               color: "#ACF1F0",
+    //               opacity: 1,
+    //             },
+    //           },
+    //         },
+    //         {
+    //           value: 120,
+    //           itemStyle: {
+    //             color: "#FFD599",
+    //             opacity: 0.6,
+    //           },
+    //           emphasis: {
+    //             itemStyle: {
+    //               color: "#FFD599",
+    //               opacity: 1,
+    //             },
+    //           },
+    //         },
+    //         {
+    //           value: 150,
+    //           itemStyle: {
+    //             color: "#FFB1AC",
+    //             opacity: 0.6,
+    //           },
+    //           emphasis: {
+    //             itemStyle: {
+    //               color: "#FFB1AC",
+    //               opacity: 1,
+    //             },
+    //           },
+    //         },
+    //         {
+    //           value: 60,
+    //           itemStyle: {
+    //             color: "#A8C5DA",
+    //             opacity: 0.6,
+    //           },
+    //           emphasis: {
+    //             itemStyle: {
+    //               color: "#A8C5DA",
+    //               opacity: 1,
+    //             },
+    //           },
+    //         },
+    //         {
+    //           value: 30,
+    //           itemStyle: {
+    //             color: "#95A4FC",
+    //             opacity: 0.6,
+    //           },
+    //           emphasis: {
+    //             itemStyle: {
+    //               color: "#95A4FC",
+    //               opacity: 1,
+    //             },
+    //           },
+    //         },
+    //       ],
+    //       type: "bar",
+    //       itemStyle: {
+    //         borderRadius: [5, 5, 0, 0],
+    //       },
+    //       label: {
+    //         show: true,
+    //         position: "top",
+    //         color: "#2866F1",
+    //       },
+    //     },
+    //   ],
+    // };
+  }, [recordTop5Obj.topCount]);
 
   return {
     t,
@@ -127,7 +403,10 @@ export const useAction = () => {
     selectStatus,
     volume,
     cameraList,
+    recordTop5Obj,
     volumeSliderStatus,
+    equipmentCountList,
+    option,
     setVolumeSliderStatus,
     setVolume,
     setSelectStatus,
