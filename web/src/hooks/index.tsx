@@ -1,6 +1,9 @@
+import { useDebounceFn } from "ahooks";
+import { App } from "antd";
 import type { Locale } from "antd/es/locale";
 import enUS from "antd/es/locale/en_US";
 import zhCN from "antd/es/locale/zh_CN";
+import { MessageInstance } from "antd/es/message/interface";
 import { TFunction } from "i18next/typescript/t";
 import queryString from "query-string";
 import { createContext, ReactElement, useEffect, useState } from "react";
@@ -20,10 +23,13 @@ interface IAuthContextType {
   t: TFunction<"translation", undefined>;
   changeLanguage: () => void;
   language: string | null;
-  signOut: () => void;
-  signIn: (token: string) => void;
+  signOut: (callback?: VoidFunction) => void;
+  signIn: (token: string, name: string) => void;
   locale: Locale;
   locationPathname: string;
+  token: string;
+  userName: string;
+  message: MessageInstance;
 }
 
 export const AuthContext = createContext<IAuthContextType>(null!);
@@ -33,6 +39,8 @@ export const AuthProvider = (props: { children: ReactElement }) => {
 
   const location = useLocation();
 
+  const { message } = App.useApp();
+
   const { t, i18n } = useTranslation();
 
   const [language, setLanguage] = useState<string | null>(null);
@@ -41,11 +49,25 @@ export const AuthProvider = (props: { children: ReactElement }) => {
 
   const [isInit, setIsInit] = useState<boolean>(false);
 
-  const signIn = (token: string) => {
-    console.log("signIn", token);
+  const [token, setToken] = useState("");
+
+  const [userName, setUserName] = useState("");
+
+  const signIn = (token: string, name: string) => {
+    setToken(token);
+    setUserName(name);
+    navigate("/home");
   };
 
-  const signOut = () => {};
+  const signOut = (callback?: VoidFunction) => {
+    setToken("");
+    setUserName("");
+
+    localStorage.setItem((window as any).appsettings?.tokenKey, "");
+    localStorage.setItem((window as any).appsettings?.userNameKey, "");
+
+    callback && callback();
+  };
 
   const parseQueryParams = <T extends object>(): T => {
     const queryParams = queryString.parse(location.search);
@@ -103,6 +125,17 @@ export const AuthProvider = (props: { children: ReactElement }) => {
   // }, [location.pathname, location.search]);
 
   useEffect(() => {
+    const token = localStorage.getItem((window as any).appsettings?.tokenKey);
+
+    const userName = localStorage.getItem(
+      (window as any).appsettings?.userNameKey
+    );
+
+    if (token) setToken(token);
+    if (userName) setUserName(userName);
+  }, []);
+
+  useEffect(() => {
     if (language) {
       i18n.changeLanguage(language);
       setLocal(language === "en" ? enUS : zhCN);
@@ -127,6 +160,9 @@ export const AuthProvider = (props: { children: ReactElement }) => {
     locale,
     locationPathname: location.pathname,
     parseQuery,
+    token,
+    userName,
+    message,
   };
 
   return (

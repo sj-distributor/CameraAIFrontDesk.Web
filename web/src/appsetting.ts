@@ -1,6 +1,7 @@
 export interface IAppSettings {
   serverUrl: string;
   tokenKey: string;
+  userNameKey: string;
 }
 
 const settings = (window as any).appsettings;

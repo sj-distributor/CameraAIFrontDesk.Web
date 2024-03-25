@@ -1,3 +1,4 @@
+import { useDebounceFn } from "ahooks";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/hooks/use-auth";
@@ -9,7 +10,7 @@ interface IPasswordDto {
 }
 
 export const useAction = () => {
-  const { location } = useAuth();
+  const { location, t, userName, navigate, signOut } = useAuth();
 
   const [openKeys, setOpenKeys] = useState<string[]>([]);
 
@@ -35,6 +36,17 @@ export const useAction = () => {
   };
 
   const submitModifyPassword = () => {};
+
+  const { run: handleOnSignOut } = useDebounceFn(signOut, {
+    wait: 500,
+  });
+
+  const { run: handleOnJump } = useDebounceFn(
+    () => location.pathname !== "/warning/list" && navigate("/warning/list"),
+    {
+      wait: 500,
+    }
+  );
 
   const filterSelectKey = (key: string) => {
     if (!["/home", "/monitoring", "/replay"].includes(key)) {
@@ -89,6 +101,10 @@ export const useAction = () => {
     passwordDto,
     status,
     collapsed,
+    t,
+    userName,
+    handleOnSignOut,
+    handleOnJump,
     setStatus,
     setDelModalStatus,
     filterSelectKey,

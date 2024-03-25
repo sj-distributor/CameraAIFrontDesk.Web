@@ -1,5 +1,6 @@
 import "./i18n/i18n";
 
+import { App as MessageApp } from "antd";
 import { BrowserRouter } from "react-router-dom";
 
 import { useAction } from "./app.hook";
@@ -11,13 +12,15 @@ function App() {
 
   return (
     <BrowserRouter>
-      {isLoaded ? (
-        <AuthProvider>
-          <Router />
-        </AuthProvider>
-      ) : (
-        <></>
-      )}
+      <MessageApp>
+        {isLoaded ? (
+          <AuthProvider>
+            <Router />
+          </AuthProvider>
+        ) : (
+          <></>
+        )}
+      </MessageApp>
     </BrowserRouter>
   );
 }

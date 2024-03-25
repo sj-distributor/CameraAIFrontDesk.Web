@@ -10,8 +10,6 @@ import { useAction } from "./hook";
 type MenuItem = Required<MenuProps>["items"][number];
 
 export const Main = () => {
-  const { t } = useAuth();
-
   const {
     openKeys,
     selectedKeys,
@@ -19,6 +17,10 @@ export const Main = () => {
     passwordDto,
     status,
     collapsed,
+    t,
+    userName,
+    handleOnSignOut,
+    handleOnJump,
     setStatus,
     filterSelectKey,
     setOpenKeys,
@@ -147,7 +149,7 @@ export const Main = () => {
     },
   ];
 
-  const { navigate, location, changeLanguage, language } = useAuth();
+  const { navigate, changeLanguage, language } = useAuth();
 
   return (
     <div className="h-screen w-screen bg-white flex flex-col ">
@@ -187,10 +189,7 @@ export const Main = () => {
           <img
             src="/src/assets/notification.png"
             className="w-6 h-6 select-none img-no-darg mx-6 cursor-pointer"
-            onClick={() => {
-              location.pathname !== "/warning/list" &&
-                navigate("/warning/list");
-            }}
+            onClick={() => handleOnJump()}
           />
 
           <div className="flex h-full items-center">
@@ -209,7 +208,7 @@ export const Main = () => {
             >
               <div className="flex relative items-center space-x-1 cursor-pointer w-[5.5rem] justify-center">
                 <div className="text-sm relative select-none w-16 text-center truncate">
-                  JAMIE.M
+                  {userName}
                 </div>
                 <img
                   src="/src/assets/chevronDown.png"
@@ -236,7 +235,9 @@ export const Main = () => {
                     {
                       name: "退出登陸",
                       component: <LogoutOutlined className="text-sm" />,
-                      function: () => {},
+                      function: () => {
+                        handleOnSignOut(() => navigate("/login"));
+                      },
                     },
                   ].map((item, index) => (
                     <div
