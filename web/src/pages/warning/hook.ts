@@ -5,7 +5,9 @@ import { useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/hooks/use-auth";
 import { GetRecordList } from "@/services/api/default";
+import { PostRegisterRecord } from "@/services/api/warning";
 import { IRecordRequest, IStatusType } from "@/services/dtos/default";
+import { IRegisterRecordRequest } from "@/services/dtos/warning";
 import { onDownLoadWorkbook } from "@/utils";
 
 interface IKey {
@@ -37,16 +39,16 @@ export const useAction = () => {
 
   const [selectValues, setSelectValues] = useState<string[]>([]);
 
-  const [isMark, setIsMark] = useState<boolean>(false);
-
   const [markModelDto, setMarkModelDto] = useState<{
     open: boolean;
-    status: boolean;
+    status: IStatusType | null;
     exceptionReason: string;
+    recordid: number | null;
   }>({
     open: false,
-    status: false,
+    status: null,
     exceptionReason: "",
+    recordid: null,
   });
 
   const [timeDto, setTimeDto] = useState<{
@@ -85,7 +87,7 @@ export const useAction = () => {
           64 -
           warningHeaderRef.current?.clientHeight -
           40 - // 1.25rem * 2
-          16 - // space-y-4
+          4 - // space-y-1
           8 <
           200
           ? 200
@@ -93,7 +95,7 @@ export const useAction = () => {
               64 -
               warningHeaderRef.current?.clientHeight -
               40 - // 1.25rem * 2
-              16 - // space-y-4
+              4 - // space-y-1
               8
       );
     }
@@ -164,6 +166,46 @@ export const useAction = () => {
     }
   };
 
+  const getParams = () => {
+    const data: IRegisterRecordRequest = {
+      recordId: markModelDto.recordid ?? 0,
+      recordStatus: markModelDto.status ?? IStatusType.Exception,
+    };
+
+    if (data.recordStatus === IStatusType.Exception) {
+      data.exceptionReason = markModelDto.exceptionReason;
+    }
+
+    return data;
+  };
+
+  const markRecord = () => {
+    const data = getParams();
+
+    if (
+      data.recordStatus >= IStatusType.Verifed ||
+      (data.recordStatus === IStatusType.Exception && !data.exceptionReason)
+    ) {
+      PostRegisterRecord(data)
+        .then(() => {
+          message.success("標記成功!");
+          setMarkModelDto((prev) => ({
+            ...prev,
+            open: false,
+          }));
+        })
+        .catch(() => {
+          message.error("標記失敗!");
+        });
+    } else {
+      message.warning("請輸入完整的標記信息!");
+    }
+  };
+
+  const { run: handleOnMarkDebounceFn } = useDebounceFn(markRecord, {
+    wait: 300,
+  });
+
   const { run: handleOnExportDebounceFn } = useDebounceFn(exportData, {
     wait: 300,
   });
@@ -190,16 +232,28 @@ export const useAction = () => {
 
   useEffect(() => {
     const state = location.state as {
-      isMark: boolean;
+      status: IStatusType;
     };
 
-    if (state && (state.isMark !== null || state.isMark !== undefined)) {
-      setIsMark(state.isMark);
+    if (location.pathname !== "/warning/list") {
+      setMarkModelDto((prev) => ({
+        ...prev,
+        recordid: location.pathname.split("/").filter((item) => item != "")[1]
+          ? Number(location.pathname.split("/").filter((item) => item != "")[1])
+          : 0,
+      }));
+
+      setMarkModelDto((prev) => ({
+        ...prev,
+        status:
+          state && (state.status !== null || state.status !== undefined)
+            ? state.status
+            : null,
+      }));
     }
   }, [location.pathname]);
 
   return {
-    isMark,
     status,
     height,
     timeDto,
@@ -209,6 +263,7 @@ export const useAction = () => {
     searchKeyWord,
     warningHeaderRef,
     markModelDto,
+    handleOnMarkDebounceFn,
     handleOnExportDebounceFn,
     setTimeDto,
     setKeyWord,

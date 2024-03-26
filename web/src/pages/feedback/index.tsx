@@ -26,9 +26,9 @@ export const Feedback = () => {
   const outlet = useOutlet();
 
   return (
-    <div className="w-full h-full flex flex-col py-5 px-5 space-y-4 overflow-auto no-scrollbar">
+    <div className="w-full h-full flex flex-col py-5 px-5 space-y-1 overflow-auto no-scrollbar">
       <div
-        className="flex flex-wrap items-center justify-between"
+        className="flex flex-wrap items-center justify-between min-h-16"
         ref={feedbackHeaderRef}
       >
         <div>
@@ -60,7 +60,6 @@ export const Feedback = () => {
       </div>
 
       <div
-        className="shrink-0"
         style={{
           height: height + "px",
         }}

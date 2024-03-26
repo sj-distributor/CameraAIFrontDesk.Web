@@ -114,7 +114,7 @@ export const useAction = () => {
 
   useEffect(() => {
     // 连续请求
-    // fetchData();
+    fetchData();
     // console.log(loadFlag, cameraList, "loadflag");
   }, [loadFlag]);
 

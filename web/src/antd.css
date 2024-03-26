@@ -47,6 +47,10 @@
   padding: 20px 0 !important;
 }
 
+.mark .ant-modal-content {
+  padding: 20px 0 !important;
+}
+
 @media (max-width: 575px) {
   :where(.css-dev-only-do-not-override-i46qwz).ant-form:not(.ant-form-inline)
     .ant-form-item

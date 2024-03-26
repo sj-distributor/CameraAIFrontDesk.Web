@@ -123,7 +123,7 @@ export const WarningList = () => {
               () =>
                 navigate(`/warning/${record.id}`, {
                   state: {
-                    isMark: true,
+                    status: IStatusType.Unmarked,
                   },
                 })
             );
@@ -136,7 +136,7 @@ export const WarningList = () => {
               () =>
                 navigate(`/warning/${record.id}`, {
                   state: {
-                    isMark: false,
+                    status: IStatusType.Verifed,
                   },
                 })
             );
@@ -149,7 +149,7 @@ export const WarningList = () => {
               () =>
                 navigate(`/warning/${record.id}`, {
                   state: {
-                    isMark: false,
+                    status: IStatusType.Exception,
                   },
                 })
             );

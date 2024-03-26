@@ -7,16 +7,18 @@ import { BreadcrumbComponent } from "@/components/breadcrumb";
 import { CheckBoxComponent } from "@/components/check-box";
 import { RangePickerComponent } from "@/components/date-range-picker";
 import { SelectComponent } from "@/components/select";
+import { IStatusType } from "@/services/dtos/default";
 
 import { useAction } from "./hook";
 import { IWarningSearchDataContext } from "./props";
+
+const { TextArea } = Input;
 
 export const WarningSearchDataContext =
   createContext<IWarningSearchDataContext>(null!);
 
 export const Warning = () => {
   const {
-    isMark,
     height,
     status,
     timeDto,
@@ -25,24 +27,25 @@ export const Warning = () => {
     selectValues,
     keyWord,
     searchKeyWord,
-    isOpenMarkModel,
+    markModelDto,
+    handleOnMarkDebounceFn,
     handleOnExportDebounceFn,
     setTimeDto,
     setKeyWord,
     onTypeClick,
     onStatusClick,
-    setIsOpenmMarkModel,
+    setMarkModelDto,
   } = useAction();
 
   const outlet = useOutlet();
 
   return (
-    <div className="w-full h-full flex flex-col py-5 px-5 space-y-4">
+    <div className="w-full h-full flex flex-col py-5 px-5 space-y-1">
       <div
-        className="flex flex-wrap items-center justify-between"
+        className="flex flex-wrap items-center justify-between min-h-16"
         ref={warningHeaderRef}
       >
-        <div>
+        <div className="">
           <BreadcrumbComponent />
           {location.pathname === "/warning/list" && (
             <div className="flex items-center flex-wrap space-x-4">
@@ -87,10 +90,17 @@ export const Warning = () => {
                 導出
               </Button>
             </>
-          ) : isMark ? (
+          ) : markModelDto.status !== null &&
+            markModelDto.status === IStatusType.Unmarked ? (
             <Button
               icon={<img src="/src/assets/pin.png" />}
               className="h-12 w-[100px] text-[#2866F1] bg-[#C2D5FF] !rounded-[56px] hover:!text-[#2866F1] hover:!border-[#C2D5FF] flex justify-center items-center"
+              onClick={() =>
+                setMarkModelDto((prev) => ({
+                  ...prev,
+                  open: true,
+                }))
+              }
             >
               標記
             </Button>
@@ -101,7 +111,6 @@ export const Warning = () => {
       </div>
 
       <div
-        className="shrink-0"
         style={{
           height: height + "px",
         }}
@@ -119,19 +128,73 @@ export const Warning = () => {
       </div>
 
       <Modal
-        open={true}
+        open={markModelDto.open}
         centered={true}
-        title={<span className="select-none">狀態標記</span>}
+        className="mark"
+        title={<span className="select-none ml-4">狀態標記</span>}
         closeIcon={false}
-        footer={null}
+        footer={
+          <div className="w-full box-border px-4 space-x-2 pt-5 border-t-[1px] border-[#E9EDF2]">
+            <button
+              className="bg-[#E6EAF4] text-[#8B98AD] rounded-[56px] w-[4.25rem] h-[2.125rem] select-none"
+              onClick={() => {
+                setMarkModelDto((prev) => ({
+                  ...prev,
+                  open: false,
+                }));
+              }}
+            >
+              取消
+            </button>
+            <button
+              className="bg-[#2866F1] text-white rounded-[56px] w-[4.25rem] h-[2.125rem] select-none"
+              onClick={handleOnMarkDebounceFn}
+            >
+              确认
+            </button>
+          </div>
+        }
       >
-        <div className="bg-red-300 w-full h-full">
-          <Radio.Group>
-            <Radio value={1}>A</Radio>
-            <Radio value={2}>B</Radio>
-          </Radio.Group>
+        <div className="w-full h-full box-border px-4">
+          <div className="flex items-center space-x-2 my-6">
+            <span className="text-base select-none">標記</span>
+            <Radio.Group
+              value={markModelDto.status}
+              onChange={(e) => {
+                setMarkModelDto((prev) => ({
+                  ...prev,
+                  status: e.target.value as IStatusType,
+                }));
+              }}
+            >
+              <Radio value={IStatusType.Verifed}>
+                <strong className="select-none">已通過</strong>
+              </Radio>
+              <Radio value={IStatusType.Exception}>
+                <strong className="select-none">異常</strong>
+              </Radio>
+            </Radio.Group>
+          </div>
+          {markModelDto.status === IStatusType.Exception && (
+            <div className="flex space-x-2">
+              <span className="text-base select-none">原因</span>
+              <TextArea
+                className="flex-1"
+                value={markModelDto.exceptionReason}
+                autoSize={{
+                  minRows: 4,
+                  maxRows: 4,
+                }}
+                onChange={(e) => {
+                  setMarkModelDto((prev) => ({
+                    ...prev,
+                    exceptionReason: e.target.value,
+                  }));
+                }}
+              />
+            </div>
+          )}
         </div>
-        {/* <div className="min-h-24">123</div> */}
       </Modal>
     </div>
   );

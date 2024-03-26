@@ -45,7 +45,7 @@ export const CheckBoxComponent = (props: ICheckBoxComponentProps) => {
                     ) !== -1
                   }
                 />
-                <span>{item.name}</span>
+                <span className="select-none">{item.name}</span>
               </div>
             ))}
           </div>

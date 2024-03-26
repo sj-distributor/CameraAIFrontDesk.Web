@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 
 import { AuthStatus } from "@/hooks/auth-status";
 import { useAuth } from "@/hooks/use-auth";
-import { Demo } from "@/pages/demo";
+// import { Demo } from "@/pages/demo";
 import { Login } from "@/pages/login";
 import { Main } from "@/pages/main";
 
@@ -30,7 +30,7 @@ export const Router = () => {
         <Route path="/login" element={<Login />} />
 
         <Route element={<Main />}>
-          <Route path="/demo" element={<Demo />} />
+          {/* <Route path="/demo" element={<Demo />} /> */}
 
           {router(routers)}
           <Route path="*" element={<Navigate to={"/home"} />} />

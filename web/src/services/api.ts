@@ -26,7 +26,7 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => {
-    if (response.status !== 200) {
+    if (response.status !== 200 || response.data.code !== 200) {
       return Promise.reject(response);
     }
 

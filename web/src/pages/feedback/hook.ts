@@ -118,7 +118,7 @@ export const useAction = () => {
           64 -
           feedbackHeaderRef.current?.clientHeight -
           40 - // 1.25rem * 2
-          16 - // space-y-4
+          4 - // space-y-1
           8 <
           200
           ? 200
@@ -126,7 +126,7 @@ export const useAction = () => {
               64 -
               feedbackHeaderRef.current?.clientHeight -
               40 - // 1.25rem * 2
-              16 - // space-y-4
+              4 - // space-y-1
               8
       );
     }

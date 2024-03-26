@@ -1,3 +1,4 @@
+import { clone } from "ramda";
 import { useContext, useEffect, useState } from "react";
 
 import { GetReplayList } from "@/services/api/replay";
@@ -28,6 +29,9 @@ export const useAction = () => {
     isScorllDown: false,
     isEnd: false,
   });
+
+  const [lastTimeSearchData, setLastTimeSearchData] =
+    useState<IRecordRequest | null>(null);
 
   const onJumpDetail = (correlationId: string) => {
     // TODO: 跳转详情
@@ -69,7 +73,49 @@ export const useAction = () => {
       data.EquipmentName = searchKeyWord;
     }
 
+    if (lastTimeSearchData) {
+      const isClearPage = areRecordRequestsDifferent(data, lastTimeSearchData);
+
+      if (isClearPage) {
+        data.PageIndex = 1;
+      }
+    }
+
     return data;
+  };
+
+  const areRecordRequestsDifferent = (
+    request1: IRecordRequest,
+    request2: IRecordRequest
+  ) => {
+    // 检查每个属性是否相同
+
+    return (
+      request1.EquipmentName !== request2.EquipmentName ||
+      !arraysAreEqual(request1.EquipmentCodes, request2.EquipmentCodes) ||
+      !arraysAreEqual(request1.MonitorTypeIds, request2.MonitorTypeIds) ||
+      request1.EndTime !== request2.EndTime ||
+      request1.StartTime !== request2.StartTime ||
+      request1.Status !== request2.Status
+    );
+  };
+
+  // 辅助函数，用于比较两个数组是否相等
+  const arraysAreEqual = (array1?: string[], array2?: string[]) => {
+    if (array1 === array2) {
+      return true; // 引用相同，直接返回 true
+    }
+    if (array1 == null || array2 == null || array1.length !== array2.length) {
+      return false; // 长度不同或其中一个数组为 null 或 undefined，直接返回 false
+    }
+    // 检查每个元素是否相同
+    for (let i = 0; i < array1.length; i++) {
+      if (array1[i] !== array2[i]) {
+        return false; // 元素不同，返回 false
+      }
+    }
+
+    return true; // 所有元素相同，返回 true
   };
 
   const setData = (
@@ -97,12 +143,16 @@ export const useAction = () => {
 
     const data = getRequestPrams();
 
+    setLastTimeSearchData(clone(data));
+
     GetReplayList(data)
       .then((res) => {
         setData(
           res?.count ?? 0,
           false,
-          [...replayDto.replays, ...(res?.replays ?? [])],
+          data.PageIndex === 1
+            ? res?.replays ?? []
+            : [...replayDto.replays, ...(res?.replays ?? [])],
           true
         );
       })
