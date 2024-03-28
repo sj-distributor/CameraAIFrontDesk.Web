@@ -259,8 +259,7 @@ export const Main = () => {
                         window.open(
                           localStorage.getItem(
                             (window as any).appsettings.cameraAIBackstageDomain
-                          ) ?? "",
-                          "_blank"
+                          ) ?? ""
                         );
                       },
                     },
