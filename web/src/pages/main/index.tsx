@@ -254,7 +254,9 @@ export const Main = () => {
                       function: () => {
                         document.cookie = `param1=${localStorage.getItem(
                           (window as any).appsettings.tokenKey
-                        )}`;
+                        )}; path=${
+                          (window as any).appsettings.cameraAIBackstageDomain
+                        }`;
 
                         window.open(
                           (window as any).appsettings.cameraAIBackstageDomain
