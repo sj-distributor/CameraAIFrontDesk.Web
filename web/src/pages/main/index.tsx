@@ -257,7 +257,18 @@ export const Main = () => {
                         )}; path=${
                           (window as any).appsettings.cameraAIBackstageDomain
                         }`;
+                        console.log(
+                          "dddd",
+                          `param1=${localStorage.getItem(
+                            (window as any).appsettings.tokenKey
+                          )}; path=${
+                            (window as any).appsettings.cameraAIBackstageDomain
+                          }`
+                        );
 
+                        window.location.href = (
+                          window as any
+                        ).appsettings.cameraAIBackstageDomain;
                         window.open(
                           (window as any).appsettings.cameraAIBackstageDomain
                         );
