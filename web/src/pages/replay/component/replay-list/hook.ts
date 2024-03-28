@@ -126,16 +126,14 @@ export const useAction = () => {
 
   // 辅助函数，用于比较两个数组是否相等
   const arraysAreEqual = (
-    array1?: number[] | string[],
-    array2?: number[] | string[]
+    array1?: (number | string)[],
+    array2?: (number | string)[]
   ) => {
-    if (array1 === array2) {
-      return true; // 引用相同，直接返回 true
+    if (!array1 || !array2 || array1.length !== array2.length) {
+      return false; // 長度不同或其中一個數組為 null 或 undefined，直接返回 false
     }
-    if (array1 == null || array2 == null || array1.length !== array2.length) {
-      return false; // 长度不同或其中一个数组为 null 或 undefined，直接返回 false
-    }
-    // 检查每个元素是否相同
+
+    // 檢查每個元素是否相同
     for (let i = 0; i < array1.length; i++) {
       if (array1[i] !== array2[i]) {
         return false; // 元素不同，返回 false
