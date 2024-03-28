@@ -266,9 +266,9 @@ export const Main = () => {
                           }`
                         );
 
-                        window.location.href = (
-                          window as any
-                        ).appsettings.cameraAIBackstageDomain;
+                        // window.location.href = (
+                        //   window as any
+                        // ).appsettings.cameraAIBackstageDomain;
                         window.open(
                           (window as any).appsettings.cameraAIBackstageDomain
                         );
