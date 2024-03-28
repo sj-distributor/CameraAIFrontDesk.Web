@@ -23,20 +23,15 @@ export const useAction = () => {
 
   const [duration, setDuration] = useState<number | null>(null);
 
-  const [state, setState] = useState<boolean>(false);
+  // const [state, setState] = useState<boolean>(false);
 
-  const [isPlay, setIsPlay] = useState<boolean>(false);
+  // const [isPlay, setIsPlay] = useState<boolean>(false);
 
-  const [data, setData] = useState<
-    {
-      second: number[];
-      type: number;
-    }[]
-  >([
+  const data = [
     { second: [60, 200], type: 0 },
     { second: [5, 45], type: 1 },
     { second: [180, 990], type: 1 },
-  ]);
+  ];
 
   const [speedBoxDto, setSpeedBoxDto] = useState<{
     status: boolean;
@@ -204,7 +199,7 @@ export const useAction = () => {
 
   const [correlationId, setCorrelationId] = useState("");
 
-  const [isFirst, setIsFirst] = useState<boolean>(false);
+  // const [isFirst, setIsFirst] = useState<boolean>(false);
 
   const [replayDetailDto, setReplayDto] = useState<IReplayDetailResponse>({
     equipment: null,
@@ -264,7 +259,7 @@ export const useAction = () => {
     }
   }, [correlationId]);
 
-  const [isFirstLoad, setIsFirstLoad] = useState<boolean>(false);
+  // const [isFirstLoad, setIsFirstLoad] = useState<boolean>(false);
 
   const [isFirstGenerate, setIsFirstGenerate] = useState<boolean>(false);
 
@@ -391,8 +386,8 @@ export const useAction = () => {
     duration,
     progressBoxRef,
     speedBoxDto,
-    setIsPlay,
-    setState,
+    // setIsPlay,
+    // setState,
     getWidth,
     skipTime,
     changeSpeed,

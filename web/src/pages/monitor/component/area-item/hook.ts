@@ -19,7 +19,7 @@ interface IDto extends IRegionEquipmentListResponse, IPageDto {
 }
 
 export const useAction = () => {
-  const { location, navigate, parseQueryParams, parseQuery } = useAuth();
+  const { navigate, parseQueryParams, parseQuery } = useAuth();
 
   // const [layoutMode, setLayoutMode] = useState<ScreenType | null>(null);
 
@@ -36,16 +36,16 @@ export const useAction = () => {
     isEnd: false,
   });
 
-  const updateLayoutMode = (value: any) => {
-    // setLayoutMode(value as ScreenType);
-    // const data = parseQueryParams<{ regionName: string }>();
-    // const arr = location.pathname.split("/").filter((item) => item !== "");
-    // navigate(
-    //   `/monitor/${arr[arr.length - 1]}/multi-screen?regionName=${
-    //     data.regionName
-    //   }&screen=${value}`
-    // );
-  };
+  // const updateLayoutMode = (value: any) => {
+  // setLayoutMode(value as ScreenType);
+  // const data = parseQueryParams<{ regionName: string }>();
+  // const arr = location.pathname.split("/").filter((item) => item !== "");
+  // navigate(
+  //   `/monitor/${arr[arr.length - 1]}/multi-screen?regionName=${
+  //     data.regionName
+  //   }&screen=${value}`
+  // );
+  // };
 
   const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;

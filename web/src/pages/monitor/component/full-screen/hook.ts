@@ -23,16 +23,11 @@ export const useAction = () => {
     speed: 1,
   });
 
-  const [videoSecond, setVideoSecond] = useState<
-    {
-      second: number[];
-      type: number;
-    }[]
-  >([
+  const videoSecond = [
     { second: [60, 200], type: 0 },
     { second: [5, 45], type: 1 },
     { second: [180, 990], type: 1 },
-  ]);
+  ];
 
   const [isExport, setIsExport] = useState<boolean>(false);
 

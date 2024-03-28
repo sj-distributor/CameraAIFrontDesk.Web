@@ -1,19 +1,19 @@
 // import { FliterWarningComponent } from "@/components/fliterWarning";
-import { SelectComponent } from "@/components/select";
-import { ScreenType } from "@/entity/screen-type";
+// import { SelectComponent } from "@/components/select";
+// import { ScreenType } from "@/entity/screen-type";
 
 import { useAction } from "./hook";
 
 export const MultiScreen = () => {
   const {
     videoBodyRef,
-    layoutMode,
-    updateLayoutMode,
-    videoItemHeight,
-    videoLinkArr,
-    warning,
-    updateWarning,
-    videoRefs,
+    // layoutMode,
+    // updateLayoutMode,
+    // videoItemHeight,
+    // videoLinkArr,
+    // warning,
+    // updateWarning,
+    // videoRefs,
     onClick,
   } = useAction();
 
@@ -44,19 +44,20 @@ export const MultiScreen = () => {
       </div>
       <div className="flex-1 flex flex-col bg-red-600 overflow-y-auto no-scrollbar">
         <div
-          className={`h-[calc(100%-44px)] overflow-y-auto no-scrollbar grid ${
-            layoutMode === ScreenType.FourScreen ? "grid-cols-2" : "grid-cols-3"
-          } gap-1`}
+          //   ${
+          //   layoutMode === ScreenType.FourScreen ? "grid-cols-2" : "grid-cols-3"
+          // }
+          className={`h-[calc(100%-44px)] overflow-y-auto no-scrollbar grid 
+        
+           gap-1`}
           ref={videoBodyRef}
         >
-          {videoLinkArr.map((item, index) => (
+          {/* {videoLinkArr.map((item, index) => (
             <div
               className={`${item ? item : "bg-black"}`}
               style={{ height: videoItemHeight + "px" }}
               key={index}
             >
-              {/* object-contain */}
-              {/* object-cover */}
               {item && (
                 <video
                   className="w-full h-full object-fill"
@@ -66,7 +67,7 @@ export const MultiScreen = () => {
                 </video>
               )}
             </div>
-          ))}
+          ))} */}
         </div>
         <div className="h-11 666">
           <div onClick={onClick}>click</div>

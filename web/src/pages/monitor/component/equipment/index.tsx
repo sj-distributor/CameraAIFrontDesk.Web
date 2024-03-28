@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 
 // import { FliterWarningComponent } from "@/components/fliterWarning";
-import { SelectComponent } from "@/components/select";
-import { VideoComponent } from "@/components/video";
-import { ScreenType } from "@/entity/screen-type";
+// import { SelectComponent } from "@/components/select";
+// import { VideoComponent } from "@/components/video";
+// import { ScreenType } from "@/entity/screen-type";
 
-import { useAction } from "./hook";
+// import { useAction } from "./hook";
 
 export const Equipment = () => {
-  const { layoutMode, data, updateLayoutMode, updateData } = useAction();
+  // const { layoutMode, data, updateLayoutMode, updateData } = useAction();
 
   useEffect(() => {
     navigator.mediaDevices

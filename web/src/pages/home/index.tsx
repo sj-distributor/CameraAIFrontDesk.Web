@@ -1,9 +1,8 @@
 import { Slider } from "antd";
-import * as echarts from "echarts";
 import EChartsReact from "echarts-for-react";
 import React from "react";
 
-type EChartsOption = echarts.EChartsOption;
+// type EChartsOption = echarts.EChartsOption;
 
 import { DownOutlined, PlayCircleFilled } from "@ant-design/icons";
 

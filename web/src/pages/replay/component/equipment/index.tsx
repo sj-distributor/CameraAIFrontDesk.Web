@@ -1,11 +1,11 @@
-import {
-  ArrowRightOutlined,
-  ExclamationCircleFilled,
-  LeftOutlined,
-  RightOutlined,
-} from "@ant-design/icons";
-import { Modal } from "antd";
-import { useEffect, useMemo, useRef, useState } from "react";
+// import {
+//   ArrowRightOutlined,
+//   ExclamationCircleFilled,
+//   LeftOutlined,
+//   RightOutlined,
+// } from "@ant-design/icons";
+// import { Modal } from "antd";
+import { useEffect, useRef, useState } from "react";
 
 import { CheckBoxComponent } from "@/components/check-box";
 
@@ -15,18 +15,18 @@ export const Equipment = () => {
   const {
     videoRef,
     scaleRef,
-    duration,
-    progressBoxRef,
-    speedBoxDto,
-    getWidth,
-    setIsPlay,
-    setState,
-    skipTime,
-    changeSpeed,
-    setSpeedBoxDto,
+    // duration,
+    // progressBoxRef,
+    // speedBoxDto,
+    // getWidth,
+    // setIsPlay,
+    // setState,
+    // skipTime,
+    // changeSpeed,
+    // setSpeedBoxDto,
 
     // new
-    replayDetailDto,
+    // replayDetailDto,
     selectValues,
     onTypeClick,
     options,
@@ -34,12 +34,12 @@ export const Equipment = () => {
     isSuccess,
   } = useAction();
 
-  const [b, setB] = useState<boolean>(false);
+  // const [b, setB] = useState<boolean>(false);
 
-  const [exportDto, setExportDto] = useState({
-    divStatus: false,
-    modalStatus: false,
-  });
+  // const [exportDto, setExportDto] = useState({
+  //   divStatus: false,
+  //   modalStatus: false,
+  // });
 
   const [left, setLeft] = useState<boolean>(false);
 
@@ -180,121 +180,121 @@ export const Equipment = () => {
     }
   };
 
-  const [da, setDa] = useState<
-    {
-      second: number[];
-      type: number;
-    }[]
-  >([
-    { second: [60, 200], type: 0 },
-    { second: [5, 45], type: 1 },
-    { second: [180, 990], type: 1 },
-  ]);
+  // const [da, setDa] = useState<
+  //   {
+  //     second: number[];
+  //     type: number;
+  //   }[]
+  // >([
+  //   { second: [60, 200], type: 0 },
+  //   { second: [5, 45], type: 1 },
+  //   { second: [180, 990], type: 1 },
+  // ]);
 
-  const progress = useMemo(() => {
-    let videoWidth: number;
+  // const progress = useMemo(() => {
+  //   let videoWidth: number;
 
-    if (duration) {
-      videoWidth =
-        Math.floor(Math.floor(duration) / 120) * 60 +
-          (Math.floor(duration) % 120) * 0.5 ?? 0;
+  //   if (duration) {
+  //     videoWidth =
+  //       Math.floor(Math.floor(duration) / 120) * 60 +
+  //         (Math.floor(duration) % 120) * 0.5 ?? 0;
 
-      return (
-        <div
-          className="relative h-[20px] flex canClick box-border my-[6px] z-10"
-          style={{
-            width: `${videoWidth}px`,
-          }}
-        >
-          {da.map((item, index) => (
-            <div
-              key={index}
-              className={`h-full ${
-                item.type === 0 ? "bg-[#2853E3] z-20" : "bg-[#34A46E] z-10"
-              } absolute canClick rounded-[46px]`}
-              style={{
-                width: `${
-                  videoWidth * (item.second[1] / (duration ?? 0)) -
-                  videoWidth * (item.second[0] / (duration ?? 0))
-                }px`,
-                left: `${videoWidth * (item.second[0] / (duration ?? 0))}px`,
-              }}
-            />
-          ))}
-          {b && (
-            <div className="flex h-5 w-12 absolute z-30" ref={exportRef}>
-              <div
-                className="w-[1px] bg-[#F49B45] cursor-pointer relative"
-                onMouseDown={(event) => {
-                  setLeft(true);
-                  event.preventDefault();
-                }}
-              >
-                <div className="absolute w-1 h-1 rounded-full -top-[2px] -left-full bg-[#F49B45]" />
-                <div className="absolute w-1 h-1 rounded-full -bottom-[2px] -left-full bg-[#F49B45]" />
-              </div>
-              <div className="bg-[#FDD38C] bg-opacity-80 grow" />
-              <div
-                className="w-[1px] bg-[#F49B45] cursor-pointer relative"
-                onMouseDown={(event) => {
-                  setRight(true);
-                  event.preventDefault();
-                }}
-              >
-                <div className="absolute w-1 h-1 rounded-full -top-[2px] -left-full bg-[#F49B45]" />
-                <div className="absolute w-1 h-1 rounded-full -bottom-[2px] -left-full  bg-[#F49B45]" />
-              </div>
-            </div>
-          )}
-        </div>
-      );
-    }
+  //     return (
+  //       <div
+  //         className="relative h-[20px] flex canClick box-border my-[6px] z-10"
+  //         style={{
+  //           width: `${videoWidth}px`,
+  //         }}
+  //       >
+  //         {da.map((item, index) => (
+  //           <div
+  //             key={index}
+  //             className={`h-full ${
+  //               item.type === 0 ? "bg-[#2853E3] z-20" : "bg-[#34A46E] z-10"
+  //             } absolute canClick rounded-[46px]`}
+  //             style={{
+  //               width: `${
+  //                 videoWidth * (item.second[1] / (duration ?? 0)) -
+  //                 videoWidth * (item.second[0] / (duration ?? 0))
+  //               }px`,
+  //               left: `${videoWidth * (item.second[0] / (duration ?? 0))}px`,
+  //             }}
+  //           />
+  //         ))}
+  //         {b && (
+  //           <div className="flex h-5 w-12 absolute z-30" ref={exportRef}>
+  //             <div
+  //               className="w-[1px] bg-[#F49B45] cursor-pointer relative"
+  //               onMouseDown={(event) => {
+  //                 setLeft(true);
+  //                 event.preventDefault();
+  //               }}
+  //             >
+  //               <div className="absolute w-1 h-1 rounded-full -top-[2px] -left-full bg-[#F49B45]" />
+  //               <div className="absolute w-1 h-1 rounded-full -bottom-[2px] -left-full bg-[#F49B45]" />
+  //             </div>
+  //             <div className="bg-[#FDD38C] bg-opacity-80 grow" />
+  //             <div
+  //               className="w-[1px] bg-[#F49B45] cursor-pointer relative"
+  //               onMouseDown={(event) => {
+  //                 setRight(true);
+  //                 event.preventDefault();
+  //               }}
+  //             >
+  //               <div className="absolute w-1 h-1 rounded-full -top-[2px] -left-full bg-[#F49B45]" />
+  //               <div className="absolute w-1 h-1 rounded-full -bottom-[2px] -left-full  bg-[#F49B45]" />
+  //             </div>
+  //           </div>
+  //         )}
+  //       </div>
+  //     );
+  //   }
 
-    return <></>;
-  }, [da, duration, b]);
+  //   return <></>;
+  // }, [da, duration, b]);
 
-  const scale = useMemo(() => {
-    if (duration) {
-      const num = Math.floor(Math.floor(duration) / 120);
+  // const scale = useMemo(() => {
+  //   if (duration) {
+  //     const num = Math.floor(Math.floor(duration) / 120);
 
-      const remainder = Math.floor(duration) % 120;
+  //     const remainder = Math.floor(duration) % 120;
 
-      return (
-        <div className="max-h-[12px] flex items-end">
-          {Array.from({ length: num }).map((_, index) => (
-            <div
-              key={index}
-              className={`w-[60px] ${
-                index % 5 === 0 ? "h-[12px]" : "h-[5px]"
-              } box-border shrink-0 border-l border-[#8B98AD] border-solid`}
-            />
-          ))}
-          {remainder !== 0 ? (
-            <div
-              className={`${
-                num % 5 === 0 ? "h-[12px]" : "h-[5px]"
-              } box-border border-l border-r border-[#8B98AD] shrink-0 border-solid`}
-              style={{
-                width: `${remainder * 0.5}px`,
-                clipPath:
-                  num % 5 === 0
-                    ? "polygon(0 0, 100% 50%, 100% 100%, 0 100%)"
-                    : undefined,
-              }}
-            />
-          ) : (
-            <div
-              className={`${
-                num % 5 === 0 ? "h-[12px]" : "h-[5px]"
-              } border-l border-solid border-[#8B98AD]`}
-            />
-          )}
-        </div>
-      );
-    }
+  //     return (
+  //       <div className="max-h-[12px] flex items-end">
+  //         {Array.from({ length: num }).map((_, index) => (
+  //           <div
+  //             key={index}
+  //             className={`w-[60px] ${
+  //               index % 5 === 0 ? "h-[12px]" : "h-[5px]"
+  //             } box-border shrink-0 border-l border-[#8B98AD] border-solid`}
+  //           />
+  //         ))}
+  //         {remainder !== 0 ? (
+  //           <div
+  //             className={`${
+  //               num % 5 === 0 ? "h-[12px]" : "h-[5px]"
+  //             } box-border border-l border-r border-[#8B98AD] shrink-0 border-solid`}
+  //             style={{
+  //               width: `${remainder * 0.5}px`,
+  //               clipPath:
+  //                 num % 5 === 0
+  //                   ? "polygon(0 0, 100% 50%, 100% 100%, 0 100%)"
+  //                   : undefined,
+  //             }}
+  //           />
+  //         ) : (
+  //           <div
+  //             className={`${
+  //               num % 5 === 0 ? "h-[12px]" : "h-[5px]"
+  //             } border-l border-solid border-[#8B98AD]`}
+  //           />
+  //         )}
+  //       </div>
+  //     );
+  //   }
 
-    return <></>;
-  }, [duration]);
+  //   return <></>;
+  // }, [duration]);
 
   return (
     // <div className="w-full h-full flex-col flex space-y-1">

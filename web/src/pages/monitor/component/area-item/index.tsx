@@ -3,7 +3,7 @@ import Spin from "antd/es/spin";
 
 import { Img } from "@/components/img";
 import { CssType } from "@/components/img/props";
-import { SelectComponent } from "@/components/select";
+// import { SelectComponent } from "@/components/select";
 
 // import { ScreenType } from "@/entity/screen-type";
 import { useAction } from "./hook";
