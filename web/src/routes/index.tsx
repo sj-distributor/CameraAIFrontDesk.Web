@@ -143,7 +143,7 @@ export const Router = () => {
     <ConfigProvider locale={locale}>
       <Routes>
         <Route path="/login" element={<Login />} />
-
+        <Route path="*" element={<Navigate to={"/home"} />} />
         <Route element={<Main />}>
           {routers.map((item, index) => {
             return (
