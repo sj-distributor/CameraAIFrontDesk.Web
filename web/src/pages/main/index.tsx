@@ -251,7 +251,18 @@ export const Main = () => {
                     {
                       name: "切換後台",
                       component: <SwapOutlined className="text-sm" />,
-                      function: () => {},
+                      function: () => {
+                        document.cookie = `param1=${localStorage.getItem(
+                          (window as any).appsettings.tokenKey
+                        )}`;
+
+                        window.open(
+                          localStorage.getItem(
+                            (window as any).appsettings.cameraAIBackstageDomain
+                          ) ?? "",
+                          "_blank"
+                        );
+                      },
                     },
                     {
                       name: "修改密碼",
