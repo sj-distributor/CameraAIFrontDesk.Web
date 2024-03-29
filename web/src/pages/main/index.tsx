@@ -252,10 +252,21 @@ export const Main = () => {
                       name: "切換後台",
                       component: <SwapOutlined className="text-sm" />,
                       function: () => {
-                        window.open(
-                          (window as any).appsettings?.cameraAIBackstageDomain,
-                          "_blank"
-                        );
+                        var myIframe = document.getElementById("myIframe");
+                        if (myIframe) {
+                          const token = localStorage.getItem(
+                            (window as any).appsettings?.tokenKey
+                          );
+                          (myIframe as any).contentWindow.postMessage(
+                            token,
+                            (window as any).appsettings?.cameraAIBackstageDomain
+                          );
+                          window.open(
+                            (window as any).appsettings
+                              ?.cameraAIBackstageDomain,
+                            "_blank"
+                          );
+                        }
                       },
                     },
                     {
@@ -285,11 +296,11 @@ export const Main = () => {
                   ))}
                 </div>
               )}
-              {/* <iframe
+              <iframe
                 id="myIframe"
                 src={(window as any).appsettings?.cameraAIBackstageDomain}
                 style={{ display: "none" }}
-              /> */}
+              />
             </div>
           </div>
         </div>
