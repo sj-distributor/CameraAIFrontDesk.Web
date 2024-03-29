@@ -252,21 +252,18 @@ export const Main = () => {
                       name: "切換後台",
                       component: <SwapOutlined className="text-sm" />,
                       function: () => {
-                        // document.cookie = `param1=${localStorage.getItem(
-                        //   (window as any).appsettings.tokenKey
-                        // )}; path=${
-                        //   (window as any).appsettings.cameraAIBackstageDomain
-                        // }`;
-                        const value = `param1=翠西翠西翠西; path=${
-                          (window as any).appsettings.cameraAIBackstageDomain
-                        }`;
-                        document.cookie = value;
-                        console.log(value, document.cookie);
-
-                        // window.location.href = "http://localhost:3001/";
-                        window.open(
-                          (window as any).appsettings.cameraAIBackstageDomain
-                        );
+                        var myIframe = document.getElementById("myIframe");
+                        if (myIframe) {
+                          var data = { data: 1 };
+                          myIframe.contentWindow.postMessage(
+                            JSON.stringify(data),
+                            (window as any).appsettings.cameraAIBackstageDomain
+                          );
+                          window.open(
+                            (window as any).appsettings.cameraAIBackstageDomain,
+                            "_blank"
+                          );
+                        }
                       },
                     },
                     {
@@ -296,6 +293,11 @@ export const Main = () => {
                   ))}
                 </div>
               )}
+              <iframe
+                id="myIframe"
+                src={(window as any).appsettings.cameraAIBackstageDomain}
+                style={{ display: "none" }}
+              />
             </div>
           </div>
         </div>
