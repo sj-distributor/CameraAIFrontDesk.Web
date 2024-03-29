@@ -32,7 +32,8 @@
     "swiper": "^11.0.7",
     "swiper-react": "^1.0.0",
     "vite-plugin-cdn-import": "^0.3.5",
-    "vite-plugin-compression": "^0.5.1"
+    "vite-plugin-compression": "^0.5.1",
+    "rollup-plugin-visualizer": "^5.12.0"
   },
   "devDependencies": {
     "@sj-distributor/eslint-plugin-react": "^0.7.1",
@@ -59,5 +60,8 @@
     "typescript": "^5.1.6",
     "typescript-plugin-css-modules": "^5.0.1",
     "vite": "^4.4.10"
+  },
+  "resolutions": {
+    "workbox-webpack-plugin": "6.4.1"
   }
 }
