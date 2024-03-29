@@ -125,6 +125,10 @@ export const useAction = () => {
     console.log(locationId, regionId, cameraId, item);
     setIsGenerate(false);
     setIsFind(true);
+    setClickCamera((prev) => ({
+      ...prev,
+      equipmentName: item?.equipmentName ?? "",
+    }));
     // setNowStream("http://camera-ai-realtime.wiltechs.com:8080/1800-1/1201.flv");
     setNowStream("http://camera-ai-realtime.wiltechs.com:8080/live/1.flv");
     // if (!isGenerate) {
