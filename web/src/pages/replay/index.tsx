@@ -10,6 +10,8 @@ import { RangePickerComponent } from "@/components/date-range-picker";
 import { useAction } from "./hook";
 import { IReplaySearchDataContext } from "./props";
 
+import KEYS from "@/i18n/keys/video-playback";
+
 export const ReplaySearchDataContext = createContext<IReplaySearchDataContext>(
   null!
 );
@@ -25,6 +27,7 @@ export const Replay = () => {
     keyWord,
     height,
     searchKeyWord,
+    t,
     onTypeClick,
     setTimeDto,
     setKeyWord,
@@ -42,7 +45,9 @@ export const Replay = () => {
             <div className="flex items-center flex-wrap space-x-4">
               <div>
                 <span className="font-medium text-sm text-[#566172] select-none">
-                  選擇日期時間：
+                  {t(KEYS.SELECT_DATE, {
+                    ns: "videoPlayback",
+                  })}
                 </span>
 
                 <RangePickerComponent
@@ -51,7 +56,9 @@ export const Replay = () => {
                 />
               </div>
               <CheckBoxComponent
-                title="預警篩選："
+                title={t(KEYS.ALERT_FILTER, {
+                  ns: "videoPlayback",
+                })}
                 selectValues={selectValues}
                 onClick={onTypeClick}
               />
@@ -61,7 +68,9 @@ export const Replay = () => {
         {location.pathname === "/replay/list" && (
           <div className="flex flex-wrap">
             <Input
-              placeholder="搜索設備名稱"
+              placeholder={t(KEYS.ENTER_DEVICE_NAME, {
+                ns: "videoPlayback",
+              })}
               className="rounded-[3rem] text-base w-[12.5rem] h-12"
               suffix={<SearchOutlined />}
               value={keyWord}

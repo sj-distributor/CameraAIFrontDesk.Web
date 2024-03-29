@@ -204,7 +204,7 @@ export const Main = () => {
     });
 
     return filteredItems;
-  }, [pagePermission, location.pathname, selectedKeys]);
+  }, [pagePermission, location.pathname, selectedKeys, t]);
 
   return (
     <div className="h-screen w-screen bg-white flex flex-col ">

@@ -8,4 +8,7 @@ export default {
   GENERATE_VIDEO: "GenerateVideo",
   CONNECTING: "Connecting",
   LOADING: "Loading",
+  SELECT_DATE: "SelectDate",
+  ALERT_FILTER: "AlertFilter",
+  ENTER_DEVICE_NAME: "EnterDeviceName",
 };

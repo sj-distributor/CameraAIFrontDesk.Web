@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 
 export const useAction = () => {
+  const { t } = useAuth();
+
   const replayHeaderRef = useRef<HTMLDivElement>(null);
 
   const { location } = useAuth();
@@ -88,6 +90,7 @@ export const useAction = () => {
     replayHeaderRef,
     selectValues,
     searchKeyWord,
+    t,
     setKeyWord,
     onTypeClick,
     setTimeDto,
