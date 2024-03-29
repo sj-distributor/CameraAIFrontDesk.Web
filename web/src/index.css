@@ -49,3 +49,19 @@ p {
   margin-inline-start: 0px;
   margin-inline-end: 0px;
 }
+
+.swiper-wrapper {
+  display: inline-flex;
+}
+
+.swiper-wrapper {
+  display: inline-flex;
+}
+
+.swiper.swiper-initialized {
+  overflow: hidden;
+}
+
+.rangePickerComponent .ant-picker-input input {
+  min-width: min-content !important;
+}

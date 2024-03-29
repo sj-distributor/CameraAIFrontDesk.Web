@@ -5,6 +5,7 @@ import { useOutlet } from "react-router-dom";
 import { BreadcrumbComponent } from "@/components/breadcrumb";
 import { CheckBoxComponent } from "@/components/check-box";
 import { RangePickerComponent } from "@/components/date-range-picker";
+import KEYS from "@/i18n/keys/feedback-list";
 
 import { useAction } from "./hook";
 import { IFeedbackSearchDataContext } from "./props";
@@ -14,6 +15,7 @@ export const FeedbackSearchDataContext =
 
 export const Feedback = () => {
   const {
+    t,
     feedbackHeaderRef,
     selectValues,
     timeDto,
@@ -28,7 +30,7 @@ export const Feedback = () => {
   return (
     <div className="w-full h-full flex flex-col py-5 px-5 space-y-1 overflow-auto no-scrollbar">
       <div
-        className="flex flex-wrap items-center justify-between min-h-16"
+        className="flex flex-wrap items-center justify-between"
         ref={feedbackHeaderRef}
       >
         <div>
@@ -36,13 +38,13 @@ export const Feedback = () => {
           <div className="flex items-center flex-wrap space-x-4">
             <div>
               <span className="font-medium text-sm text-[#566172] select-none">
-                選擇日期時間：
+                {t(KEYS.SELECT_DATE_TIME, { ns: "feedbackList" })}
               </span>
 
               <RangePickerComponent timeDto={timeDto} setTimeDto={setTimeDto} />
             </div>
             <CheckBoxComponent
-              title="預警篩選："
+              title={t(KEYS.ALERT_SELECT, { ns: "feedbackList" })}
               selectValues={selectValues}
               onClick={onTypeClick}
             />
@@ -50,11 +52,13 @@ export const Feedback = () => {
         </div>
         <div className="flex space-x-6 flex-wrap">
           <Button
-            icon={<img src="/src/assets/import.png" />}
-            className="h-12 w-[100px] text-white bg-[#2866F1] !rounded-[56px] hover:!text-white flex items-center justify-center"
+            icon={<img src="../src/assets/import.png" />}
+            className="h-12 w-[6.25rem] text-white bg-[#2866F1] !rounded-[3.5rem] hover:!text-white flex items-center justify-center hover:!bg-[#2866F1]"
             onClick={handleOnExportDebounceFn}
           >
-            導出
+            {t(KEYS.EXPORT, {
+              ns: "feedbackList",
+            })}
           </Button>
         </div>
       </div>

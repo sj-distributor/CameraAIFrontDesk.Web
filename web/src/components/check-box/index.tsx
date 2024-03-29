@@ -1,13 +1,15 @@
 import { DownOutlined } from "@ant-design/icons";
 import { Checkbox } from "antd";
 
+import KEYS from "@/i18n/keys/alert-list";
+
 import { useAction } from "./hook";
 import { ICheckBoxComponentProps } from "./props";
 
 export const CheckBoxComponent = (props: ICheckBoxComponentProps) => {
-  const { title, selectValues, options, onClick } = props;
+  const { title, selectValues, onClick } = props;
 
-  const { wrapperRef, isOpen, typeList, toggleDropdown } = useAction();
+  const { t, wrapperRef, isOpen, typeList, toggleDropdown } = useAction();
 
   return (
     <div className="flex items-center">
@@ -19,14 +21,16 @@ export const CheckBoxComponent = (props: ICheckBoxComponentProps) => {
           className="cursor-pointer flex items-center space-x-1 relative"
           onClick={toggleDropdown}
         >
-          <span className="select-none w-14 px-1 truncate text-center text-[#2866F1]">
-            {selectValues.length > 0 ? "已選擇" : "請選擇"}
+          <span className="select-none w-14 px-1 truncate text-center text-[#2866F1] text-[1rem]">
+            {selectValues.length > 0
+              ? t(KEYS.SELECTED, { ns: "alertList" })
+              : t(KEYS.PLEASE_SELECT, { ns: "alertList" })}
           </span>
           <DownOutlined className="text-xs" />
         </div>
         {isOpen && (
-          <div className="absolute max-h-60 overflow-auto bg-white mt-1 p-2 rounded-lg box-content w-36 space-y-1 -left-[50%] z-50">
-            {(options ?? typeList).map((item, index) => (
+          <div className="absolute max-h-60 overflow-auto bg-white mt-1 p-2 rounded-lg box-content w-[11rem] space-y-1 -left-[50%] z-50">
+            {typeList.map((item, index) => (
               <div
                 key={index}
                 className={`py-2 hover:bg-[#EBF1FF] space-x-2 cursor-pointer text-sm px-4 rounded-lg ${

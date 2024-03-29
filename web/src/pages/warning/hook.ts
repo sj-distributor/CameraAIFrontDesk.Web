@@ -29,13 +29,21 @@ const keyName: IKey = {
 };
 
 export const useAction = () => {
-  const { location, message } = useAuth();
+  const { location, message, t } = useAuth();
+
+  const state = location.state as {
+    status: IStatusType;
+  };
 
   const warningHeaderRef = useRef<HTMLDivElement>(null);
 
   const [height, setHeight] = useState<number | null>(null);
 
   const [status, setStatus] = useState<IStatusType>(IStatusType.All);
+
+  const [markedStatus, setMarkedStatus] = useState<IStatusType>(
+    IStatusType.All
+  );
 
   const [selectValues, setSelectValues] = useState<number[]>([]);
 
@@ -180,6 +188,8 @@ export const useAction = () => {
   };
 
   const markRecord = () => {
+    setMarkedStatus(markModelDto.status as IStatusType);
+
     const data = getParams();
 
     if (
@@ -231,11 +241,13 @@ export const useAction = () => {
   }, []);
 
   useEffect(() => {
-    const state = location.state as {
-      status: IStatusType;
-    };
-
     if (location.pathname !== "/warning/list") {
+      setMarkedStatus(
+        state && (state.status !== null || state.status !== undefined)
+          ? state.status
+          : IStatusType.All
+      );
+
       setMarkModelDto((prev) => ({
         ...prev,
         recordid: location.pathname.split("/").filter((item) => item != "")[1]
@@ -254,6 +266,7 @@ export const useAction = () => {
   }, [location.pathname]);
 
   return {
+    t,
     status,
     height,
     timeDto,
@@ -265,6 +278,7 @@ export const useAction = () => {
     markModelDto,
     handleOnMarkDebounceFn,
     handleOnExportDebounceFn,
+    markedStatus,
     setTimeDto,
     setKeyWord,
     onTypeClick,

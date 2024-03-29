@@ -1,3 +1,4 @@
+import { useUpdateEffect } from "ahooks";
 import { App } from "antd";
 import type { Locale } from "antd/es/locale";
 import enUS from "antd/es/locale/en_US";
@@ -38,6 +39,8 @@ interface IAuthContextType {
   message: MessageInstance;
   pagePermission: IPermissions;
   changeLanguage: (language: "en" | "ch") => void;
+  isGetPermission: boolean;
+  defaultNavigatePage: string | null;
 }
 
 interface IPermissions {
@@ -61,16 +64,11 @@ export const AuthProvider = (props: { children: ReactElement }) => {
 
   const [locale, setLocal] = useState<Locale>(zhCN);
 
+  const [isGetPermission, setIsGetPermission] = useState<boolean>(false);
+
   const [token, setToken] = useState(
     localStorage.getItem((window as any).appsettings?.tokenKey) ?? ""
   );
-
-  useEffect(() => {
-    localStorage.setItem(
-      (window as any).appsettings?.tokenKey,
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImFkbWluIiwibmFtZWlkIjoiMSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2F1dGhlbnRpY2F0aW9uIjoiU2VsZiIsInJvbGUiOlsiQWRtaW5pc3RyYXRvciIsIjEwMzAiXSwibmJmIjoxNzExNjk4OTA0LCJleHAiOjE3MTE3MDI1MDQsImlhdCI6MTcxMTY5ODkwNH0.YStUJNi24ESp8t4Hr6PbYfvCU3DcxY2-L-NbkGC7X2k"
-    );
-  }, []);
 
   const [userName, setUserName] = useState(
     localStorage.getItem((window as any).appsettings?.userNameKey) ?? ""
@@ -84,6 +82,10 @@ export const AuthProvider = (props: { children: ReactElement }) => {
   const [isLogin, setIsLogin] = useState<boolean>(false);
 
   const [isInit, setIsInit] = useState<boolean>(false);
+
+  const [defaultNavigatePage, setDefaultNavigatePage] = useState<string | null>(
+    null
+  );
 
   const [pagePermission, setPagePermission] = useState<IPermissions>({
     canViewHome: false,
@@ -238,6 +240,7 @@ export const AuthProvider = (props: { children: ReactElement }) => {
     if (userName && token && !isLogin) {
       getMinePermission()
         .then((res) => {
+          setIsGetPermission(true);
           setPagePermission(res);
         })
         .catch(() => {
@@ -265,6 +268,22 @@ export const AuthProvider = (props: { children: ReactElement }) => {
     }
   }, [userName, token, isLogin]);
 
+  useUpdateEffect(() => {
+    const defaultPage = pagePermission["canViewHome"]
+      ? "/home"
+      : pagePermission["canViewMonitor"]
+      ? "/monitor"
+      : pagePermission["canViewReplay"]
+      ? "/replay"
+      : pagePermission["canViewWarning"]
+      ? "/warning"
+      : pagePermission["canViewFeedback"]
+      ? "/feedback"
+      : "/none";
+
+    setDefaultNavigatePage(defaultPage);
+  }, [pagePermission]);
+
   const value = {
     t,
     language,
@@ -280,6 +299,8 @@ export const AuthProvider = (props: { children: ReactElement }) => {
     parseQuery,
     changeLanguage,
     parseQueryParams,
+    isGetPermission,
+    defaultNavigatePage,
   };
 
   return (

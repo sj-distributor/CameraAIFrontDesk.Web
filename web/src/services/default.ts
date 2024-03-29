@@ -1,6 +1,10 @@
 import queryString from "query-string";
 
-import { IRecordRequest, IRecordResponse } from "@/dtos/default";
+import {
+  IRecordRequest,
+  IRecordResponse,
+  IStopRealtimeResquest,
+} from "@/dtos/default";
 import { IMineRoleResponse } from "@/dtos/mine";
 
 import { api } from "./api";
@@ -19,6 +23,12 @@ export const GetRecordList = async (data: IRecordRequest) => {
   const response = await api.get<IRecordResponse>(
     "/api/CameraAi/monitor/records?" + string
   );
+
+  return response.data;
+};
+
+export const PostStopRealtime = async (data: IStopRealtimeResquest) => {
+  const response = await api.post("/api/CameraAi/media/realtime/stop", data);
 
   return response.data;
 };

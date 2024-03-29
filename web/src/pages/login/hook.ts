@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import { IUserInfo } from "@/dtos";
 import { useAuth } from "@/hooks/use-auth";
-import { Login } from "@/services";
+import { Login } from "@/services/home";
 
 export const useAction = () => {
   const { signIn, message } = useAuth();

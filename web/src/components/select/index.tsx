@@ -21,7 +21,7 @@ export const SelectComponent = (props: ISelectProps) => {
           className="cursor-pointer flex items-center space-x-1 relative"
           onClick={toggleDropdown}
         >
-          <span className="select-none w-14 px-1 truncate text-center text-[#2866F1]">
+          <span className="select-none w-14 px-1 truncate text-center text-[#2866F1] text-[1rem]">
             {selectValueText(value)}
           </span>
           <DownOutlined className="text-xs" />

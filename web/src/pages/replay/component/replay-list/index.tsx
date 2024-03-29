@@ -18,7 +18,7 @@ export const ReplayList = () => {
 
   return (
     <>
-      {!replayDto.isFirstGet && replayDto.loading ? (
+      {replayDto.switchLoading ? (
         <div className="w-full h-full flex justify-center items-center">
           <Spin />
         </div>
@@ -39,7 +39,7 @@ export const ReplayList = () => {
                       }}
                     >
                       <Img
-                        url={"/src/assets/star.jpeg"}
+                        url={item.equipment.previewImg}
                         title={
                           item.duration ? formatSeconds(item.duration) : ""
                         }
@@ -48,7 +48,9 @@ export const ReplayList = () => {
                       />
                     </div>
                     <div className="w-full">
-                      <div className="text-lg w-full truncate">996</div>
+                      <div className="text-lg w-full truncate">
+                        {item.equipment.equipmentName}
+                      </div>
                       <div className="flex flex-row items-center space-x-1">
                         <div className="space-x-1 flex w-9">
                           {showCircle(item.records, [
@@ -76,7 +78,7 @@ export const ReplayList = () => {
               </div>
               <div className="flex items-center justify-center text-[#8B98AD] text-base font-bold h-6 w-full">
                 <p>
-                  {replayDto.isScorllDown && "正在拉取数据..."}
+                  {replayDto.scrollLoading && "正在拉取数据..."}
                   {replayDto.isEnd && "已经到底了"}
                 </p>
               </div>

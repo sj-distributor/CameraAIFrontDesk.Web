@@ -1,11 +1,22 @@
+import { useUpdateEffect } from "ahooks";
+import Mpegts from "mpegts.js";
+import { clone } from "ramda";
 import { useEffect, useRef, useState } from "react";
+
+import { ICameraAiMonitorType } from "@/dtos/default";
+import {
+  IMonitorDetailResponse,
+  IRealtimeGenerateRequest,
+} from "@/dtos/monitor";
+import { IPlayBackStatus } from "@/dtos/replay";
+import { useAuth } from "@/hooks/use-auth";
+import { PostStopRealtime } from "@/services/default";
+import { GetMonitorDetail, PostRealtimeGenerate } from "@/services/monitor";
 
 export const useAction = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const scaleRef = useRef<HTMLDivElement>(null);
-
-  const progressBoxRef = useRef<HTMLDivElement>(null);
 
   const exportRef = useRef<HTMLDivElement>(null);
 
@@ -14,38 +25,6 @@ export const useAction = () => {
   const [left, setLeft] = useState<boolean>(false);
 
   const [right, setRight] = useState<boolean>(false);
-
-  const [speedBoxDto, setSpeedBoxDto] = useState<{
-    status: boolean;
-    speed: number;
-  }>({
-    status: false,
-    speed: 1,
-  });
-
-  const videoSecond = [
-    { second: [60, 200], type: 0 },
-    { second: [5, 45], type: 1 },
-    { second: [180, 990], type: 1 },
-  ];
-
-  const [isExport, setIsExport] = useState<boolean>(false);
-
-  const changeSpeed = (speed: number) => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = speed;
-      setSpeedBoxDto({
-        status: false,
-        speed,
-      });
-    }
-  };
-
-  const skipTime = (amount: number) => {
-    if (videoRef.current) {
-      videoRef.current.currentTime += amount;
-    }
-  };
 
   const getWidth = (duration: number) => {
     return (
@@ -256,21 +235,239 @@ export const useAction = () => {
     }
   }, [left]);
 
+  // new
+
+  const { location, message } = useAuth();
+
+  const [paramsDto, setParamsDto] = useState<{
+    regionId: string;
+    equipmentId: string;
+  }>();
+
+  const [isGenerate, setIsGenerate] = useState<boolean>(false);
+
+  const [monitorDetail, setMonitorDetail] =
+    useState<IMonitorDetailResponse | null>(null);
+
+  const monitorDetailRef = useRef<IMonitorDetailResponse | null>(null);
+
+  const [selectValues, setSelectValues] = useState<ICameraAiMonitorType[]>([
+    ICameraAiMonitorType.People,
+    ICameraAiMonitorType.Vehicles,
+    ICameraAiMonitorType.AbnormalVehicles,
+  ]);
+
+  const [endSelectValues, setEndSelectValues] = useState<number[]>([]);
+
+  const continueExecution = useRef<boolean>(true);
+
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+
+  const [successUrl, setSuccessUrl] = useState<string>("");
+
+  const mpegtsPlayerPlayer = useRef<Mpegts.Player | null>(null);
+
+  const [isOpenExportPlaybackModal, setIsOpenExportPlaybackModal] =
+    useState<boolean>(false);
+
+  const onTypeClick = (id: number) => {
+    setEndSelectValues((prev) => {
+      let newData = clone(prev);
+
+      const isExist = newData.findIndex((item) => item === id) !== -1;
+
+      if (isExist) newData = newData.filter((item) => item !== id);
+      else newData.push(id);
+
+      return newData;
+    });
+  };
+
+  // 保存预警筛选
+  const onSave = (isTrue: boolean) => {
+    if (isTrue) {
+      if (!isGenerate && !continueExecution.current && isSuccess) {
+        const data = getGenerateParams(monitorDetail!);
+
+        // 调用生成回放
+        PostRealtimeGenerate(data)
+          .then(() => {
+            console.log("生成回放成功");
+            setSelectValues(endSelectValues);
+            setIsGenerate(true);
+            setIsSuccess(false);
+            continueExecution.current = true;
+          })
+          .catch(() => {
+            message.error("生成回放失败,请重试");
+          });
+      } else {
+        message.info("在生成視頻，請視頻生成完再更換預警篩選條件");
+        setEndSelectValues(selectValues ?? []);
+      }
+    } else {
+      setEndSelectValues(selectValues ?? []);
+    }
+  };
+
+  useEffect(() => {
+    const params = location.pathname.split("/").filter((item) => item !== "");
+
+    const regionId = params[1],
+      equipmentId = params[2] ?? location.state?.equipmentId;
+
+    setParamsDto({
+      equipmentId,
+      regionId,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (paramsDto?.equipmentId) {
+      GetMonitorDetail({
+        EquipmentId: Number(paramsDto?.equipmentId),
+      })
+        .then((res) => {
+          console.log("获取详情成功");
+          setMonitorDetail(res ?? null);
+        })
+        .catch(() => {
+          setMonitorDetail(null);
+        });
+    }
+  }, [paramsDto?.equipmentId]);
+
+  useUpdateEffect(() => {
+    setEndSelectValues(selectValues ?? []);
+  }, [selectValues]);
+
+  const getGenerateParams = (monitorDetail: IMonitorDetailResponse) => {
+    const data: IRealtimeGenerateRequest = {
+      lives: [
+        {
+          locationId: monitorDetail?.locationId ?? "",
+          equipmentCode: monitorDetail?.equipmentCode ?? "",
+          taskId: monitorDetail?.taskId ?? "",
+          monitorTypes: selectValues,
+        },
+      ],
+    };
+
+    return data;
+  };
+
+  useEffect(() => {
+    if (monitorDetail && !isGenerate) {
+      monitorDetailRef.current = monitorDetail;
+
+      const data = getGenerateParams(monitorDetail);
+
+      PostRealtimeGenerate(data)
+        .then(() => {
+          setIsGenerate(true);
+          console.log("生成实时成功");
+        })
+        .catch(() => {
+          message.error("生成实时失败");
+        });
+    }
+  }, [monitorDetail]);
+
+  useEffect(() => {
+    if (isGenerate) {
+      executeWithDelay();
+    }
+  }, [isGenerate]);
+
+  function executeWithDelay() {
+    if (!continueExecution.current) return;
+
+    console.log("Method executed");
+    GetMonitorDetail({ EquipmentId: Number(paramsDto?.equipmentId) })
+      .then((res) => {
+        if (res) {
+          console.log(res, "生成成功后获取轮训");
+          if (res.status === IPlayBackStatus.Success) {
+            setIsSuccess(true);
+            setIsGenerate(false);
+            setSuccessUrl(res.liveStreaming);
+            continueExecution.current = false;
+
+            return;
+          } else if (res.status === IPlayBackStatus.Failed) {
+            const data = getGenerateParams(monitorDetail!);
+
+            PostRealtimeGenerate(data);
+          }
+        }
+      })
+      .catch()
+      .finally(() => {
+        // 等待1秒钟后再次执行
+        // setTimeout(() => {
+        //   executeWithDelay(); // 递归调用自己
+        // }, 5000);
+      });
+  }
+
+  // 通过拿到url去播放视频
+  useEffect(() => {
+    if (successUrl) {
+      if (Mpegts.isSupported()) {
+        console.log(successUrl);
+
+        // 需要替换为当前videoElement
+        const videoElement = document.getElementById("homeVideo");
+
+        const player = Mpegts.createPlayer({
+          type: "flv",
+          isLive: true,
+          url: successUrl,
+          hasAudio: true,
+          hasVideo: true,
+        });
+
+        mpegtsPlayerPlayer.current = player;
+
+        player.attachMediaElement(videoElement! as HTMLMediaElement);
+        player.load();
+        player.play();
+      }
+    }
+
+    return () => {
+      mpegtsPlayerPlayer?.current?.pause();
+      mpegtsPlayerPlayer?.current?.unload();
+      mpegtsPlayerPlayer?.current?.detachMediaElement();
+      mpegtsPlayerPlayer?.current?.destroy();
+    };
+  }, [successUrl]);
+
+  useEffect(() => {
+    return () => {
+      continueExecution.current = false;
+
+      PostStopRealtime({
+        stopList: [
+          {
+            locationId: monitorDetailRef.current?.locationId ?? "",
+            equipmentCode: monitorDetailRef.current?.equipmentCode ?? "",
+            taskId: monitorDetailRef.current?.taskId ?? "",
+          },
+        ],
+      });
+    };
+  }, []);
+
+  // const isShow = useMemo(() => {
+  //   return !continueExecution.current && !isGenerate && isSuccess;
+  // }, [continueExecution, isGenerate, isSuccess]);
+
   return {
-    videoRef,
-    scaleRef,
-    exportRef,
-    progressBoxRef,
-    duration,
-    isExport,
-    speedBoxDto,
-    videoSecond,
-    setSpeedBoxDto,
-    changeSpeed,
-    skipTime,
-    getWidth,
-    setIsExport,
-    setLeft,
-    setRight,
+    onTypeClick,
+    onSave,
+    endSelectValues,
+    setIsOpenExportPlaybackModal,
+    isOpenExportPlaybackModal,
   };
 };

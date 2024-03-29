@@ -43,7 +43,7 @@
   padding: 0 16px;
 }
 
-.abc .ant-modal-content {
+.customModalStyle .ant-modal-content {
   padding: 20px 0 !important;
 }
 
@@ -59,26 +59,26 @@
     flex: none;
   }
 
-  .abc .ant-modal-body {
+  .customModalStyle .ant-modal-body {
     padding: 32px 64px !important;
   }
 }
 
-.abc .ant-modal-body > .item:not(:last-child) {
+.customModalStyle .ant-modal-body > .item:not(:last-child) {
   margin-bottom: 1.5rem;
 }
 
 @media (min-width: 575px) {
-  .abc .ant-modal-body {
+  .customModalStyle .ant-modal-body {
     padding: 32px 128px !important;
     border-bottom: 1px solid #e9edf2;
   }
 }
 
-:where(.css-dev-only-do-not-override-i46qwz).ant-menu
+:where(.css-dev-only-do-not-override-42nv3w).ant-menu
   .ant-menu-item
   .ant-menu-item-icon {
-  min-width: 0.125rem;
+  min-width: 0.125rem !important;
 }
 
 .ant-picker-ranges .ant-picker-ok button {
@@ -91,4 +91,26 @@
 
 .ant-pagination .ant-pagination-item {
   border-radius: 50% !important;
+}
+
+.ant-menu-item {
+  margin-bottom: 0.75rem !important;
+}
+
+.ant-menu-submenu .ant-menu {
+  background-color: white !important;
+}
+
+.ant-menu-submenu .ant-menu .ant-menu-item {
+  margin: 0px !important;
+  background-color: white !important;
+  height: 3rem;
+}
+
+.exportModelRangePicker .ant-picker-suffix {
+  margin-left: 1rem;
+}
+
+.exportModelRangePicker .ant-picker-input input {
+  min-width: min-content !important;
 }

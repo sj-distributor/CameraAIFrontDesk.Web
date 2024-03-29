@@ -1,15 +1,26 @@
+import { useUpdateEffect } from "ahooks";
+import Mpegts from "mpegts.js";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
+  ICameraItem,
+  ICameraListResponse,
   IEquipmentOnlineCountItem,
   IRecordTop5CountListResponse,
 } from "@/dtos/home";
-import { GetEquipmentOnlineList, GetRecordTop5CountList } from "@/services";
+import { IPlayBackStatus } from "@/dtos/replay";
+import { useAuth } from "@/hooks/use-auth";
+import { PostStopRealtime } from "@/services/default";
+import {
+  GetCameraList,
+  GetEquipmentOnlineList,
+  GetRecordTop5CountList,
+} from "@/services/home";
 
 type EChartsOption = echarts.EChartsOption;
 
 export const useAction = () => {
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const { t } = useAuth();
 
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -25,6 +36,57 @@ export const useAction = () => {
     IEquipmentOnlineCountItem[]
   >([]);
 
+  const continueExecution = useRef<boolean>(true);
+
+  const [cameraList, setCameraList] = useState<ICameraListResponse>({
+    count: 0,
+    regionCameras: [],
+  });
+
+  const [isGenerate, setIsGenerate] = useState<boolean>(false);
+
+  const [isFind, setIsFind] = useState<boolean>(false);
+
+  const [nowStream, setNowStream] = useState<string>("");
+
+  const [clickCamera, setClickCamera] = useState<{
+    locationId: string;
+    equipmentCode: string;
+    taskId: string;
+    regionId: number;
+    cameraId: number;
+    equipmentName: string;
+  }>({
+    locationId: "",
+    equipmentCode: "",
+    taskId: "",
+    regionId: 0,
+    cameraId: 0,
+    equipmentName: "",
+  });
+
+  const clickCameraCameraRef = useRef<{
+    locationId: string;
+    equipmentCode: string;
+    taskId: string;
+    regionId: number;
+    cameraId: number;
+    equipmentName: string;
+  }>({
+    locationId: "",
+    equipmentCode: "",
+    taskId: "",
+    regionId: 0,
+    cameraId: 0,
+    equipmentName: "",
+  });
+
+  useUpdateEffect(() => {
+    clickCameraCameraRef.current = clickCamera;
+  }, [clickCamera]);
+
+  const mpegtsPlayerPlayer = useRef<Mpegts.Player | null>(null);
+
   const [recordTop5Obj, setRecordTop5Obj] =
     useState<IRecordTop5CountListResponse>({
       thisMouthRecordCount: 0,
@@ -36,6 +98,95 @@ export const useAction = () => {
     if (videoRef.current) {
       videoRef.current.requestFullscreen();
     }
+  };
+
+  const videoPlayback = () => {
+    if (mpegtsPlayerPlayer.current && videoRef.current) {
+      if (!videoRef.current.paused) {
+        mpegtsPlayerPlayer.current.pause();
+      } else {
+        mpegtsPlayerPlayer.current.play();
+      }
+    }
+  };
+
+  const isShow = useMemo(() => {
+    return !isGenerate && isFind;
+  }, [isGenerate, isFind]);
+
+  const getCameraStream = (
+    locationId: string,
+    regionId: number,
+    cameraId: number,
+    item: ICameraItem
+  ) => {
+    // setIsGenerate(false);
+    // setIsFind(true);
+    console.log(locationId, regionId, cameraId, item);
+    setIsGenerate(false);
+    setIsFind(true);
+    // setNowStream("http://camera-ai-realtime.wiltechs.com:8080/1800-1/1201.flv");
+    setNowStream("http://camera-ai-realtime.wiltechs.com:8080/live/1.flv");
+    // if (!isGenerate) {
+    //   // 停止推流
+    //   if (nowStream) {
+    //     PostStopRealtime({
+    //       stopList: [
+    //         {
+    //           taskId: clickCamera.taskId,
+    //           locationId: clickCamera.locationId,
+    //           equipmentCode: clickCamera.equipmentCode,
+    //         },
+    //       ],
+    //     })
+    //       .then(() => {
+    //         mpegtsPlayerPlayer?.current?.unload();
+    //         mpegtsPlayerPlayer?.current?.pause();
+    //         mpegtsPlayerPlayer?.current?.detachMediaElement();
+    //         mpegtsPlayerPlayer?.current?.destroy();
+    //         mpegtsPlayerPlayer.current = null;
+    //       })
+    //       .catch(() => {});
+    //   }
+    //   setClickCamera({
+    //     locationId,
+    //     equipmentCode: item?.equipmentCode ?? "",
+    //     taskId: item?.taskId ?? "",
+    //     regionId: regionId,
+    //     cameraId: cameraId,
+    //     equipmentName: item?.equipmentName ?? "",
+    //   });
+    //   const data: IRealtimeGenerateRequest = {
+    //     lives: [
+    //       {
+    //         locationId: locationId ?? "",
+    //         equipmentCode: item?.equipmentCode ?? "",
+    //         taskId: item?.taskId ?? "",
+    //         monitorTypes: [],
+    //       },
+    //     ],
+    //   };
+
+    //   PostHomeStream(data)
+    //     .then(() => {
+    //       setIsGenerate(true);
+    //       setNowStream("");
+    //       setIsFind(false);
+    //     })
+    //     .catch(() => {
+    //       message.error("获取视频流失败");
+    //       setClickCamera({
+    //         locationId: "",
+    //         equipmentCode: "",
+    //         taskId: "",
+    //         regionId: 0,
+    //         cameraId: 0,
+    //         equipmentName: "",
+    //       });
+    //     });
+    // } else {
+    //   message.info("正在獲取視頻流，請勿切換攝像頭");
+    // }
   };
 
   const getHeight = () => {
@@ -64,6 +215,7 @@ export const useAction = () => {
     return window.removeEventListener("reset", getHeight);
   }, []);
 
+  // 獲取top5跟設備
   useEffect(() => {
     GetEquipmentOnlineList()
       .then((res) => {
@@ -216,119 +368,150 @@ export const useAction = () => {
         },
       ],
     };
-
-    // return {
-    //   xAxis: {
-    //     type: "category",
-    //     data: ["XXX", "XXX", "XXX", "XXX", "XXXXX"],
-    //   },
-    //   yAxis: {
-    //     type: "value",
-    //   },
-    //   tooltip: {
-    //     show: true,
-    //     trigger: "item",
-    //     position: function (point, params: any) {
-    //       return [
-    //         params.name === "XXXXX" ? point[0] - 130 : point[0] + 10,
-    //         point[1] > 140 ? point[1] - 40 : point[1] + 20,
-    //       ];
-    //     },
-    //     confine: true,
-    //   },
-    //   series: [
-    //     {
-    //       data: [
-    //         {
-    //           value: 600,
-    //           itemStyle: {
-    //             color: "#ACF1F0",
-    //             opacity: 0.6,
-    //           },
-    //           emphasis: {
-    //             itemStyle: {
-    //               color: "#ACF1F0",
-    //               opacity: 1,
-    //             },
-    //           },
-    //         },
-    //         {
-    //           value: 120,
-    //           itemStyle: {
-    //             color: "#FFD599",
-    //             opacity: 0.6,
-    //           },
-    //           emphasis: {
-    //             itemStyle: {
-    //               color: "#FFD599",
-    //               opacity: 1,
-    //             },
-    //           },
-    //         },
-    //         {
-    //           value: 150,
-    //           itemStyle: {
-    //             color: "#FFB1AC",
-    //             opacity: 0.6,
-    //           },
-    //           emphasis: {
-    //             itemStyle: {
-    //               color: "#FFB1AC",
-    //               opacity: 1,
-    //             },
-    //           },
-    //         },
-    //         {
-    //           value: 60,
-    //           itemStyle: {
-    //             color: "#A8C5DA",
-    //             opacity: 0.6,
-    //           },
-    //           emphasis: {
-    //             itemStyle: {
-    //               color: "#A8C5DA",
-    //               opacity: 1,
-    //             },
-    //           },
-    //         },
-    //         {
-    //           value: 30,
-    //           itemStyle: {
-    //             color: "#95A4FC",
-    //             opacity: 0.6,
-    //           },
-    //           emphasis: {
-    //             itemStyle: {
-    //               color: "#95A4FC",
-    //               opacity: 1,
-    //             },
-    //           },
-    //         },
-    //       ],
-    //       type: "bar",
-    //       itemStyle: {
-    //         borderRadius: [5, 5, 0, 0],
-    //       },
-    //       label: {
-    //         show: true,
-    //         position: "top",
-    //         color: "#2866F1",
-    //       },
-    //     },
-    //   ],
-    // };
   }, [recordTop5Obj.topCount]);
 
+  // 轮训获取摄像头List
+  const getCameraList = () => {
+    if (!continueExecution.current) return;
+
+    GetCameraList()
+      .then((res) => {
+        setCameraList({
+          count: res?.count ?? 0,
+          regionCameras: res?.regionCameras ?? [],
+        });
+      })
+      .catch(() => {
+        setCameraList({
+          count: 0,
+          regionCameras: [],
+        });
+      })
+      .finally(() => {
+        setTimeout(() => {
+          getCameraList();
+        }, 10000);
+      });
+  };
+
+  useEffect(() => {
+    getCameraList();
+
+    return () => {
+      continueExecution.current = false;
+
+      clickCameraCameraRef.current.taskId &&
+        clickCameraCameraRef.current.locationId &&
+        clickCameraCameraRef.current.equipmentCode &&
+        PostStopRealtime({
+          stopList: [
+            {
+              taskId: clickCameraCameraRef.current.taskId,
+              locationId: clickCameraCameraRef.current.locationId,
+              equipmentCode: clickCameraCameraRef.current.equipmentCode,
+            },
+          ],
+        });
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isGenerate) {
+      const findCameraItem = cameraList.regionCameras.filter(
+        (item) => item.id === clickCamera.regionId
+      );
+
+      if (findCameraItem.length > 0) {
+        findCameraItem[0].cameras.forEach((item) => {
+          if (
+            item.id === clickCamera.cameraId &&
+            item.status === IPlayBackStatus.Success &&
+            !isFind
+          ) {
+            setNowStream(item.liveStreaming);
+            setIsFind(true);
+            setIsGenerate(false);
+          }
+        });
+      }
+    }
+  }, [cameraList.regionCameras]);
+
+  const [videoDuration, setVideoDuration] = useState("00:00");
+
+  useEffect(() => {
+    if (nowStream) {
+      if (Mpegts.isSupported()) {
+        const videoElement = document.getElementById("homeVideo");
+
+        const player = Mpegts.createPlayer(
+          {
+            type: "flv",
+            isLive: true,
+            url: nowStream,
+          },
+          {
+            enableWorker: true, // 启用分离的线程进行转换（如果不想看到控制台频繁报错把它设置为false，官方的回答是这个属性还不稳定，所以要测试实时视频流的话设置为true控制台经常报错）
+            enableStashBuffer: false, // 关闭IO隐藏缓冲区（如果需要最小延迟，则设置为false，此项设置针对直播视频流）
+            stashInitialSize: 128, // 减少首帧等待时长（针对实时视频流）
+            lazyLoad: false, // 关闭懒加载模式（针对实时视频流）
+            lazyLoadMaxDuration: 0.2, // 懒加载的最大时长。单位：秒。建议针对直播：调整为200毫秒
+            deferLoadAfterSourceOpen: false, // 在MediaSource sourceopen事件触发后加载。在Chrome上，在后台打开的标签页可能不会触发sourceopen事件，除非切换到该标签页。
+            liveBufferLatencyChasing: true, // 追踪内部缓冲区导致的实时流延迟
+            liveBufferLatencyMaxLatency: 1.5, // HTMLMediaElement 中可接受的最大缓冲区延迟（以秒为单位）之前使用flv.js发现延时严重，还有延时累加的问题，而mpegts.js对此做了优化，不需要我们自己设置快进追帧了
+            liveBufferLatencyMinRemain: 0.3, // HTMLMediaElement 中可接受的最小缓冲区延迟（以秒为单位）
+          }
+        );
+
+        mpegtsPlayerPlayer.current = player;
+        if (videoElement) {
+          player.attachMediaElement(videoElement! as HTMLMediaElement);
+          player.load();
+          player.play();
+
+          const handleTimeUpdate = () => {
+            if (videoRef.current?.currentTime) {
+              const min = Math.round(videoRef.current?.currentTime);
+
+              const minutes = Math.floor(min / 60);
+
+              const remainingSeconds = min % 60;
+
+              const paddedMinutes = String(minutes).padStart(2, "0");
+
+              const paddedSeconds = String(remainingSeconds).padStart(2, "0");
+
+              setVideoDuration(`${paddedMinutes}:${paddedSeconds}`);
+            }
+          };
+
+          videoElement.addEventListener("timeupdate", handleTimeUpdate);
+
+          return () => {
+            videoElement.removeEventListener("timeupdate", handleTimeUpdate);
+          };
+        }
+      }
+    }
+  }, [nowStream]);
+
   return {
+    t,
     height,
     volume,
-    dropdownRef,
     videoRef,
     option,
     selectStatus,
     recordTop5Obj,
     volumeSliderStatus,
     equipmentCountList,
+    cameraList,
+    clickCamera,
+    videoDuration,
+    isShow,
+    setClickCamera,
+    videoPlayback,
+    getCameraStream,
     setVolume,
     setSelectStatus,
     videoFullScreen,

@@ -1,6 +1,5 @@
-import { Dayjs } from "dayjs";
-
-import { IPageDto } from "./default";
+import { ICameraAiMonitorType, IPageDto } from "./default";
+import { IPlayBackStatus } from "./replay";
 
 export interface IRegionListRequest extends IPageDto {
   RegionId?: number;
@@ -10,17 +9,43 @@ export interface IRegionListRequest extends IPageDto {
 
 export interface IRegionListResponse {
   count: number;
-  regions: IRegionItem[];
+  regionCameras: IRegionItem[];
 }
 
 export interface IRegionItem {
   id: number;
-  areaId: number;
-  areaName: string;
+  locationId: string;
   regionAddress: string;
-  regionAreaNames: string[];
   principal: string;
-  createdTime: string | Dayjs;
+  isDeleted: boolean;
+  createdTime: string;
+  cameras: ICameraItem[];
+}
+
+export interface ICameraItem {
+  id: number;
+  equipmentCode: string;
+  equipmentTypeId: number;
+  isOnline: boolean;
+  equipmentTypeName: string;
+  label: ICameraAiEquipmentTypeLabel;
+  equipmentName: string;
+  isBind: boolean;
+  areaId: number;
+  ipAddress: string;
+  brand: string;
+  username: string;
+  password: string;
+  taskId: string;
+  areaName: string;
+  locationId: string;
+  regionAddress: string;
+  liveStreaming: string;
+  regionId: number;
+  previewImg: string;
+  isDeleted: boolean;
+  status: IPlayBackStatus;
+  createdTime: string;
 }
 
 export interface IRegionEquipmentListRequest extends IPageDto {
@@ -28,9 +53,15 @@ export interface IRegionEquipmentListRequest extends IPageDto {
   EquipmentName?: string;
   IsOnline?: boolean;
   IsBind?: boolean;
-  EquipmentType?: string;
+  TypeLabel: ICameraAiEquipmentTypeLabel;
   Keyword?: string;
   RegionId: number;
+}
+
+export enum ICameraAiEquipmentTypeLabel {
+  Camera,
+  Sound,
+  Lighting,
 }
 
 export interface IRegionEquipmentListResponse {
@@ -43,13 +74,60 @@ export interface IRegionEquipmentItem {
   equipmentCode: string;
   equipmentTypeId: number;
   isOnline: boolean;
-  equipmentType: string;
+  equipmentTypeName: string;
+  label: 0;
+  equipmentName: "string";
+  isBind: true;
+  areaId: 0;
+  ipAddress: "string";
+  brand: "string";
+  username: "string";
+  password: "string";
+  taskId: "string";
+  areaName: "string";
+  locationId: "string";
+  regionAddress: "string";
+  liveStreaming: "string";
+  regionId: 0;
+  previewImg: "string";
+  isDeleted: true;
+  status: IPlayBackStatus;
+  createdTime: "2024-03-28T11:38:07.081Z";
+}
+
+export interface IMonitorDetailResponse {
+  id: number;
+  equipmentCode: string;
+  equipmentTypeId: number;
+  isOnline: boolean;
+  equipmentTypeName: string;
+  label: ICameraAiEquipmentTypeLabel;
   equipmentName: string;
   isBind: boolean;
   areaId: number;
+  ipAddress: string;
+  brand: string;
+  username: string;
+  password: string;
+  taskId: string;
   areaName: string;
+  locationId: string;
   regionAddress: string;
   liveStreaming: string;
+  regionId: number;
+  previewImg: string;
   isDeleted: boolean;
-  createdTime: string | Dayjs;
+  status: IPlayBackStatus;
+  createdTime: string;
+}
+
+export interface IRealtimeGenerateRequest {
+  lives: ILiveItem[];
+}
+
+export interface ILiveItem {
+  locationId: string;
+  equipmentCode: string;
+  taskId: string;
+  monitorTypes: ICameraAiMonitorType[];
 }

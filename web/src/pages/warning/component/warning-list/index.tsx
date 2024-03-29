@@ -5,13 +5,17 @@ import {
   ExclamationCircleOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { Tooltip } from "antd";
+import { Pagination, Tooltip } from "antd";
 import Table from "antd/es/table";
 import dayjs from "dayjs";
 import { ReactElement } from "react";
 
 import { IRecordItem, IStatusType } from "@/dtos/default";
+import KEYS from "@/i18n/keys/alert-list";
 
+import carImg from "../../../../assets/car.png";
+import error_carImg from "../../../../assets/error-car.png";
+import peopleImg from "../../../../assets/people.png";
 import { useAction } from "./hook";
 
 const statusComponent = (
@@ -23,7 +27,7 @@ const statusComponent = (
 ) => {
   return (
     <span
-      className={`py-1 px-[10px] border border-solid rounded-lg space-x-1 cursor-pointer ${boxBorderColor}`}
+      className={`py-[0.25rem] px-[0.625rem] border border-solid rounded-lg space-x-1 cursor-pointer ${boxBorderColor}`}
       onClick={func}
     >
       {icon}
@@ -33,11 +37,11 @@ const statusComponent = (
 };
 
 export const WarningList = () => {
-  const { height, dto, isShowQuickJumper, navigate, updateData } = useAction();
+  const { t, dto, navigate, updateData, handleScroll } = useAction();
 
   const columns = [
     {
-      title: "設備名稱",
+      title: t(KEYS.DEVICE, { ns: "alertList" }),
       dataIndex: "equipmentName",
       key: "equipmentName",
       width: 180,
@@ -57,30 +61,18 @@ export const WarningList = () => {
       },
     },
     {
-      title: "預警類型",
+      title: t(KEYS.ALERT_TYPE, { ns: "alertList" }),
       dataIndex: "monitorTypeName",
       key: "monitorTypeName",
       width: 180,
       render: (text: string) => {
         const img = () => {
           if (text.includes("人員") || text.includes("人员"))
-            return (
-              <img
-                src="/src/assets/people.png"
-                className="w-4 h-4 img-no-darg"
-              />
-            );
+            return <img src={peopleImg} className="w-4 h-4 img-no-darg" />;
           else if (text.includes("異常車輛") || text.includes("异常车辆")) {
-            return (
-              <img
-                src="/src/assets/error-car.png"
-                className="w-4 h-4 img-no-darg"
-              />
-            );
+            return <img src={error_carImg} className="w-4 h-4 img-no-darg" />;
           } else if (text.includes("車輛") || text.includes("车辆")) {
-            return (
-              <img src="/src/assets/car.png" className="w-4 h-4 img-no-darg" />
-            );
+            return <img src={carImg} className="w-4 h-4 img-no-darg" />;
           }
         };
 
@@ -93,7 +85,7 @@ export const WarningList = () => {
       },
     },
     {
-      title: "預警內容",
+      title: t(KEYS.ALERT_CONTENT, { ns: "alertList" }),
       dataIndex: "monitorContent",
       key: "monitorContent",
       width: 200,
@@ -108,7 +100,7 @@ export const WarningList = () => {
       },
     },
     {
-      title: "狀態",
+      title: t(KEYS.STATUS, { ns: "alertList" }),
       dataIndex: "recordStatus",
       key: "recordStatus",
       width: 180,
@@ -124,6 +116,7 @@ export const WarningList = () => {
                 navigate(`/warning/${record.id}`, {
                   state: {
                     status: IStatusType.Unmarked,
+                    record: record,
                   },
                 })
             );
@@ -137,6 +130,7 @@ export const WarningList = () => {
                 navigate(`/warning/${record.id}`, {
                   state: {
                     status: IStatusType.Verifed,
+                    record: record,
                   },
                 })
             );
@@ -150,6 +144,7 @@ export const WarningList = () => {
                 navigate(`/warning/${record.id}`, {
                   state: {
                     status: IStatusType.Exception,
+                    record: record,
                   },
                 })
             );
@@ -157,7 +152,7 @@ export const WarningList = () => {
       },
     },
     {
-      title: "開始時間",
+      title: t(KEYS.START_TIME, { ns: "alertList" }),
       dataIndex: "occurrenceTime",
       key: "occurrenceTime",
       width: 180,
@@ -172,7 +167,7 @@ export const WarningList = () => {
       },
     },
     {
-      title: "持續時間",
+      title: t(KEYS.CONTINUE_TIME, { ns: "alertList" }),
       dataIndex: "settingDuration",
       key: "settingDuration",
       width: 180,
@@ -192,42 +187,53 @@ export const WarningList = () => {
 
   return (
     <div
-      className="bg-green-300 w-full h-full box-border rounded-lg flex flex-col"
+      className="h-full box-border rounded-lg flex flex-col bg-white"
       id="warning-box"
     >
-      <div className="flex-1 min-h-96">
+      <div
+        className="flex-1 no-scrollbar mt-[1.5rem]"
+        style={{ overflowY: "scroll" }}
+        onScroll={handleScroll}
+      >
         <Table
+          sticky={true}
           loading={dto.loading}
           dataSource={dto.records}
+          scroll={{ x: "100%" }}
           rowKey={(record) =>
             record.id + Math.floor(Math.random() * 100000000000)
           }
           columns={columns}
-          scroll={{ y: height ?? 0 }}
-          // scroll={{ y: 800 }}
-          pagination={{
-            position: ["bottomRight"],
-            pageSizeOptions: [10, 15, 20, 50],
-            current: dto.PageIndex,
-            pageSize: dto.PageSize,
-            showQuickJumper: isShowQuickJumper,
-            showSizeChanger: true,
-            hideOnSinglePage: false,
-            showLessItems: true,
-            total: dto.count,
-            size: "small",
-            showTotal: (total) => (
-              <div className="w-full">
-                共<span className="text-[#2866F1]"> {total} </span>條數據
-              </div>
-            ),
-            onChange: (page, pageSize) => {
-              updateData("PageIndex", page);
-              updateData("PageSize", pageSize);
-            },
-          }}
+          pagination={false}
         />
       </div>
+      <Pagination
+        className="my-5 flex justify-end"
+        current={dto.PageIndex}
+        pageSize={dto.PageSize}
+        total={dto.count}
+        showSizeChanger
+        showLessItems
+        pageSizeOptions={[10, 15, 20, 50]}
+        showQuickJumper={true}
+        hideOnSinglePage={false}
+        onChange={(page, pageSize) => {
+          updateData("PageIndex", page);
+          updateData("PageSize", pageSize);
+        }}
+        showTotal={(total) => (
+          <div>
+            {t(KEYS.TOTAL, { ns: "alertList" })}
+            <span className="text-[#2866F1]"> {total} </span>
+            {t(KEYS.TOTAL_DATA, { ns: "alertList" })}
+          </div>
+        )}
+        locale={{
+          jump_to: t(KEYS.JUMPT_TO, { ns: "alertList" }),
+          items_per_page: t(KEYS.ITEMS_PER_PAGE, { ns: "alertList" }),
+          page: t(KEYS.PAGE, { ns: "alertList" }),
+        }}
+      />
     </div>
   );
 };

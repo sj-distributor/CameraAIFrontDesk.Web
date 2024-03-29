@@ -17,19 +17,19 @@ export const AreaList = () => {
         </div>
       ) : (
         <>
-          {regionDto.regions.length > 0 ? (
+          {regionDto.regionCameras.length > 0 ? (
             <div
               className="flex flex-col h-full w-full overflow-y-auto no-scrollbar"
               onScroll={onScroll}
             >
               <div className="grid auto-grid1 md:auto-grid gap-8">
-                {regionDto.regions.map((item, index) => (
+                {regionDto.regionCameras.map((item, index) => (
                   <div
-                    className="bg-red-200 aspect-[4/2.25] w-full rounded-xl overflow-hidden"
+                    className="aspect-[4/2.25] w-full rounded-xl overflow-hidden"
                     key={index}
                   >
                     <Img
-                      url="/src/assets/star.jpeg"
+                      url={item?.cameras[0]?.previewImg}
                       title={item.regionAddress}
                       type={CssType.Area}
                       onClickFunction={() =>

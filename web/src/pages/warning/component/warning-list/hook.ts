@@ -20,11 +20,7 @@ export const useAction = () => {
     WarningSearchDataContext
   );
 
-  const { navigate } = useAuth();
-
-  const [height, setHeight] = useState<number | null>(null);
-
-  const [isShowQuickJumper, setIsShowQuickJumper] = useState<boolean>(false);
+  const { navigate, t } = useAuth();
 
   const [dto, setDto] = useState<IDto>({
     PageIndex: 1,
@@ -39,20 +35,6 @@ export const useAction = () => {
       ...prev,
       [k]: v,
     }));
-  };
-
-  const getWidth = () => {
-    setIsShowQuickJumper(document.body.clientWidth > 800 ? true : false);
-  };
-
-  const getHeight = () => {
-    setHeight(
-      (document.getElementById("warning-box")?.scrollHeight ?? 0) -
-        20 -
-        (dto.records.length > 0 ? 24 + 32 : 0) -
-        (document.getElementsByClassName("ant-table-thead")[0]?.clientHeight ??
-          0)
-    );
   };
 
   const getRequestPrams = (pageIndex?: number, pageSize?: number) => {
@@ -93,19 +75,11 @@ export const useAction = () => {
     updateData("loading", false);
   };
 
-  useEffect(() => {
-    getHeight();
-    window.addEventListener("resize", getHeight);
+  const handleScroll = () => {
+    const e = new Event("resize");
 
-    return window.removeEventListener("reset", getHeight);
-  }, [dto.records]);
-
-  useEffect(() => {
-    getWidth();
-    window.addEventListener("resize", getWidth);
-
-    return window.removeEventListener("reset", getWidth);
-  }, []);
+    window.dispatchEvent(e);
+  };
 
   useEffect(() => {
     loadData();
@@ -119,10 +93,10 @@ export const useAction = () => {
   ]);
 
   return {
-    height,
+    t,
     dto,
-    isShowQuickJumper,
     navigate,
     updateData,
+    handleScroll,
   };
 };

@@ -19,11 +19,15 @@ export const Img = (props: IImgProps) => {
       >
         {title}
       </div>
-      <img
-        src={url}
-        alt=""
-        className="w-full h-full object-cover img-no-darg"
-      />
+      {url ? (
+        <img
+          src={url}
+          alt=""
+          className="w-full h-full object-cover img-no-darg"
+        />
+      ) : (
+        <div className="w-full h-full bg-black" />
+      )}
     </div>
   );
 };

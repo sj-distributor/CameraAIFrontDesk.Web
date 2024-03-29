@@ -8,7 +8,10 @@ import { CheckBoxComponent } from "@/components/check-box";
 import { RangePickerComponent } from "@/components/date-range-picker";
 import { SelectComponent } from "@/components/select";
 import { IStatusType } from "@/dtos/default";
+import KEYS from "@/i18n/keys/alert-list";
 
+import importImg from "../../assets/import.png";
+import pinImg from "../../assets/pin.png";
 import { useAction } from "./hook";
 import { IWarningSearchDataContext } from "./props";
 
@@ -19,6 +22,7 @@ export const WarningSearchDataContext =
 
 export const Warning = () => {
   const {
+    t,
     height,
     status,
     timeDto,
@@ -30,6 +34,7 @@ export const Warning = () => {
     markModelDto,
     handleOnMarkDebounceFn,
     handleOnExportDebounceFn,
+    markedStatus,
     setTimeDto,
     setKeyWord,
     onTypeClick,
@@ -40,18 +45,18 @@ export const Warning = () => {
   const outlet = useOutlet();
 
   return (
-    <div className="w-full h-full flex flex-col py-5 px-5 space-y-1">
+    <div className="w-full h-full flex flex-col pt-5 pb-3 px-5 space-y-1">
       <div
-        className="flex flex-wrap items-center justify-between min-h-16"
+        className="flex flex-wrap items-center justify-between"
         ref={warningHeaderRef}
       >
-        <div className="">
+        <div>
           <BreadcrumbComponent />
           {location.pathname === "/warning/list" && (
             <div className="flex items-center flex-wrap space-x-4">
               <div>
                 <span className="font-medium text-sm text-[#566172] select-none">
-                  選擇日期時間：
+                  {t(KEYS.SELECT_DATE_TIME, { ns: "alertList" })}
                 </span>
 
                 <RangePickerComponent
@@ -60,12 +65,12 @@ export const Warning = () => {
                 />
               </div>
               <CheckBoxComponent
-                title="預警篩選："
+                title={t(KEYS.ALERT_SELECT, { ns: "alertList" })}
                 selectValues={selectValues}
                 onClick={onTypeClick}
               />
               <SelectComponent
-                title="狀態："
+                title={t(KEYS.STATUS, { ns: "alertList" }) + "："}
                 value={status}
                 onClick={onStatusClick}
               />
@@ -76,25 +81,28 @@ export const Warning = () => {
           {location.pathname === "/warning/list" ? (
             <>
               <Input
-                placeholder="搜索設備名稱"
-                className="rounded-[48px] text-base w-[200px]"
+                placeholder={t(KEYS.SEARCH_INPUT_PLACEHOLDER, {
+                  ns: "alertList",
+                })}
+                className="rounded-[3rem] text-base w-[12.5rem]"
                 suffix={<SearchOutlined className="" />}
                 value={keyWord}
                 onChange={(e) => setKeyWord(e.target.value)}
               />
               <Button
-                icon={<img src="/src/assets/import.png" />}
-                className="h-12 w-[100px] text-white bg-[#2866F1] !rounded-[56px] hover:!text-white flex items-center justify-center"
+                icon={<img src={importImg} />}
+                className="h-12 w-[6.25rem] text-white bg-[#2866F1] !rounded-[3.5rem] hover:!text-white flex items-center justify-center hover:!bg-[#2866F1]"
                 onClick={handleOnExportDebounceFn}
               >
-                導出
+                {t(KEYS.EXPORT, {
+                  ns: "alertList",
+                })}
               </Button>
             </>
-          ) : markModelDto.status !== null &&
-            markModelDto.status === IStatusType.Unmarked ? (
+          ) : markedStatus !== null && markedStatus === IStatusType.Unmarked ? (
             <Button
-              icon={<img src="/src/assets/pin.png" />}
-              className="h-12 w-[100px] text-[#2866F1] bg-[#C2D5FF] !rounded-[56px] hover:!text-[#2866F1] hover:!border-[#C2D5FF] flex justify-center items-center"
+              icon={<img src={pinImg} />}
+              className="h-12 w-[6.25rem] text-[#2866F1] bg-[#C2D5FF] !rounded-[3.5rem] hover:!text-[#2866F1] hover:!border-[#C2D5FF] flex justify-center items-center"
               onClick={() =>
                 setMarkModelDto((prev) => ({
                   ...prev,
@@ -134,9 +142,9 @@ export const Warning = () => {
         title={<span className="select-none ml-4">狀態標記</span>}
         closeIcon={false}
         footer={
-          <div className="w-full box-border px-4 space-x-2 pt-5 border-t-[1px] border-[#E9EDF2]">
+          <div className="w-full box-border px-4 space-x-2 pt-5 border-t-[0.063rem] border-[#E9EDF2]">
             <button
-              className="bg-[#E6EAF4] text-[#8B98AD] rounded-[56px] w-[4.25rem] h-[2.125rem] select-none"
+              className="bg-[#E6EAF4] text-[#8B98AD] rounded-[3.5rem] w-[4.25rem] h-[2.125rem] select-none"
               onClick={() => {
                 setMarkModelDto((prev) => ({
                   ...prev,
@@ -147,7 +155,7 @@ export const Warning = () => {
               取消
             </button>
             <button
-              className="bg-[#2866F1] text-white rounded-[56px] w-[4.25rem] h-[2.125rem] select-none"
+              className="bg-[#2866F1] text-white rounded-[3.5rem] w-[4.25rem] h-[2.125rem] select-none"
               onClick={handleOnMarkDebounceFn}
             >
               确认

@@ -3,15 +3,26 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "./use-auth";
 
 export const AuthStatus = (props: { children: JSX.Element }) => {
-  // const { userName, mineRoles, location } = useAuth();
-  const { location } = useAuth();
+  const { location, pagePermission, isGetPermission } = useAuth();
 
   if (!localStorage.getItem((window as any).appsettings.tokenKey)) {
     return <Navigate to="/login" state={{ from: location }} replace={true} />;
   }
 
-  // 在这里判断路由权限
-  // console.log("userName", userName, mineRoles.count, location.pathname);
+  if (
+    isGetPermission &&
+    ((location.pathname.includes("/home") && !pagePermission.canViewHome) ||
+      (location.pathname.includes("/monitor") &&
+        !pagePermission.canViewMonitor) ||
+      (location.pathname.includes("/replay") &&
+        !pagePermission.canViewReplay) ||
+      (location.pathname.includes("/warning") &&
+        !pagePermission.canViewWarning) ||
+      (location.pathname.includes("/feedback") &&
+        !pagePermission.canViewFeedback))
+  ) {
+    return <Navigate to="/none" state={{ from: location }} replace={true} />;
+  }
 
   return props.children;
 };

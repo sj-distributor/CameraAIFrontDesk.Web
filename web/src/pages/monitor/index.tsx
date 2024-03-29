@@ -8,7 +8,7 @@ export const Monitor = () => {
       <div className="w-full h-full flex flex-col space-y-2">
         <BreadcrumbComponent />
 
-        <div className="h-[calc(100%-1.75rem)]">
+        <div className="h-[calc(100%-3.25rem)]">
           <Outlet />
         </div>
       </div>

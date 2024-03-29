@@ -3,6 +3,7 @@ import {
   IEquipmentOnlineCountItem,
   IRecordTop5CountListResponse,
 } from "@/dtos/home";
+import { IRealtimeGenerateRequest } from "@/dtos/monitor";
 
 import { api } from "./api";
 
@@ -13,7 +14,7 @@ export const Login = async (data: { userName: string; password: string }) => {
 };
 
 export const GetCameraList = async () => {
-  const response = await api.get<ICameraListResponse[]>(
+  const response = await api.get<ICameraListResponse>(
     "/api/CameraAi/region/camera/page"
   );
 
@@ -32,6 +33,12 @@ export const GetRecordTop5CountList = async () => {
   const response = await api.get<IRecordTop5CountListResponse>(
     "/api/CameraAi/monitor/record/count?TimeZone=America/Los_Angeles"
   );
+
+  return response.data;
+};
+
+export const PostHomeStream = async (data: IRealtimeGenerateRequest) => {
+  const response = await api.post("/api/CameraAi/realtime/generate", data);
 
   return response.data;
 };

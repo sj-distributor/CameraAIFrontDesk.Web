@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 
 import { IPageDto } from "@/dtos/default";
 import {
+  ICameraAiEquipmentTypeLabel,
   IRegionEquipmentItem,
   IRegionEquipmentListResponse,
 } from "@/dtos/monitor";
 // import { ScreenType } from "@/entity/screen-type";
 import { useAuth } from "@/hooks/use-auth";
 import { GetRegionEquipmentList } from "@/services/monitor";
+import { ScreenType } from "@/entity/screen-type";
 
 interface IDto extends IRegionEquipmentListResponse, IPageDto {
   loading: boolean;
@@ -19,9 +21,9 @@ interface IDto extends IRegionEquipmentListResponse, IPageDto {
 }
 
 export const useAction = () => {
-  const { navigate, parseQueryParams, parseQuery } = useAuth();
+  const { location, navigate, parseQueryParams, parseQuery } = useAuth();
 
-  // const [layoutMode, setLayoutMode] = useState<ScreenType | null>(null);
+  const [layoutMode, setLayoutMode] = useState<ScreenType | null>(null);
 
   const [regionEquipmentDto, setRegionEquipmentDto] = useState<IDto>({
     PageIndex: 1,
@@ -36,16 +38,18 @@ export const useAction = () => {
     isEnd: false,
   });
 
-  // const updateLayoutMode = (value: any) => {
-  // setLayoutMode(value as ScreenType);
-  // const data = parseQueryParams<{ regionName: string }>();
-  // const arr = location.pathname.split("/").filter((item) => item !== "");
-  // navigate(
-  //   `/monitor/${arr[arr.length - 1]}/multi-screen?regionName=${
-  //     data.regionName
-  //   }&screen=${value}`
-  // );
-  // };
+  const updateLayoutMode = (value: any) => {
+    setLayoutMode(value as ScreenType);
+    const data = parseQueryParams<{ regionName: string }>();
+
+    const arr = location.pathname.split("/").filter((item) => item !== "");
+
+    navigate(
+      `/monitor/${arr[arr.length - 1]}/multi-screen?regionName=${
+        data.regionName
+      }&screen=${value}`
+    );
+  };
 
   const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
@@ -92,9 +96,14 @@ export const useAction = () => {
     }, 300);
   };
 
-  const onClickEquipmentItem = (equipmentCode: string) => {
+  const onClickEquipmentItem = (id: number) => {
     navigate(
-      `/monitor/${regionEquipmentDto.regionId}/${equipmentCode}?regionName=${regionEquipmentDto.regionName}`
+      `/monitor/${regionEquipmentDto.regionId}/${id}?regionName=${regionEquipmentDto.regionName}`,
+      {
+        state: {
+          equipmentId: id,
+        },
+      }
     );
   };
 
@@ -120,10 +129,9 @@ export const useAction = () => {
         PageIndex: regionEquipmentDto.PageIndex,
         PageSize: regionEquipmentDto.PageSize,
         RegionId: regionEquipmentDto.regionId,
-        // EquipmentType: "'摄像头",
+        TypeLabel: ICameraAiEquipmentTypeLabel.Camera,
       })
         .then((res) => {
-          console.log(res);
           setData(
             res?.count ?? 0,
             false,
@@ -141,10 +149,14 @@ export const useAction = () => {
     regionEquipmentDto.regionId,
   ]);
 
+  useEffect(() => {
+    console.log(regionEquipmentDto.equipments);
+  }, [regionEquipmentDto.equipments]);
+
   return {
-    // layoutMode,
+    layoutMode,
     regionEquipmentDto,
-    // updateLayoutMode,
+    updateLayoutMode,
     onScroll,
     onClickEquipmentItem,
   };

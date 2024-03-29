@@ -62,8 +62,8 @@ export const Replay = () => {
           <div className="flex flex-wrap">
             <Input
               placeholder="搜索設備名稱"
-              className="rounded-[48px] text-base w-[200px] h-12"
-              suffix={<SearchOutlined className="" />}
+              className="rounded-[3rem] text-base w-[12.5rem] h-12"
+              suffix={<SearchOutlined />}
               value={keyWord}
               onChange={(e) => setKeyWord(e.target.value)}
             />

@@ -14,6 +14,8 @@ import { Main } from "@/pages/main";
 import { Monitor } from "@/pages/monitor";
 import { AreaItem } from "@/pages/monitor/component/area-item";
 import { AreaList } from "@/pages/monitor/component/area-list";
+import { FullScreen } from "@/pages/monitor/component/full-screen";
+import { MultiScreen } from "@/pages/monitor/component/multi-screen";
 import { None } from "@/pages/none";
 import { Replay } from "@/pages/replay";
 import { Equipment as ReplayEquipment } from "@/pages/replay/component/equipment";
@@ -52,26 +54,19 @@ export const routers: IRouteItem[] = [
       {
         // 设备s
         // path: "/monitoring/:areaId",
-        // ?areaId areaName
         path: "/monitor/:areaId",
         element: <AreaItem />,
       },
-      // {
-      //   // 视频
-      //   // ?areaId ?equipmentId areaName screen
-      //   path: "/monitoring/:areaId/:equipmentId",
-      //   element: <MonitoringEquipment />,
-      // },
-      // {
-      //   // 全屏
-      //   path: "/monitor/:areaId/:equipmentId",
-      //   element: <FullScreen />,
-      // },
-      // {
-      //   // 多屏
-      //   path: "/monitor/:areaId/multi-screen",
-      //   element: <MultiScreen />,
-      // },
+      {
+        // 全屏
+        path: "/monitor/:areaId/:equipmentId",
+        element: <FullScreen />,
+      },
+      {
+        // 多屏
+        path: "/monitor/:areaId/multi-screen",
+        element: <MultiScreen />,
+      },
     ],
   },
   {
@@ -109,7 +104,6 @@ export const routers: IRouteItem[] = [
       },
       {
         path: "/warning/:warningId",
-
         element: <Equipment />,
       },
     ],
@@ -164,46 +158,6 @@ export const Router = () => {
               </Route>
             );
           })}
-          {/* <Route
-          path="/home"
-          element={
-            <AuthStatus>
-              <Home />
-            </AuthStatus>
-          }
-        />
-        <Route
-          path="/a"
-          element={
-            <AuthStatus>
-              <A />
-            </AuthStatus>
-          }
-        />
-        <Route
-          path="/b"
-          element={
-            <AuthStatus>
-              <B />
-            </AuthStatus>
-          }
-        />
-        <Route
-          path="/c"
-          element={
-            <AuthStatus>
-              <C />
-            </AuthStatus>
-          }
-        />
-        <Route
-          path="/d"
-          element={
-            <AuthStatus>
-              <D />
-            </AuthStatus>
-          }
-        /> */}
         </Route>
       </Routes>
     </ConfigProvider>

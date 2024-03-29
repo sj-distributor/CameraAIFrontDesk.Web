@@ -1,5 +1,14 @@
+import { ICameraAiEquipmentTypeLabel } from "./monitor";
+import { IPlayBackStatus } from "./replay";
+
 export interface ICameraListResponse {
+  count: number;
+  regionCameras: IReginCameraItem[];
+}
+
+export interface IReginCameraItem {
   id: number;
+  locationId: string;
   regionAddress: string;
   principal: string;
   isDeleted: boolean;
@@ -12,14 +21,24 @@ export interface ICameraItem {
   equipmentCode: string;
   equipmentTypeId: number;
   isOnline: boolean;
-  equipmentType: string;
+  equipmentTypeName: string;
+  label: ICameraAiEquipmentTypeLabel;
   equipmentName: string;
   isBind: boolean;
   areaId: number;
+  ipAddress: string;
+  brand: string;
+  username: string;
+  password: string;
+  taskId: string;
   areaName: string;
+  locationId: string;
   regionAddress: string;
   liveStreaming: string;
+  regionId: number;
+  previewImg: string;
   isDeleted: boolean;
+  status: IPlayBackStatus;
   createdTime: string;
 }
 

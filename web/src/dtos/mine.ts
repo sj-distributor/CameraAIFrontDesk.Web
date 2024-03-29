@@ -32,9 +32,9 @@ export enum FrontRolePermissionEnum {
   CanViewCameraAiHomePage = "CanViewCameraAiHomePage",
   CanSwitchCameraAiBackEnd = "CanSwitchCameraAiBackEnd",
   CanViewCameraAiLiveMonitorPage = "CanViewCameraAiLiveMonitorPage",
-  CanExportExcelCameraAiLiveMonitor = "CanExportExcelCameraAiLiveMonitor", // mock字段未出
+  CanExportCameraAiRealtimeVideo = "CanExportCameraAiRealtimeVideo",
   CanViewCameraAiVideoPlaybackPage = "CanViewCameraAiVideoPlaybackPage",
-  CanExportVideoCameraAi = "CanExportVideoCameraAi",
+  CanExportCameraAiPlaybackVideo = "CanExportCameraAiPlaybackVideo",
   CanViewCameraAiWarningListPage = "CanViewCameraAiWarningListPage",
   CanExportExcelCameraAiWarning = "CanExportExcelCameraAiWarning",
   CanViewDetailCameraAiWarning = "CanViewDetailCameraAiWarning",

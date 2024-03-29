@@ -2,44 +2,49 @@ import { useEffect, useRef, useState } from "react";
 
 import { IStatusType } from "@/dtos/default";
 
-const options = [
-  {
-    label: "全部",
-    value: IStatusType.All,
-  },
-  {
-    label: "待標記",
-    value: IStatusType.Unmarked,
-  },
-  {
-    label: "通過",
-    value: IStatusType.Verifed,
-  },
-  {
-    label: "異常",
-    value: IStatusType.Exception,
-  },
-];
+import KEYS from "@/i18n/keys/alert-list";
+import { useAuth } from "@/hooks/use-auth";
 
 export const useAction = () => {
+  const { t } = useAuth();
+
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
+  const options = [
+    {
+      label: t(KEYS.ALL, { ns: "alertList" }),
+      value: IStatusType.All,
+    },
+    {
+      label: t(KEYS.UN_MARKED, { ns: "alertList" }),
+      value: IStatusType.Unmarked,
+    },
+    {
+      label: t(KEYS.VERIFED, { ns: "alertList" }),
+      value: IStatusType.Verifed,
+    },
+    {
+      label: t(KEYS.EXCEPTION, { ns: "alertList" }),
+      value: IStatusType.Exception,
+    },
+  ];
+
   const selectValueText = (value: IStatusType) => {
     switch (value) {
       case IStatusType.All:
-        return "全部";
+        return t(KEYS.ALL, { ns: "alertList" });
       case IStatusType.Unmarked:
-        return "待標記";
+        return t(KEYS.UN_MARKED, { ns: "alertList" });
       case IStatusType.Verifed:
-        return "通過";
+        return t(KEYS.VERIFED, { ns: "alertList" });
       case IStatusType.Exception:
-        return "異常";
+        return t(KEYS.EXCEPTION, { ns: "alertList" });
       default:
-        return "請選擇";
+        return "请选择";
     }
   };
 

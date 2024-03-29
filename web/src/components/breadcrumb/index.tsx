@@ -24,7 +24,7 @@ export const BreadcrumbComponent = () => {
     <Breadcrumb
       itemRender={itemRender}
       items={items()}
-      className="select-none"
+      className="select-none mb-[1.125rem]"
     />
   );
 };

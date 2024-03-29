@@ -85,6 +85,14 @@ export interface IPlayBackGenerateRequest {
   monitorTypes: number[];
 }
 
+export interface IGeneratePlayBackRequest {
+  locationId: string;
+  equipmentCode: string;
+  startTime: string;
+  endTime: string;
+  monitorTypes: number[];
+}
+
 export enum IPlayBackStatus {
   Pending,
   Processing,

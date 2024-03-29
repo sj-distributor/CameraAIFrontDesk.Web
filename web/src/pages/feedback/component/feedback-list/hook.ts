@@ -9,17 +9,16 @@ import {
 import { GetRecordList } from "@/services/default";
 
 import { FeedbackSearchDataContext } from "../..";
+import { useAuth } from "@/hooks/use-auth";
 
 interface IDto extends IPageDto, IRecordResponse {
   loading: boolean;
 }
 
 export const useAction = () => {
+  const { t, navigate } = useAuth();
+
   const { selectValues, timeDto } = useContext(FeedbackSearchDataContext);
-
-  const [height, setHeight] = useState<number | null>(null);
-
-  const [isShowQuickJumper, setIsShowQuickJumper] = useState<boolean>(false);
 
   const [dto, setDto] = useState<IDto>({
     PageIndex: 1,
@@ -34,20 +33,6 @@ export const useAction = () => {
       ...prev,
       [k]: v,
     }));
-  };
-
-  const getHeight = () => {
-    setHeight(
-      (document.getElementById("feedback-box")?.scrollHeight ?? 0) -
-        20 -
-        (dto.records.length > 0 ? 24 + 32 : 0) -
-        (document.getElementsByClassName("ant-table-thead")[0]?.clientHeight ??
-          0)
-    );
-  };
-
-  const getWidth = () => {
-    setIsShowQuickJumper(document.body.clientWidth > 800 ? true : false);
   };
 
   const getRequestPrams = () => {
@@ -81,23 +66,14 @@ export const useAction = () => {
     updateData("loading", false);
   };
 
-  useEffect(() => {
-    getHeight();
-    window.addEventListener("resize", getHeight);
-
-    return window.removeEventListener("reset", getHeight);
-  }, [dto.records]);
-
-  useEffect(() => {
-    getWidth();
-    window.addEventListener("resize", getWidth);
-
-    return window.removeEventListener("reset", getWidth);
-  }, []);
+  const handleScroll = () => {
+    const e = new Event("resize");
+    window.dispatchEvent(e);
+  };
 
   useEffect(() => {
     loadData();
   }, [dto.PageIndex, dto.PageSize, selectValues, timeDto]);
 
-  return { height, dto, isShowQuickJumper, updateData };
+  return { t, dto, updateData, handleScroll, navigate };
 };

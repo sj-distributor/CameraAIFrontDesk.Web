@@ -27,7 +27,7 @@ const keyName: IKey = {
 };
 
 export const useAction = () => {
-  const { message } = useAuth();
+  const { t, message } = useAuth();
 
   const feedbackHeaderRef = useRef<HTMLDivElement>(null);
 
@@ -143,6 +143,7 @@ export const useAction = () => {
   }, []);
 
   return {
+    t,
     feedbackHeaderRef,
     selectValues,
     timeDto,

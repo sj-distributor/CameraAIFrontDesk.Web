@@ -3,6 +3,9 @@ import "./index.css";
 import { DatePicker, TimeRangePickerProps } from "antd";
 import dayjs from "dayjs";
 
+import { useAuth } from "@/hooks/use-auth";
+import KEYS from "@/i18n/keys/alert-list";
+
 import { IRangePickerProps } from "./props";
 
 const rangePresets: TimeRangePickerProps["presets"] = [
@@ -17,6 +20,8 @@ const rangePresets: TimeRangePickerProps["presets"] = [
 export const RangePickerComponent = (props: IRangePickerProps) => {
   const { timeDto, setTimeDto } = props;
 
+  const { t } = useAuth();
+
   return (
     <DatePicker.RangePicker
       presets={rangePresets}
@@ -28,8 +33,12 @@ export const RangePickerComponent = (props: IRangePickerProps) => {
         timeDto.startTime ? dayjs(timeDto.startTime) : null,
         timeDto.endTime ? dayjs(timeDto.endTime) : null,
       ]}
+      className="rangePickerComponent"
       format="YYYY-MM-DD HH:mm:ss"
-      placeholder={["開始日期時間", "結束日期時間"]}
+      placeholder={[
+        t(KEYS.START_DATE_TIME, { ns: "alertList" }),
+        t(KEYS.END_DATE_TIME, { ns: "alertList" }),
+      ]}
       onChange={(e) => {
         if (e && e[0] && e[1]) {
           setTimeDto({

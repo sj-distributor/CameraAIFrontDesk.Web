@@ -19,7 +19,7 @@ export const useAction = () => {
     PageIndex: 1,
     PageSize: 10,
     count: 0,
-    regions: [],
+    regionCameras: [],
     loading: false,
     isFirstGet: false,
     isScorllDown: false,
@@ -58,7 +58,7 @@ export const useAction = () => {
   ) => {
     setTimeout(() => {
       updateRegionDto("count", count);
-      updateRegionDto("regions", regions);
+      updateRegionDto("regionCameras", regions);
 
       !regionDto.isFirstGet
         ? updateRegionDto("loading", loading)
@@ -81,7 +81,7 @@ export const useAction = () => {
         setData(
           res?.count ?? 0,
           false,
-          [...regionDto.regions, ...(res?.regions ?? [])],
+          [...regionDto.regionCameras, ...(res?.regionCameras ?? [])],
           true
         );
       })

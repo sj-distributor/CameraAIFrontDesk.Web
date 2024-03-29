@@ -2,24 +2,29 @@ import { useEffect, useRef, useState } from "react";
 
 import { ICameraAiMonitorType } from "@/dtos/default";
 
+import { useAuth } from "@/hooks/use-auth";
+
+import KEYS from "@/i18n/keys/alert-list";
+
 // import { useTypeList } from "@/hooks/hook";
-export const typeList = [
-  {
-    label: "識別人員",
-    value: ICameraAiMonitorType.People,
-  },
-  {
-    label: "識別車輛",
-    value: ICameraAiMonitorType.Vehicles,
-  },
-  {
-    label: "識別異常車輛",
-    value: ICameraAiMonitorType.AbnormalVehicles,
-  },
-];
 
 export const useAction = () => {
-  // const { typeList } = useTypeList();
+  const { t } = useAuth();
+
+  const typeList = [
+    {
+      label: t(KEYS.PEOPLE, { ns: "alertList" }),
+      value: ICameraAiMonitorType.People,
+    },
+    {
+      label: t(KEYS.VEHICLES, { ns: "alertList" }),
+      value: ICameraAiMonitorType.Vehicles,
+    },
+    {
+      label: t(KEYS.ABNORMALVEHICLES, { ns: "alertList" }),
+      value: ICameraAiMonitorType.AbnormalVehicles,
+    },
+  ];
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
@@ -47,6 +52,7 @@ export const useAction = () => {
   }, [wrapperRef]);
 
   return {
+    t,
     wrapperRef,
     isOpen,
     typeList,

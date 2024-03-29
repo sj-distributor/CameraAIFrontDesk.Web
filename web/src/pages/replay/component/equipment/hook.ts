@@ -1,205 +1,32 @@
+import { useUpdateEffect } from "ahooks";
 import dayjs from "dayjs";
 import { clone } from "ramda";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
+import { useAction as checkBoxUseAction } from "@/components/check-box/hook";
 import { ICameraAiMonitorType } from "@/dtos/default";
 import {
   IPlayBackGenerateRequest,
   IPlayBackStatus,
   IReplayDetailResponse,
+  IReplayRecordItem,
 } from "@/dtos/replay";
 import { useAuth } from "@/hooks/use-auth";
-import { GetReplayDetail, PostPlayBackGenerate } from "@/services/replay";
-import { typeList } from "@/components/check-box/hook";
+import {
+  GetGenerateUrl,
+  GetReplayDetail,
+  PostGeneratePlayBack,
+  // PostGenerateRealtime,
+  PostPlayBackGenerate,
+} from "@/services/replay";
 
 export const useAction = () => {
   const { location, message } = useAuth();
 
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  const scaleRef = useRef<HTMLDivElement>(null);
-
-  const progressBoxRef = useRef<HTMLDivElement>(null);
-
-  const [duration, setDuration] = useState<number | null>(null);
-
-  // const [state, setState] = useState<boolean>(false);
-
-  // const [isPlay, setIsPlay] = useState<boolean>(false);
-
-  const data = [
-    { second: [60, 200], type: 0 },
-    { second: [5, 45], type: 1 },
-    { second: [180, 990], type: 1 },
-  ];
-
-  const [speedBoxDto, setSpeedBoxDto] = useState<{
-    status: boolean;
-    speed: number;
-  }>({
-    status: false,
-    speed: 1,
-  });
-
-  const getWidth = (duration: number) => {
-    return (
-      Math.floor(Math.floor(duration) / 120) * 60 +
-      (Math.floor(duration) % 120) * 0.5
-    );
-  };
-
-  // const updateProgressBar = (event: any) => {
-  //   if (state && scaleRef.current && duration) {
-  //     // 鼠标位置 不带滑动
-  //     const clickX =
-  //       event.clientX -
-  //       scaleRef.current.offsetLeft +
-  //       scaleRef.current.scrollLeft;
-
-  //     // 点击位置位于进度条位置比例
-  //     const clickPercent = clickX / getWidth(duration);
-
-  //     if (videoRef.current && clickPercent * duration <= duration) {
-  //       videoRef.current.currentTime = clickPercent * duration;
-  //       videoRef.current.pause();
-  //     }
-  //   }
-  // };
-
-  // const mouseUp = () => {
-  //   setState(false);
-  //   if (videoRef.current && isPlay) {
-  //     videoRef.current.play();
-  //     setIsPlay(false);
-  //   }
-  // };
-
-  const skipTime = (amount: number) => {
-    if (videoRef.current) {
-      videoRef.current.currentTime += amount;
-    }
-  };
-
-  const changeSpeed = (speed: number) => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = speed;
-      setSpeedBoxDto({
-        status: false,
-        speed,
-      });
-    }
-  };
-
-  useEffect(() => {
-    const video = videoRef.current;
-
-    const getVideoDuration = () => {
-      setDuration(video?.duration ?? 0);
-    };
-
-    video?.addEventListener("loadedmetadata", getVideoDuration);
-
-    return () => {
-      video?.removeEventListener("loadedmetadata", getVideoDuration);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (duration && scaleRef.current && progressBoxRef.current) {
-      // 视频长度在UI上的宽
-      const videoWidth =
-        Math.floor(Math.floor(duration) / 120) * 60 +
-        (Math.floor(duration) % 120) * 0.5;
-
-      // 进度条
-      const progressDiv = document.createElement("div");
-
-      progressDiv.style["position"] = "relative";
-      progressDiv.style["height"] = "32px";
-      progressDiv.style["backgroundColor"] = "green";
-      progressDiv.style["display"] = "flex";
-      progressDiv.style.width = `${videoWidth}px`;
-      progressDiv.style.margin = "6px 0";
-      progressDiv.className = "canClick";
-
-      data.forEach((item) => {
-        const div = document.createElement("div");
-
-        div.className = `h-full ${
-          item.type === 0 ? "bg-blue-300 z-20" : "bg-yellow-300 z-10"
-        } absolute canClick`;
-
-        div.style["borderRadius"] = "46px";
-
-        div.style.width = `${
-          videoWidth * (item.second[1] / (duration ?? 0)) -
-          videoWidth * (item.second[0] / (duration ?? 0))
-        }px`;
-
-        div.style.left = `${videoWidth * (item.second[0] / (duration ?? 0))}px`;
-
-        progressDiv.appendChild(div);
-      });
-      // scaleRef.current.appendChild(progressDiv);
-
-      // 刻度条
-      // 2分钟 60px 1分钟 30px
-      const div = document.createElement("div");
-
-      div.style["display"] = "inline-flex";
-      div.style["alignItems"] = "flex-end";
-
-      for (let i = 0; i < Math.floor(Math.floor(duration) / 120); i++) {
-        const secondMinDiv = document.createElement("div");
-
-        secondMinDiv.style.width = "60px";
-        secondMinDiv.style["height"] = i % 5 === 0 ? "12px" : "5px";
-
-        secondMinDiv.style["boxSizing"] = "border-box";
-        secondMinDiv.style["borderLeft"] = "1px solid #8B98AD";
-        secondMinDiv.style["flexShrink"] = "0";
-
-        div.appendChild(secondMinDiv);
-      }
-      if (Math.floor(duration) % 120 !== 0) {
-        const remainderDiv = document.createElement("div");
-
-        remainderDiv.style["width"] = `${(Math.floor(duration) % 120) * 0.5}px`;
-        remainderDiv.style["height"] =
-          Math.floor(Math.floor(duration) / 120) % 5 === 0 ? "12px" : "5px";
-
-        remainderDiv.style["boxSizing"] = "border-box";
-
-        remainderDiv.style["borderLeft"] = "1px solid #8B98AD";
-        remainderDiv.style["borderRight"] = "1px solid #8B98AD";
-        remainderDiv.style["flexShrink"] = "0";
-
-        if (Math.floor(Math.floor(duration) / 120) % 5 === 0) {
-          remainderDiv.style["clipPath"] =
-            "polygon(0 0, 100% 50%, 100% 100%, 0 100%)";
-        }
-
-        div.appendChild(remainderDiv);
-      } else {
-        const remainderDiv = document.createElement("div");
-
-        remainderDiv.style["height"] =
-          Math.floor(Math.floor(duration) / 120) % 5 === 0 ? "12px" : "5px";
-        remainderDiv.style["borderLeft"] = "1px solid #8B98AD";
-        div.appendChild(remainderDiv);
-      }
-
-      // div.style.backgroundColor = "yellow";
-
-      // scaleRef.current?.append(div);
-    }
-  }, [duration, data]);
+  const { typeList } = checkBoxUseAction();
 
   // new
-
   const [correlationId, setCorrelationId] = useState("");
-
-  // const [isFirst, setIsFirst] = useState<boolean>(false);
 
   const [replayDetailDto, setReplayDto] = useState<IReplayDetailResponse>({
     equipment: null,
@@ -207,7 +34,7 @@ export const useAction = () => {
     records: [],
   });
 
-  const [selectValues, setSelectValues] = useState<number[]>([]);
+  const [selectValues, setSelectValues] = useState<number[] | null>(null);
 
   const [options, setOptions] = useState<
     {
@@ -216,21 +43,53 @@ export const useAction = () => {
     }[]
   >([]);
 
+  const [endSelectValues, setEndSelectValues] = useState<number[]>([]);
+
+  useUpdateEffect(() => {
+    setEndSelectValues(selectValues ?? []);
+  }, [selectValues]);
+
   const onTypeClick = (id: number) => {
-    isSuccess
-      ? setSelectValues((prev) => {
-          let newData = clone(prev);
+    setEndSelectValues((prev) => {
+      let newData = clone(prev);
 
-          const isExist = newData.findIndex((item) => item === id) !== -1;
+      const isExist = newData.findIndex((item) => item === id) !== -1;
 
-          if (isExist) newData = newData.filter((item) => item !== id);
-          else newData.push(id);
+      if (isExist) newData = newData.filter((item) => item !== id);
+      else newData.push(id);
 
-          return newData;
-        })
-      : message.info("在生成視頻，請視頻生成完再更換預警篩選條件");
+      return newData;
+    });
   };
 
+  // 保存预警筛选
+  const onSave = (isTrue: boolean) => {
+    if (isTrue) {
+      if (!isFirstGenerate && !continueExecution.current && isSuccess) {
+        const data = getGenerateParams(replayDetailDto);
+
+        // 调用生成回放
+        PostPlayBackGenerate(data)
+          .then(() => {
+            setSelectValues(endSelectValues);
+            setIsFirstGenerate(true);
+            setIsSuccess(false);
+            setSuccessUrl("");
+            continueExecution.current = true;
+          })
+          .catch(() => {
+            message.error("生成回放失败,请重试");
+          });
+      } else {
+        message.info("在生成視頻，請視頻生成完再更換預警篩選條件");
+        setEndSelectValues(selectValues ?? []);
+      }
+    } else {
+      setEndSelectValues(selectValues ?? []);
+    }
+  };
+
+  // 获取correlationId
   useEffect(() => {
     const correlationId =
       location?.state?.correlationId ??
@@ -239,6 +98,7 @@ export const useAction = () => {
     if (correlationId) setCorrelationId(correlationId);
   }, []);
 
+  // 获取回放详情接口
   useEffect(() => {
     if (correlationId) {
       GetReplayDetail({ CorrelationId: correlationId })
@@ -259,12 +119,72 @@ export const useAction = () => {
     }
   }, [correlationId]);
 
-  // const [isFirstLoad, setIsFirstLoad] = useState<boolean>(false);
-
   const [isFirstGenerate, setIsFirstGenerate] = useState<boolean>(false);
 
+  // 获取生成请求的参数
+  const getGenerateParams = (replayDetailDto: IReplayDetailResponse) => {
+    const data: IPlayBackGenerateRequest = {
+      locationId: replayDetailDto?.equipment?.locationId ?? "",
+      equipmentCode: replayDetailDto?.equipment?.equipmentCode ?? "",
+      startTime: dayjs
+        .utc(replayDetailDto?.totalRecord?.occurrenceTime)
+        .format("YYYY_MM_DD_HH_mm_ss"),
+      endTime: dayjs
+        .utc(replayDetailDto?.totalRecord?.occurrenceTime)
+        .add(replayDetailDto?.totalRecord?.duration ?? 0, "second")
+        .format("YYYY_MM_DD_HH_mm_ss"),
+      monitorTypes: selectValues
+        ? endSelectValues
+        : Array.from(
+            new Set(replayDetailDto.records.map((item) => item.monitorType))
+          ),
+      taskId: replayDetailDto?.totalRecord?.replayTaskId ?? "",
+    };
+
+    return data;
+  };
+
+  const handelGetWarningData = (data: IReplayRecordItem[]) => {
+    const getTimeList = (
+      data: IReplayRecordItem[],
+      type: ICameraAiMonitorType
+    ) => {
+      return data
+        .filter((item) => item.monitorType === type)
+        .map((item) => {
+          const startTime = item.occurrenceTime;
+
+          const endTime = dayjs(startTime)
+            .set(
+              "seconds",
+              dayjs(startTime).get("seconds") + item.monitorDuration
+            )
+            .toISOString();
+
+          return { startTime, endTime };
+        });
+    };
+
+    const peopleWarningLists = getTimeList(data, ICameraAiMonitorType.People);
+
+    const vehiclesWarningLists = getTimeList(
+      data,
+      ICameraAiMonitorType.Vehicles
+    );
+
+    const abnormalVehiclesWarningLists = getTimeList(
+      data,
+      ICameraAiMonitorType.AbnormalVehicles
+    );
+
+    return {
+      [ICameraAiMonitorType.AbnormalVehicles]: abnormalVehiclesWarningLists,
+      [ICameraAiMonitorType.People]: peopleWarningLists,
+      [ICameraAiMonitorType.Vehicles]: vehiclesWarningLists,
+    };
+  };
+
   useEffect(() => {
-    console.log(replayDetailDto);
     if (
       replayDetailDto.equipment &&
       replayDetailDto.totalRecord &&
@@ -272,21 +192,23 @@ export const useAction = () => {
       !isFirstGenerate
     ) {
       // 生成参数
-      const data: IPlayBackGenerateRequest = {
-        locationId: replayDetailDto.equipment.locationId,
-        equipmentCode: replayDetailDto.equipment.equipmentCode,
-        startTime: dayjs
-          .utc(replayDetailDto.totalRecord.occurrenceTime)
-          .format("YYYY-MM-DDTHH:mm:ssZ"),
-        endTime: dayjs
-          .utc(replayDetailDto.totalRecord.occurrenceTime)
-          .add(replayDetailDto.totalRecord.duration, "second")
-          .format("YYYY-MM-DDTHH:mm:ssZ"),
-        monitorTypes: Array.from(
-          new Set(replayDetailDto.records.map((item) => item.monitorType))
-        ),
-        taskId: replayDetailDto.totalRecord.replayTaskId ?? "",
-      };
+      // const data: IPlayBackGenerateRequest = {
+      //   locationId: replayDetailDto.equipment.locationId,
+      //   equipmentCode: replayDetailDto.equipment.equipmentCode,
+      //   startTime: dayjs
+      //     .utc(replayDetailDto.totalRecord.occurrenceTime)
+      //     .format("YYYY-MM-DDTHH:mm:ssZ"),
+      //   endTime: dayjs
+      //     .utc(replayDetailDto.totalRecord.occurrenceTime)
+      //     .add(replayDetailDto.totalRecord.duration, "second")
+      //     .format("YYYY-MM-DDTHH:mm:ssZ"),
+      //   monitorTypes: Array.from(
+      //     new Set(replayDetailDto.records.map((item) => item.monitorType))
+      //   ),
+      //   taskId: replayDetailDto.totalRecord.replayTaskId ?? "",
+      // };
+
+      const data = getGenerateParams(replayDetailDto);
 
       const recordStatusArray = Array.from(
         new Set(replayDetailDto.records.map((item) => item.monitorType))
@@ -305,39 +227,62 @@ export const useAction = () => {
         )
       );
 
-      // 调用生成回放
+      // 调用生成回放;
       PostPlayBackGenerate(data)
         .then(() => {
-          console.log("生成回放成功");
           setIsFirstGenerate(true);
         })
         .catch(() => {
           message.error("生成回放失败");
         });
     }
-    // if (replayDetailDto.totalRecord) {
-    //   console.log(
-    //     dayjs
-    //       .utc(replayDetailDto.totalRecord.occurrenceTime)
-    //       .add(replayDetailDto.totalRecord.duration, "second")
-    //       .toISOString(),
-    //     replayDetailDto.totalRecord.occurrenceTime
-    //   );
-    // }
-    // const recordStatusSet = Array.from(
-    //   new Set(replayDetailDto.records.map((item) => item.recordStatus))
-    // );
+  }, [replayDetailDto]);
 
-    // console.log(recordStatusSet);
+  const warningData = useMemo(() => {
+    if (
+      replayDetailDto &&
+      replayDetailDto.equipment &&
+      replayDetailDto.totalRecord &&
+      replayDetailDto.records.length
+    ) {
+      const warningDataList = handelGetWarningData(replayDetailDto.records);
+
+      const data = {
+        name: replayDetailDto.equipment.equipmentName,
+        type: replayDetailDto.equipment.equipmentTypeName,
+        content: "",
+        startTime: replayDetailDto.totalRecord.occurrenceTime,
+        address: replayDetailDto.equipment.areaName,
+        duration: String(replayDetailDto.totalRecord.duration),
+        warningDataList,
+      };
+
+      return data;
+    } else {
+      return {
+        name: "",
+        type: "",
+        content: "",
+        startTime: "",
+        address: "",
+        duration: "0",
+        warningDataList: {
+          [ICameraAiMonitorType.AbnormalVehicles]: [],
+          [ICameraAiMonitorType.People]: [],
+          [ICameraAiMonitorType.Vehicles]: [],
+        },
+      };
+    }
   }, [replayDetailDto]);
 
   const [successUrl, setSuccessUrl] = useState<string>("");
 
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
-  let continueExecution = true;
+  const continueExecution = useRef<boolean>(true);
 
-  let i = 0;
+  const [isOpenExportPlaybackModal, setIsOpenExportPlaybackModal] =
+    useState<boolean>(false);
 
   useEffect(() => {
     if (isFirstGenerate) {
@@ -345,54 +290,167 @@ export const useAction = () => {
     }
   }, [isFirstGenerate]);
 
-  function executeWithDelay() {
-    if (!continueExecution) return;
+  let i = 0;
 
-    console.log("Method executed");
+  function executeWithDelay() {
+    if (!continueExecution.current) return;
 
     GetReplayDetail({ CorrelationId: correlationId })
       .then((res) => {
         const totalRecord = res.totalRecord;
 
         i++;
-        console.log(res, "一直调用----");
 
         if (
           (totalRecord &&
             totalRecord.playbackStatus === IPlayBackStatus.Success) ||
-          i === 4
+          i > 0
         ) {
           // setSuccessUrl(totalRecord.replayUrl);
           setIsSuccess(true);
+          setIsFirstGenerate(false);
           setSuccessUrl(
             "https://video-builder.oss-cn-hongkong.aliyuncs.com/video/test-001.mp4"
           );
-          continueExecution = false;
+          continueExecution.current = false;
+          i = 0;
 
           return;
+        } else if (
+          totalRecord &&
+          totalRecord.playbackStatus === IPlayBackStatus.Failed
+        ) {
+          const data = getGenerateParams(replayDetailDto);
+
+          PostPlayBackGenerate(data);
         }
       })
-      .catch(() => {});
-
-    // 等待1秒钟后再次执行
-    setTimeout(() => {
-      executeWithDelay(); // 递归调用自己
-    }, 5000);
+      .catch(() => {})
+      .finally(() => {
+        setTimeout(() => {
+          executeWithDelay(); // 递归调用自己
+        }, 5000);
+      });
   }
 
-  return {
-    videoRef,
-    scaleRef,
-    duration,
-    progressBoxRef,
-    speedBoxDto,
-    // setIsPlay,
-    // setState,
-    getWidth,
-    skipTime,
-    changeSpeed,
-    setSpeedBoxDto,
+  // 導出視頻接口邏輯
+  const handelGetVideoPlayBackUrl = () => {
+    {
+      const { equipmentCode, monitorTypes, locationId, startTime } =
+        getGenerateParams(replayDetailDto);
 
+      if (palyBackDate.endTime && palyBackDate.startTime) {
+        const startDate = dayjs(startTime);
+
+        const duration = replayDetailDto?.totalRecord?.duration ?? 0;
+
+        const endDate = startDate.set(
+          "seconds",
+          startDate.get("seconds") + duration
+        );
+
+        if (
+          dayjs(palyBackDate.startTime) < startDate ||
+          dayjs(palyBackDate.startTime) > endDate ||
+          dayjs(palyBackDate.endTime) > endDate ||
+          dayjs(palyBackDate.endTime) < startDate
+        ) {
+          message.info(
+            `請選擇從${startDate.format(
+              "YYYY-MM-DDTHH:mm:ss"
+            )}到${endDate.format("YYYY-MM-DDTHH:mm:ss")}內的時間`
+          );
+        }
+
+        const data = {
+          equipmentCode,
+          monitorTypes,
+          locationId,
+          startTime: palyBackDate.startTime,
+          endTime: palyBackDate.endTime,
+        };
+
+        PostGeneratePlayBack(data)
+          .then((res) => {
+            const { generateTaskId } = res;
+
+            message.info("視頻正在生成中，生成成功自動為您下載，請稍等");
+
+            generateTaskId && handelGetVideoPlayBackData(generateTaskId);
+          })
+          .catch(() => message.error("視頻導出失敗"));
+      }
+    }
+  };
+
+  const isPlayBackCallBackData = useRef<boolean>(true);
+
+  // 回調獲取導出視頻url
+
+  const handelGetVideoPlayBackData = (id: string) => {
+    if (!isPlayBackCallBackData.current) return;
+
+    id &&
+      GetGenerateUrl(id)
+        .then((res) => {
+          const { generateUrl } = res;
+
+          if (generateUrl) {
+            handelDownloadUrl(generateUrl);
+            isPlayBackCallBackData.current = false;
+
+            return;
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          setTimeout(() => {
+            handelGetVideoPlayBackData(id);
+          }, 5000);
+        });
+  };
+
+  // 下載獲取到的回放url
+
+  const handelDownloadUrl = (url: string) => {
+    const a = document.createElement("a");
+
+    const videoUrl = url;
+
+    fetch(videoUrl)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+
+        a.href = url;
+        a.download = videoUrl.split("com/")[1];
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => console.error("Error downloading video:", error));
+  };
+
+  const isShow = useMemo(() => {
+    return !continueExecution.current && !isFirstGenerate && isSuccess;
+  }, [continueExecution, isFirstGenerate, isSuccess]);
+
+  useEffect(() => {
+    return () => {
+      continueExecution.current = false;
+      isPlayBackCallBackData.current = false;
+    };
+  }, []);
+
+  const [palyBackDate, setPalyBlackDate] = useState<{
+    startTime?: string;
+    endTime?: string;
+  }>({
+    startTime: "2024-03-28T10:07:04.871Z",
+    endTime: "2024-03-28T10:07:04.871Z",
+  });
+
+  return {
     // new
     replayDetailDto,
     selectValues,
@@ -400,5 +458,14 @@ export const useAction = () => {
     options,
     successUrl,
     isSuccess,
+    endSelectValues,
+    onSave,
+    isShow,
+    getGenerateParams,
+    handelGetVideoPlayBackUrl,
+    setPalyBlackDate,
+    isOpenExportPlaybackModal,
+    setIsOpenExportPlaybackModal,
+    warningData,
   };
 };

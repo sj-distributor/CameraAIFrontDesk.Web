@@ -10,8 +10,15 @@ interface IPasswordDto {
 }
 
 export const useAction = () => {
-  const { t, signOut, navigate, changeLanguage, location, language } =
-    useAuth();
+  const {
+    t,
+    signOut,
+    navigate,
+    changeLanguage,
+    location,
+    language,
+    pagePermission,
+  } = useAuth();
 
   const [openKeys, setOpenKeys] = useState<string[]>([]);
 
@@ -110,6 +117,7 @@ export const useAction = () => {
     passwordDto,
     languageStatus,
     handleOnSignOut,
+    pagePermission,
     navigate,
     setStatus,
     setOpenKeys,

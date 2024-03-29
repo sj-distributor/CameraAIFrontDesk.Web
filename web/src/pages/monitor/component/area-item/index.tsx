@@ -3,44 +3,25 @@ import Spin from "antd/es/spin";
 
 import { Img } from "@/components/img";
 import { CssType } from "@/components/img/props";
-// import { SelectComponent } from "@/components/select";
 
-// import { ScreenType } from "@/entity/screen-type";
+import { ScreenTypeSelect } from "../screen-type-select";
 import { useAction } from "./hook";
 
 export const AreaItem = () => {
   const {
-    // layoutMode,
+    layoutMode,
     regionEquipmentDto,
-    // updateLayoutMode,
+    updateLayoutMode,
     onScroll,
     onClickEquipmentItem,
   } = useAction();
 
   return (
     <div className="flex-1 flex flex-col space-y-1 h-full w-full">
-      <div>
-        分屏模式：
-        {/* <SelectComponent
-          title="分屏模式："
-          value={layoutMode}
-          onChange={updateLayoutMode}
-          options={[
-            {
-              label: "四屏模式",
-              value: ScreenType.FourScreen,
-            },
-            {
-              label: "六屏模式",
-              value: ScreenType.SixScreen,
-            },
-            {
-              label: "九屏模式",
-              value: ScreenType.NineScreen,
-            },
-          ]}
-        /> */}
-      </div>
+      <ScreenTypeSelect
+        layoutMode={layoutMode}
+        updateLayoutMode={updateLayoutMode}
+      />
 
       {!regionEquipmentDto.isFirstGet && regionEquipmentDto.loading ? (
         <div className="w-full h-full flex justify-center items-center">
@@ -60,12 +41,10 @@ export const AreaItem = () => {
                     key={index}
                   >
                     <Img
-                      url="/src/assets/star.jpeg"
+                      url={item.previewImg}
                       title={item.equipmentName}
                       type={CssType.Equipment}
-                      onClickFunction={() =>
-                        onClickEquipmentItem(item.equipmentCode)
-                      }
+                      onClickFunction={() => onClickEquipmentItem(item.id)}
                     />
                   </div>
                 ))}

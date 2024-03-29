@@ -50,3 +50,13 @@ export interface IRecordItem {
   occurrenceTime: string;
   createdTime: string;
 }
+
+export interface IStopRealtimeResquest {
+  stopList: IStopItem[];
+}
+
+export interface IStopItem {
+  taskId: string;
+  locationId: string;
+  equipmentCode: string;
+}
