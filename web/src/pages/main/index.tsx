@@ -1,19 +1,11 @@
 import { KeyOutlined, LogoutOutlined, SwapOutlined } from "@ant-design/icons";
-import {
-  Button,
-  ConfigProvider,
-  Input,
-  Menu,
-  MenuProps,
-  Modal,
-  Spin,
-} from "antd";
+import { Button, ConfigProvider, Input, Menu, MenuProps, Modal } from "antd";
 import { Link, Outlet } from "react-router-dom";
 
 import KEYS from "@/i18n/keys/main-page";
 
 import { useAction } from "./hook";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
