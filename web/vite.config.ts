@@ -8,34 +8,7 @@ import VitePluginCompression from "vite-plugin-compression";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    importToCDN({
-      modules: [
-        autoComplete("react"),
-        autoComplete("react-dom"),
-        {
-          name: "dayjs",
-          var: "dayjs",
-          path: `dayjs.min.js`,
-        },
-        {
-          name: "antd",
-          var: "antd",
-          path: `dist/antd.min.js`,
-        },
-      ],
-    }),
-    react(),
-    visualizer(),
-    VitePluginCompression({
-      algorithm: "gzip",
-      ext: ".gz",
-      verbose: true,
-      disable: false,
-      threshold: 10240,
-      deleteOriginFile: false,
-    }),
-  ],
+  plugins: [react()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -55,16 +28,5 @@ export default defineConfig({
       },
     },
   },
-  build: {
-    outDir: "build",
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes("node_modules")) {
-            return "vendor";
-          }
-        },
-      },
-    },
-  },
+  build: { outDir: "build" },
 });
