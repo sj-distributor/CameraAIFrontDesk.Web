@@ -254,12 +254,16 @@ export const Main = () => {
                       function: () => {
                         var myIframe = document.getElementById("myIframe");
                         if (myIframe) {
-                          var data = { data: 1 };
-                          myIframe.contentWindow.postMessage(
-                            JSON.stringify(data),
-                            "http://localhost:3001/"
+                          const token = localStorage.getItem("tokenKey");
+                          (myIframe as any).contentWindow.postMessage(
+                            token,
+                            (window as any).appsettings?.cameraAIBackstageDomain
                           );
-                          window.open("http://localhost:3001/", "_blank");
+                          window.open(
+                            (window as any).appsettings
+                              ?.cameraAIBackstageDomain,
+                            "_blank"
+                          );
                         }
                       },
                     },
@@ -292,7 +296,7 @@ export const Main = () => {
               )}
               <iframe
                 id="myIframe"
-                src="http://localhost:3001/"
+                src={(window as any).appsettings?.cameraAIBackstageDomain}
                 style={{ display: "none" }}
               />
             </div>
