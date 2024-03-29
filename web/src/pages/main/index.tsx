@@ -5,7 +5,6 @@ import { Link, Outlet } from "react-router-dom";
 import KEYS from "@/i18n/keys/main-page";
 
 import { useAction } from "./hook";
-import { useEffect } from "react";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -34,18 +33,6 @@ export const Main = () => {
     setDelModalStatus,
     submitModifyPassword,
   } = useAction();
-
-  const myIframe = document.getElementById("myIframe");
-
-  useEffect(() => {
-    if (myIframe) {
-      const token = localStorage.getItem((window as any).appsettings?.tokenKey);
-      (myIframe as any).contentWindow.postMessage(
-        token,
-        (window as any).appsettings?.cameraAIBackstageDomain
-      );
-    }
-  }, [myIframe]);
 
   const items: MenuItem[] = [
     {
@@ -233,11 +220,6 @@ export const Main = () => {
             onClick={() => handleOnJump()}
           />
 
-          <iframe
-            id="myIframe"
-            src={(window as any).appsettings?.cameraAIBackstageDomain}
-            style={{ display: "none" }}
-          />
           <div className="flex h-full items-center">
             <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-2">
               <img
@@ -270,16 +252,20 @@ export const Main = () => {
                       name: "切換後台",
                       component: <SwapOutlined className="text-sm" />,
                       function: () => {
-                        // setLoading(true);
+                        var myIframe = document.getElementById("myIframe");
                         if (myIframe) {
-                          // myIframe.onload = function () {
-                          // setLoading(false);
+                          const token = localStorage.getItem(
+                            (window as any).appsettings?.tokenKey
+                          );
+                          (myIframe as any).contentWindow.postMessage(
+                            token,
+                            (window as any).appsettings?.cameraAIBackstageDomain
+                          );
                           window.open(
                             (window as any).appsettings
                               ?.cameraAIBackstageDomain,
                             "_blank"
                           );
-                          // };
                         }
                       },
                     },
@@ -310,6 +296,11 @@ export const Main = () => {
                   ))}
                 </div>
               )}
+              <iframe
+                id="myIframe"
+                src={(window as any).appsettings?.cameraAIBackstageDomain}
+                style={{ display: "none" }}
+              />
             </div>
           </div>
         </div>
