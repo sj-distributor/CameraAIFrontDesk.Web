@@ -190,6 +190,7 @@ export const VideoPlayback = (props: {
             type: "flv",
             isLive: true,
             url: videoUrl,
+            cors: true,
           },
           {
             enableWorker: true, // 启用分离的线程进行转换（如果不想看到控制台频繁报错把它设置为false，官方的回答是这个属性还不稳定，所以要测试实时视频流的话设置为true控制台经常报错）
