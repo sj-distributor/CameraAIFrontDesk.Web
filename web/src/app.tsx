@@ -15,17 +15,17 @@ dayjs.extend(utc);
 
 function App() {
   const { isLoaded } = useAction();
+  var myIframe = document.getElementById("myIframe");
+  const token = localStorage.getItem((window as any).appsettings?.tokenKey);
 
   useEffect(() => {
-    var myIframe = document.getElementById("myIframe");
-    const token = localStorage.getItem((window as any).appsettings?.tokenKey);
     if (isLoaded && myIframe && token) {
       (myIframe as any).contentWindow.postMessage(
         token,
         (window as any).appsettings?.cameraAIBackstageDomain
       );
     }
-  }, [isLoaded]);
+  }, [isLoaded, myIframe, token]);
 
   return (
     <BrowserRouter>
