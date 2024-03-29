@@ -255,14 +255,11 @@ export const Main = () => {
                         var myIframe = document.getElementById("myIframe");
                         if (myIframe) {
                           var data = { data: 1 };
-                          (myIframe as any).contentWindow.postMessage(
+                          myIframe.contentWindow.postMessage(
                             JSON.stringify(data),
-                            (window as any).appsettings.cameraAIBackstageDomain
+                            "http://localhost:3001/"
                           );
-                          window.open(
-                            (window as any).appsettings.cameraAIBackstageDomain,
-                            "_blank"
-                          );
+                          window.open("http://localhost:3001/", "_blank");
                         }
                       },
                     },
@@ -295,7 +292,7 @@ export const Main = () => {
               )}
               <iframe
                 id="myIframe"
-                src={(window as any).appsettings.cameraAIBackstageDomain}
+                src="http://localhost:3001/"
                 style={{ display: "none" }}
               />
             </div>
