@@ -254,7 +254,9 @@ export const Main = () => {
                       function: () => {
                         var myIframe = document.getElementById("myIframe");
                         if (myIframe) {
-                          const token = localStorage.getItem("tokenKey");
+                          const token = localStorage.getItem(
+                            (window as any).appsettings?.tokenKey
+                          );
                           (myIframe as any).contentWindow.postMessage(
                             token,
                             (window as any).appsettings?.cameraAIBackstageDomain
