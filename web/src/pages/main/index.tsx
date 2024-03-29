@@ -45,8 +45,6 @@ export const Main = () => {
 
   const myIframe = document.getElementById("myIframe");
 
-  const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     if (myIframe) {
       const token = localStorage.getItem((window as any).appsettings?.tokenKey);
@@ -325,39 +323,35 @@ export const Main = () => {
         </div>
       </div>
 
-      {loading ? (
-        <Spin />
-      ) : (
-        <main className="grow flex overflow-hidden">
-          {location.pathname !== "/none" && (
-            <div
-              className={`overflow-y-auto no-scrollbar box-border py-12 ${
-                !collapsed && "!min-w-60 w-60"
-              }`}
-            >
-              <Menu
-                className="select-none"
-                mode="inline"
-                items={items}
-                openKeys={openKeys}
-                selectedKeys={selectedKeys}
-                onSelect={(e) => {
-                  setSelectedKeys(e.selectedKeys);
-                  filterSelectKey(e.selectedKeys[0]);
-                }}
-                onOpenChange={(e) => {
-                  setOpenKeys([e[e.length > 0 ? e.length - 1 : 0]]);
-                }}
-                inlineCollapsed={collapsed}
-              />
-            </div>
-          )}
-
-          <div className="w-[calc(100%-15rem)] flex-1 bg-[#F5F7FB] p-1">
-            <Outlet />
+      <main className="grow flex overflow-hidden">
+        {location.pathname !== "/none" && (
+          <div
+            className={`overflow-y-auto no-scrollbar box-border py-12 ${
+              !collapsed && "!min-w-60 w-60"
+            }`}
+          >
+            <Menu
+              className="select-none"
+              mode="inline"
+              items={items}
+              openKeys={openKeys}
+              selectedKeys={selectedKeys}
+              onSelect={(e) => {
+                setSelectedKeys(e.selectedKeys);
+                filterSelectKey(e.selectedKeys[0]);
+              }}
+              onOpenChange={(e) => {
+                setOpenKeys([e[e.length > 0 ? e.length - 1 : 0]]);
+              }}
+              inlineCollapsed={collapsed}
+            />
           </div>
-        </main>
-      )}
+        )}
+
+        <div className="w-[calc(100%-15rem)] flex-1 bg-[#F5F7FB] p-1">
+          <Outlet />
+        </div>
+      </main>
 
       <Modal
         className="abc"
