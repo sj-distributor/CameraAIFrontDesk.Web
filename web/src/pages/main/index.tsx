@@ -1,10 +1,19 @@
 import { KeyOutlined, LogoutOutlined, SwapOutlined } from "@ant-design/icons";
-import { Button, ConfigProvider, Input, Menu, MenuProps, Modal } from "antd";
+import {
+  Button,
+  ConfigProvider,
+  Input,
+  Menu,
+  MenuProps,
+  Modal,
+  Spin,
+} from "antd";
 import { Link, Outlet } from "react-router-dom";
 
 import KEYS from "@/i18n/keys/main-page";
 
 import { useAction } from "./hook";
+import { useEffect, useState } from "react";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -33,6 +42,20 @@ export const Main = () => {
     setDelModalStatus,
     submitModifyPassword,
   } = useAction();
+
+  const myIframe = document.getElementById("myIframe");
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (myIframe) {
+      const token = localStorage.getItem((window as any).appsettings?.tokenKey);
+      (myIframe as any).contentWindow.postMessage(
+        token,
+        (window as any).appsettings?.cameraAIBackstageDomain
+      );
+    }
+  }, [myIframe]);
 
   const items: MenuItem[] = [
     {
@@ -220,6 +243,11 @@ export const Main = () => {
             onClick={() => handleOnJump()}
           />
 
+          <iframe
+            id="myIframe"
+            src={(window as any).appsettings?.cameraAIBackstageDomain}
+            style={{ display: "none" }}
+          />
           <div className="flex h-full items-center">
             <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-2">
               <img
@@ -252,23 +280,16 @@ export const Main = () => {
                       name: "切換後台",
                       component: <SwapOutlined className="text-sm" />,
                       function: () => {
-                        var myIframe = document.getElementById("myIframe");
+                        // setLoading(true);
                         if (myIframe) {
-                          myIframe.onload = function () {
-                            const token = localStorage.getItem(
-                              (window as any).appsettings?.tokenKey
-                            );
-                            (myIframe as any).contentWindow.postMessage(
-                              token,
-                              (window as any).appsettings
-                                ?.cameraAIBackstageDomain
-                            );
-                            window.open(
-                              (window as any).appsettings
-                                ?.cameraAIBackstageDomain,
-                              "_blank"
-                            );
-                          };
+                          // myIframe.onload = function () {
+                          // setLoading(false);
+                          window.open(
+                            (window as any).appsettings
+                              ?.cameraAIBackstageDomain,
+                            "_blank"
+                          );
+                          // };
                         }
                       },
                     },
@@ -299,45 +320,44 @@ export const Main = () => {
                   ))}
                 </div>
               )}
-              <iframe
-                id="myIframe"
-                src={(window as any).appsettings?.cameraAIBackstageDomain}
-                style={{ display: "none" }}
-              />
             </div>
           </div>
         </div>
       </div>
 
-      <main className="grow flex overflow-hidden">
-        {location.pathname !== "/none" && (
-          <div
-            className={`overflow-y-auto no-scrollbar box-border py-12 ${
-              !collapsed && "!min-w-60 w-60"
-            }`}
-          >
-            <Menu
-              className="select-none"
-              mode="inline"
-              items={items}
-              openKeys={openKeys}
-              selectedKeys={selectedKeys}
-              onSelect={(e) => {
-                setSelectedKeys(e.selectedKeys);
-                filterSelectKey(e.selectedKeys[0]);
-              }}
-              onOpenChange={(e) => {
-                setOpenKeys([e[e.length > 0 ? e.length - 1 : 0]]);
-              }}
-              inlineCollapsed={collapsed}
-            />
-          </div>
-        )}
+      {loading ? (
+        <Spin />
+      ) : (
+        <main className="grow flex overflow-hidden">
+          {location.pathname !== "/none" && (
+            <div
+              className={`overflow-y-auto no-scrollbar box-border py-12 ${
+                !collapsed && "!min-w-60 w-60"
+              }`}
+            >
+              <Menu
+                className="select-none"
+                mode="inline"
+                items={items}
+                openKeys={openKeys}
+                selectedKeys={selectedKeys}
+                onSelect={(e) => {
+                  setSelectedKeys(e.selectedKeys);
+                  filterSelectKey(e.selectedKeys[0]);
+                }}
+                onOpenChange={(e) => {
+                  setOpenKeys([e[e.length > 0 ? e.length - 1 : 0]]);
+                }}
+                inlineCollapsed={collapsed}
+              />
+            </div>
+          )}
 
-        <div className="w-[calc(100%-15rem)] flex-1 bg-[#F5F7FB] p-1">
-          <Outlet />
-        </div>
-      </main>
+          <div className="w-[calc(100%-15rem)] flex-1 bg-[#F5F7FB] p-1">
+            <Outlet />
+          </div>
+        </main>
+      )}
 
       <Modal
         className="abc"
