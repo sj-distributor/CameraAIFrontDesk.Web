@@ -255,7 +255,7 @@ export const Main = () => {
                         var myIframe = document.getElementById("myIframe");
                         if (myIframe) {
                           var data = { data: 1 };
-                          myIframe.contentWindow.postMessage(
+                          (myIframe as any).contentWindow.postMessage(
                             JSON.stringify(data),
                             (window as any).appsettings.cameraAIBackstageDomain
                           );
