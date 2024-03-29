@@ -257,10 +257,11 @@ export const Main = () => {
                         // )}; path=${
                         //   (window as any).appsettings.cameraAIBackstageDomain
                         // }`;
-
-                        document.cookie = `param1=翠西翠西翠西; path=${
+                        const value = `param1=翠西翠西翠西; path=${
                           (window as any).appsettings.cameraAIBackstageDomain
                         }`;
+                        document.cookie = value;
+                        console.log(value, document.cookie);
 
                         // window.location.href = "http://localhost:3001/";
                         window.open(
