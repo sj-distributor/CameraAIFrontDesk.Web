@@ -37,6 +37,7 @@ export const Main = () => {
     status,
     location,
     openKeys,
+    userName,
     language,
     collapsed,
     passwordDto,
@@ -278,7 +279,7 @@ export const Main = () => {
                 }}
                 size="default"
               >
-                {"".charAt(0)}
+                {userName.charAt(0)}
               </Avatar>
             </div>
 
@@ -288,7 +289,9 @@ export const Main = () => {
               onMouseLeave={() => setStatus(false)}
             >
               <div className="flex relative items-center space-x-1 cursor-pointer w-[5.5rem] justify-center">
-                <div className="text-sm relative select-none w-16 text-center truncate" />
+                <div className="text-sm relative select-none w-16 text-center truncate">
+                  {userName}
+                </div>
                 <img
                   src={chevronDownImg}
                   alt=""

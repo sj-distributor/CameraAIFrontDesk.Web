@@ -103,6 +103,8 @@ export const AuthProvider = (props: { children: ReactElement }) => {
 
     const { count, rolePermissionData } = await GetMineRoleList();
 
+    setIsGetPermission(true);
+
     setMineRoles({
       count: count ?? 0,
       rolePermissionData: rolePermissionData ?? [],

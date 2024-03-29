@@ -15,6 +15,7 @@ export const useAction = () => {
     signOut,
     navigate,
     changeLanguage,
+    userName,
     location,
     language,
     pagePermission,
@@ -107,6 +108,7 @@ export const useAction = () => {
   return {
     t,
     status,
+    userName,
     language,
     handleOnJump,
     delModalStatus,
