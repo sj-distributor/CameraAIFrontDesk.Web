@@ -19,6 +19,7 @@ export default {
   },
   ch: {
     [KEYS.SELECT_DATE_TIME]: "選擇日期時間：",
+    [KEYS.ALERT_SELECT]: "預警篩選：",
     [KEYS.EXPORT]: "導出",
     [KEYS.DEVICE]: "設備名稱",
     [KEYS.ALERT_TYPE]: "預警類型",
