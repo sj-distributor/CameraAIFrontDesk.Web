@@ -135,7 +135,7 @@ export const Main = () => {
               </Link>
             ),
             icon: !collapsed ? (
-              <div className="h-full bg-[#E9EDF2] py-2">
+              <div className="h-full bg-[#E9EDF2] py-2 navigationIconBox">
                 {selectedKeys[0] === "/warning" && (
                   <div className="w-full h-full relative flex items-center justify-center">
                     <div className="h-full w-[0.125rem] bg-[#2866F1] absolute" />
@@ -155,7 +155,7 @@ export const Main = () => {
               </Link>
             ),
             icon: !collapsed ? (
-              <div className="h-full bg-[#E9EDF2] py-2">
+              <div className="h-full bg-[#E9EDF2] py-2 navigationIconBox">
                 {selectedKeys[0] === "/feedback" && (
                   <div className="w-full h-full relative flex items-center justify-center">
                     <div className="h-full w-[0.125rem] bg-[#2866F1] absolute" />

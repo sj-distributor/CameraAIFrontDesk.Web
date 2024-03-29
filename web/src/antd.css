@@ -75,9 +75,7 @@
   }
 }
 
-:where(.css-dev-only-do-not-override-42nv3w).ant-menu
-  .ant-menu-item
-  .ant-menu-item-icon {
+.navigationIconBox {
   min-width: 0.125rem !important;
 }
 
