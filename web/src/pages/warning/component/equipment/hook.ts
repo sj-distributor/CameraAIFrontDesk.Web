@@ -56,8 +56,12 @@ export const useAction = () => {
           equipmentCode: playDetailData.equipmentCode,
           monitorTypes: palybackData.monitorTypes,
           locationId: playDetailData.locationId,
-          startTime: palybackData.startTime,
-          endTime: palybackData.endTime,
+          startTime: dayjs
+            .utc(palybackData.startTime)
+            .format("YYYY_MM_DD_HH_mm_ss"),
+          endTime: dayjs
+            .utc(palybackData.endTime)
+            .format("YYYY_MM_DD_HH_mm_ss"),
         };
 
         PostGeneratePlayBack(data)
