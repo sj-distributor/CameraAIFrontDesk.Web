@@ -266,7 +266,7 @@ export const FullScreen = () => {
                 [ICameraAiMonitorType.Vehicles]: [],
               },
             }}
-            videoUrl={"http://camera-ai-realtime.wiltechs.com:8080/live/1.flv"}
+            videoUrl={"http://47.254.86.185:8080/live/1.flv"}
           />
         )}
       </div>

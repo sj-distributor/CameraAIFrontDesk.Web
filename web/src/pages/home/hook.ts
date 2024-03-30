@@ -132,7 +132,7 @@ export const useAction = () => {
       equipmentName: item?.equipmentName ?? "",
     }));
     // setNowStream("http://camera-ai-realtime.wiltechs.com:8080/1800-1/1201.flv");
-    setNowStream("http://camera-ai-realtime.wiltechs.com:8080/live/1.flv");
+    setNowStream("http://47.254.86.185:8080/live/1.flv");
     // if (!isGenerate) {
     //   // 停止推流
     //   if (nowStream) {
