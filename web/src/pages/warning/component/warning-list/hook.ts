@@ -81,22 +81,22 @@ export const useAction = () => {
     window.dispatchEvent(e);
   };
 
-  useEffect(() => {
+  const onChangePage = (page: number, pageSize: number) => {
+    updateData("PageIndex", page);
+    updateData("PageSize", pageSize);
     loadData();
-  }, [
-    dto.PageIndex,
-    dto.PageSize,
-    status,
-    selectValues,
-    timeDto,
-    searchKeyWord,
-  ]);
+  };
+
+  useEffect(() => {
+    updateData("PageIndex", 1);
+    loadData();
+  }, [status, selectValues, timeDto, searchKeyWord]);
 
   return {
     t,
     dto,
     navigate,
-    updateData,
     handleScroll,
+    onChangePage,
   };
 };

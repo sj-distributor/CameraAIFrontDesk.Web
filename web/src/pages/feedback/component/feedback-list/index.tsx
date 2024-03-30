@@ -7,7 +7,7 @@ import KEYS from "@/i18n/keys/feedback-list";
 import { useAction } from "./hook";
 
 export const FeedbackList = () => {
-  const { t, dto, updateData, handleScroll, navigate } = useAction();
+  const { t, dto, handleScroll, navigate, onChangePage } = useAction();
 
   const columns = [
     {
@@ -174,8 +174,7 @@ export const FeedbackList = () => {
         showQuickJumper={true}
         hideOnSinglePage={false}
         onChange={(page, pageSize) => {
-          updateData("PageIndex", page);
-          updateData("PageSize", pageSize);
+          onChangePage(page, pageSize);
         }}
         showTotal={(total) => (
           <div>

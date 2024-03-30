@@ -71,9 +71,16 @@ export const useAction = () => {
     window.dispatchEvent(e);
   };
 
-  useEffect(() => {
+  const onChangePage = (page: number, pageSize: number) => {
+    updateData("PageIndex", page);
+    updateData("PageSize", pageSize);
     loadData();
-  }, [dto.PageIndex, dto.PageSize, selectValues, timeDto]);
+  };
 
-  return { t, dto, updateData, handleScroll, navigate };
+  useEffect(() => {
+    updateData("PageIndex", 1);
+    loadData();
+  }, [selectValues, timeDto]);
+
+  return { t, dto, handleScroll, navigate, onChangePage };
 };
