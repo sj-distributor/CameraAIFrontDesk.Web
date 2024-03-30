@@ -37,7 +37,7 @@ const statusComponent = (
 };
 
 export const WarningList = () => {
-  const { t, dto, navigate, updateData, handleScroll } = useAction();
+  const { t, dto, navigate, handleScroll, onChangePage } = useAction();
 
   const columns = [
     {
@@ -218,8 +218,7 @@ export const WarningList = () => {
         showQuickJumper={true}
         hideOnSinglePage={false}
         onChange={(page, pageSize) => {
-          updateData("PageIndex", page);
-          updateData("PageSize", pageSize);
+          onChangePage(page, pageSize);
         }}
         showTotal={(total) => (
           <div>
