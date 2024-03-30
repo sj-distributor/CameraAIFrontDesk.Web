@@ -1,6 +1,6 @@
 // import { FliterWarningComponent } from "@/components/fliterWarning";
 import { DownOutlined } from "@ant-design/icons";
-import { Checkbox, Popconfirm } from "antd";
+import { Checkbox, Popconfirm, message } from "antd";
 
 import { ScreenType } from "@/entity/screen-type";
 
@@ -13,12 +13,14 @@ export const MultiScreen = () => {
     layoutMode,
     updateLayoutMode,
     videoItemHeight,
-    videoLinkArr,
     videoRefs,
     endSelectValues,
     onTypeClick,
     typeList,
     onSave,
+    numberaa,
+    navigateToFullScreem,
+    errorEquipmentId,
   } = useAction();
 
   return (
@@ -85,25 +87,39 @@ export const MultiScreen = () => {
           } gap-1`}
           ref={videoBodyRef}
         >
-          {videoLinkArr.map((item, index) => (
-            <div
-              className={`${item && "bg-black"} rounded-md`}
-              style={{ height: videoItemHeight + "px" }}
-              key={index}
-            >
-              {item ? (
-                <video
-                  className="w-full h-full object-fill rounded-lg"
-                  ref={videoRefs[index]}
-                  controls
-                >
-                  <source src={item} />
-                </video>
-              ) : (
-                <div className="w-full h-full object-fill rounded-lg bg-black" />
-              )}
-            </div>
-          ))}
+          {Array.from({ length: numberaa }, (_, index) => index + 1).map(
+            (item, index) => (
+              <div
+                className={`${
+                  item && "bg-black"
+                } rounded-md flex justify-center items-center`}
+                style={{ height: videoItemHeight + "px" }}
+                key={index}
+              >
+                {errorEquipmentId.includes(index) ? (
+                  <div className="text-white">当前视频出现问题，无法播放</div>
+                ) : (
+                  <video
+                    id={`video${index}`}
+                    ref={videoRefs[index]}
+                    className="w-full h-full object-fill rounded-lg"
+                    onClick={() => {
+                      const videoElement = videoRefs[index].current;
+
+                      const hasSrcAttribute =
+                        videoElement?.getAttribute("src") !== null;
+                      if (
+                        hasSrcAttribute &&
+                        !errorEquipmentId.includes(index)
+                      ) {
+                        navigateToFullScreem(index);
+                      }
+                    }}
+                  />
+                )}
+              </div>
+            )
+          )}
         </div>
       </div>
     </div>

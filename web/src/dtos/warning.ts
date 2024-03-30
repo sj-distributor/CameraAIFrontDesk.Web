@@ -12,6 +12,7 @@ export interface IPostPlayBackGenerateRequest {
   startTime: string;
   endTime: string;
   taskId: string;
+  monitorTypes?: number[];
 }
 
 export interface IPlayDetailDataDto {

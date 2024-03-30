@@ -189,7 +189,10 @@ export const useAction = () => {
 
             const data = getGenerateParams(resData);
 
-            PostPlaybackGenerateApi(data)
+            PostPlaybackGenerateApi({
+              ...data,
+              monitorTypes: [res.record.monitorType],
+            })
               .then(() => {
                 setIsFirstGenerate(true);
                 continueExecution.current = true;
@@ -207,6 +210,12 @@ export const useAction = () => {
     }
   };
 
+  useEffect(() => {
+    return () => {
+      continueExecution.current = false;
+    };
+  }, []);
+
   /* 獲取生成請求的參數 */
   const getGenerateParams = (replayDetailDto: any) => {
     const data: IPostPlayBackGenerateRequest = {
@@ -214,18 +223,16 @@ export const useAction = () => {
       equipmentCode: replayDetailDto.equipmentCode ?? "",
       startTime: dayjs
         .utc(replayDetailDto.startTime)
-        .format("YYYY-MM-DDTHH:mm:ssZ"),
+        .format("YYYY_MM_DD_HH_mm_ss"),
       endTime: dayjs
         .utc(replayDetailDto.startTime)
         .add(replayDetailDto.duration ?? 0, "second")
-        .format("YYYY-MM-DDTHH:mm:ssZ"),
+        .format("YYYY_MM_DD_HH_mm_ss"),
       taskId: replayDetailDto.taskId ?? "",
     };
 
     return data;
   };
-
-  let i = 0;
 
   function executeWithDelay() {
     if (warningId !== undefined) {
@@ -233,19 +240,13 @@ export const useAction = () => {
 
       GetRecordDetailApi({ RecordId: warningId })
         .then((res) => {
-          i++;
-
           const record = res.record;
 
-          if (
-            (record && record.playbackStatus === IPlayBackStatus.Success) ||
-            i > 0
-          ) {
-            i = 0;
-            setSuccessUrl(
-              "https://video-builder.oss-cn-hongkong.aliyuncs.com/video/test-001.mp4"
-            );
-            // setSuccessUrl(record.replayUrl);
+          if (record && record.playbackStatus === IPlayBackStatus.Success) {
+            // setSuccessUrl(
+            //   "https://video-builder.oss-cn-hongkong.aliyuncs.com/video/test-001.mp4"
+            // );
+            setSuccessUrl(record.replayUrl);
             setIsFirstGenerate(false);
             setIsShow(true);
             continueExecution.current = false;
