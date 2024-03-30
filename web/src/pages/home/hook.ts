@@ -15,15 +15,15 @@ import {
   GetCameraList,
   GetEquipmentOnlineList,
   GetRecordTop5CountList,
-  PostHomeStream,
+  // PostHomeStream,
 } from "@/services/home";
-import { IRealtimeGenerateRequest } from "@/dtos/monitor";
+// import { IRealtimeGenerateRequest } from "@/dtos/monitor";
 
 type EChartsOption = echarts.EChartsOption;
 
 export const useAction = () => {
-  const { t, message } = useAuth();
-
+  const { t } = useAuth();
+  // message
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const [volume, setVolume] = useState<number>(50);
@@ -124,7 +124,7 @@ export const useAction = () => {
   ) => {
     // setIsGenerate(false);
     // setIsFind(true);
-    // console.log(locationId, regionId, cameraId, item);
+    console.log(locationId, regionId, cameraId, item);
     setIsGenerate(false);
     setIsFind(true);
     setClickCamera((prev) => ({
