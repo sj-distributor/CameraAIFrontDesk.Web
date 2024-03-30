@@ -234,7 +234,7 @@ export const Home = () => {
                       {item?.online}
                     </div>
                     <div className="text-lg pl-4 py-4 truncate border-solid border-b-[.0625rem]">
-                      {item?.total ?? 0 - item?.online ?? 0}
+                      {(item?.total ?? 0) - (item?.online ?? 0)}
                     </div>
                   </React.Fragment>
                 ))}
