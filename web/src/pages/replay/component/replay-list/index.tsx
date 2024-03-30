@@ -33,7 +33,7 @@ export const ReplayList = () => {
                 {replayDto.replays.map((item, index) => (
                   <div key={index} className="select-none">
                     <div
-                      className="bg-red-200 aspect-[4/2.25] w-full rounded-xl overflow-hidden flex flex-col"
+                      className="aspect-[4/2.25] w-full rounded-xl overflow-hidden flex flex-col"
                       onClick={() => {
                         onJumpDetail(item?.records[0]?.correlationId ?? "");
                       }}

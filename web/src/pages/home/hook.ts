@@ -15,12 +15,14 @@ import {
   GetCameraList,
   GetEquipmentOnlineList,
   GetRecordTop5CountList,
+  PostHomeStream,
 } from "@/services/home";
+import { IRealtimeGenerateRequest } from "@/dtos/monitor";
 
 type EChartsOption = echarts.EChartsOption;
 
 export const useAction = () => {
-  const { t } = useAuth();
+  const { t, message } = useAuth();
 
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -122,7 +124,7 @@ export const useAction = () => {
   ) => {
     // setIsGenerate(false);
     // setIsFind(true);
-    console.log(locationId, regionId, cameraId, item);
+    // console.log(locationId, regionId, cameraId, item);
     setIsGenerate(false);
     setIsFind(true);
     setClickCamera((prev) => ({
@@ -394,7 +396,7 @@ export const useAction = () => {
       .finally(() => {
         setTimeout(() => {
           getCameraList();
-        }, 10000);
+        }, 5000);
       });
   };
 
@@ -403,6 +405,12 @@ export const useAction = () => {
 
     return () => {
       continueExecution.current = false;
+
+      mpegtsPlayerPlayer?.current?.unload();
+      mpegtsPlayerPlayer?.current?.pause();
+      mpegtsPlayerPlayer?.current?.detachMediaElement();
+      mpegtsPlayerPlayer?.current?.destroy();
+      mpegtsPlayerPlayer.current = null;
 
       clickCameraCameraRef.current.taskId &&
         clickCameraCameraRef.current.locationId &&
