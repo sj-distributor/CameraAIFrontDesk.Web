@@ -95,13 +95,11 @@ export const Home = () => {
         </div>
         {height && (
           <div
-            className="w-full rounded-lg relative justify-center items-center"
+            className="w-full rounded-lg relative flex justify-center items-center"
             style={{ height: `${height}px` }}
           >
             {errorFlv ? (
-              <div className="text-center mt-[10rem]">
-                当前视频出现问题，无法播放
-              </div>
+              <div className="">当前视频出现问题，无法播放</div>
             ) : (
               <video
                 id="homeVideo"

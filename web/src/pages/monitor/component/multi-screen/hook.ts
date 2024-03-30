@@ -71,13 +71,6 @@ export const useAction = () => {
 
   const [data, setData] = useState<string[]>([]);
 
-  // const [number,setNumber] = useState<number>(0)
-
-  // const [dto, setDto] = useState({
-  //   count: 0,
-  //   flv: [],
-  // });
-
   const typeList = [
     {
       label: "識別人員",
@@ -216,8 +209,6 @@ export const useAction = () => {
     }
   };
 
-  let i = 0;
-
   const change = (flv: string, index: number) => {
     if (flv) {
       if (Mpegts.isSupported()) {
@@ -267,8 +258,6 @@ export const useAction = () => {
       TypeLabel: ICameraAiEquipmentTypeLabel.Camera,
     })
       .then((res) => {
-        i++;
-
         const tempSuccessEquipments = res.equipments.filter(
           (item) =>
             item.status === IPlayBackStatus.Success && item.liveStreaming

@@ -183,14 +183,7 @@ export const VideoPlayback = (props: {
   };
 
   useEffect(() => {
-    console.log(videoUrl, "wqedqwdqwd");
-  }, [videoUrl]);
-
-  useEffect(() => {
-    console.log(videoUrl, isLive);
     if (videoUrl && isLive) {
-      console.log(121212);
-
       if (Mpegts.isSupported()) {
         const videoElement = videoRef.current;
 
