@@ -240,7 +240,7 @@ export const useAction = () => {
           player.load();
           player.play();
 
-          player.on(Mpegts.Events.ERROR, (...e) => {
+          player.on(Mpegts.Events.ERROR, () => {
             setErrorEquipmentId((prev) => [...prev, index]);
           });
         }

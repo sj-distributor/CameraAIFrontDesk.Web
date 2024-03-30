@@ -1,6 +1,6 @@
 // import { FliterWarningComponent } from "@/components/fliterWarning";
 import { DownOutlined } from "@ant-design/icons";
-import { Checkbox, Popconfirm, message } from "antd";
+import { Checkbox, Popconfirm } from "antd";
 
 import { ScreenType } from "@/entity/screen-type";
 

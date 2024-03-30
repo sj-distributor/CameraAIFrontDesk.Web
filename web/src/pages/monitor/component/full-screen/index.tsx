@@ -1,5 +1,4 @@
 import { Button, Checkbox, Popconfirm, Spin } from "antd";
-import { useEffect } from "react";
 
 import { useAction as checkBoxUseAction } from "@/components/check-box/hook";
 import { ICameraAiMonitorType } from "@/dtos/default";

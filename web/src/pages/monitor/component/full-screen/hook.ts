@@ -1,5 +1,4 @@
 import { useUpdateEffect } from "ahooks";
-import Mpegts from "mpegts.js";
 import { clone } from "ramda";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -41,8 +40,6 @@ export const useAction = () => {
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
   const [successUrl, setSuccessUrl] = useState<string>("");
-
-  const mpegtsPlayerPlayer = useRef<Mpegts.Player | null>(null);
 
   const [isOpenExportPlaybackModal, setIsOpenExportPlaybackModal] =
     useState<boolean>(false);

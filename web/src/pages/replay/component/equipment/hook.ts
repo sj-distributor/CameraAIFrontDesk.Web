@@ -16,7 +16,6 @@ import {
   GetGenerateUrl,
   GetReplayDetail,
   PostGeneratePlayBack,
-  PostGenerateRealtime,
   PostPlayBackGenerate,
 } from "@/services/replay";
 
