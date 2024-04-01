@@ -445,6 +445,10 @@ export const useAction = () => {
             setNowStream("");
             setIsFind(true);
             setIsGenerate(false);
+            setClickCamera((prev) => ({
+              ...prev,
+              equipmentName: item?.equipmentName ?? "",
+            }));
           }
         });
       }
