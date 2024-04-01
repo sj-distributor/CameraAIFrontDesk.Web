@@ -124,7 +124,7 @@ export const useAction = () => {
     cameraId: number,
     item: ICameraItem
   ) => {
-    // setNowStream("http://camera-ai-realtime.wiltechs.com:8080/1800-1/1201.flv");
+    // setNowStream("http://camera-ai-realtime.wiltechs.com/1800-1/1201.flv");
     // setNowStream("http://47.254.86.185:8080/live/1.flv");
     if (!isGenerate) {
       // 停止推流
@@ -171,6 +171,7 @@ export const useAction = () => {
           setIsGenerate(true);
           setNowStream("");
           setIsFind(false);
+          setErrorFlv(false);
         })
         .catch(() => {
           message.error("获取视频流失败");
@@ -434,6 +435,14 @@ export const useAction = () => {
             !isFind
           ) {
             setNowStream(item.liveStreaming);
+            setIsFind(true);
+            setIsGenerate(false);
+          } else if (
+            item.id === clickCamera.cameraId &&
+            item.status === IPlayBackStatus.Failed &&
+            !isFind
+          ) {
+            setNowStream("");
             setIsFind(true);
             setIsGenerate(false);
           }
