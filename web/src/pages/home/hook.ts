@@ -15,15 +15,15 @@ import {
   GetCameraList,
   GetEquipmentOnlineList,
   GetRecordTop5CountList,
-  // PostHomeStream,
+  PostHomeStream,
 } from "@/services/home";
-// import { IRealtimeGenerateRequest } from "@/dtos/monitor";
+import { IRealtimeGenerateRequest } from "@/dtos/monitor";
 
 type EChartsOption = echarts.EChartsOption;
 
 export const useAction = () => {
-  const { t } = useAuth();
-  // message
+  const { t, message } = useAuth();
+
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const [volume, setVolume] = useState<number>(50);
@@ -50,6 +50,8 @@ export const useAction = () => {
   const [isFind, setIsFind] = useState<boolean>(false);
 
   const [nowStream, setNowStream] = useState<string>("");
+
+  const [errorFlv, setErrorFlv] = useState<boolean>(false);
 
   const [clickCamera, setClickCamera] = useState<{
     locationId: string;
@@ -122,77 +124,69 @@ export const useAction = () => {
     cameraId: number,
     item: ICameraItem
   ) => {
-    // setIsGenerate(false);
-    // setIsFind(true);
-    console.log(locationId, regionId, cameraId, item);
-    setIsGenerate(false);
-    setIsFind(true);
-    setClickCamera((prev) => ({
-      ...prev,
-      equipmentName: item?.equipmentName ?? "",
-    }));
-    // setNowStream("http://camera-ai-realtime.wiltechs.com:8080/1800-1/1201.flv");
-    setNowStream("http://47.254.86.185:8080/live/1.flv");
-    // if (!isGenerate) {
-    //   // 停止推流
-    //   if (nowStream) {
-    //     PostStopRealtime({
-    //       stopList: [
-    //         {
-    //           taskId: clickCamera.taskId,
-    //           locationId: clickCamera.locationId,
-    //           equipmentCode: clickCamera.equipmentCode,
-    //         },
-    //       ],
-    //     })
-    //       .then(() => {
-    //         mpegtsPlayerPlayer?.current?.unload();
-    //         mpegtsPlayerPlayer?.current?.pause();
-    //         mpegtsPlayerPlayer?.current?.detachMediaElement();
-    //         mpegtsPlayerPlayer?.current?.destroy();
-    //         mpegtsPlayerPlayer.current = null;
-    //       })
-    //       .catch(() => {});
-    //   }
-    //   setClickCamera({
-    //     locationId,
-    //     equipmentCode: item?.equipmentCode ?? "",
-    //     taskId: item?.taskId ?? "",
-    //     regionId: regionId,
-    //     cameraId: cameraId,
-    //     equipmentName: item?.equipmentName ?? "",
-    //   });
-    //   const data: IRealtimeGenerateRequest = {
-    //     lives: [
-    //       {
-    //         locationId: locationId ?? "",
-    //         equipmentCode: item?.equipmentCode ?? "",
-    //         taskId: item?.taskId ?? "",
-    //         monitorTypes: [],
-    //       },
-    //     ],
-    //   };
+    // setNowStream("http://camera-ai-realtime.wiltechs.com/1800-1/1201.flv");
+    // setNowStream("http://47.254.86.185:8080/live/1.flv");
+    if (!isGenerate) {
+      // 停止推流
+      if (nowStream) {
+        PostStopRealtime({
+          stopList: [
+            {
+              taskId: clickCamera.taskId,
+              locationId: clickCamera.locationId,
+              equipmentCode: clickCamera.equipmentCode,
+            },
+          ],
+        })
+          .then(() => {
+            mpegtsPlayerPlayer?.current?.unload();
+            mpegtsPlayerPlayer?.current?.pause();
+            mpegtsPlayerPlayer?.current?.detachMediaElement();
+            mpegtsPlayerPlayer?.current?.destroy();
+            mpegtsPlayerPlayer.current = null;
+          })
+          .catch(() => {});
+      }
+      setClickCamera({
+        locationId,
+        equipmentCode: item?.equipmentCode ?? "",
+        taskId: item?.taskId ?? "",
+        regionId: regionId,
+        cameraId: cameraId,
+        equipmentName: item?.equipmentName ?? "",
+      });
+      const data: IRealtimeGenerateRequest = {
+        lives: [
+          {
+            locationId: locationId ?? "",
+            equipmentCode: item?.equipmentCode ?? "",
+            taskId: item?.taskId ?? "",
+            monitorTypes: [],
+          },
+        ],
+      };
 
-    //   PostHomeStream(data)
-    //     .then(() => {
-    //       setIsGenerate(true);
-    //       setNowStream("");
-    //       setIsFind(false);
-    //     })
-    //     .catch(() => {
-    //       message.error("获取视频流失败");
-    //       setClickCamera({
-    //         locationId: "",
-    //         equipmentCode: "",
-    //         taskId: "",
-    //         regionId: 0,
-    //         cameraId: 0,
-    //         equipmentName: "",
-    //       });
-    //     });
-    // } else {
-    //   message.info("正在獲取視頻流，請勿切換攝像頭");
-    // }
+      PostHomeStream(data)
+        .then(() => {
+          setIsGenerate(true);
+          setNowStream("");
+          setIsFind(false);
+          setErrorFlv(false);
+        })
+        .catch(() => {
+          message.error("获取视频流失败");
+          setClickCamera({
+            locationId: "",
+            equipmentCode: "",
+            taskId: "",
+            regionId: 0,
+            cameraId: 0,
+            equipmentName: "",
+          });
+        });
+    } else {
+      message.info("正在獲取視頻流，請勿切換攝像頭");
+    }
   };
 
   const getHeight = () => {
@@ -443,6 +437,18 @@ export const useAction = () => {
             setNowStream(item.liveStreaming);
             setIsFind(true);
             setIsGenerate(false);
+          } else if (
+            item.id === clickCamera.cameraId &&
+            item.status === IPlayBackStatus.Failed &&
+            !isFind
+          ) {
+            setNowStream("");
+            setIsFind(true);
+            setIsGenerate(false);
+            setClickCamera((prev) => ({
+              ...prev,
+              equipmentName: item?.equipmentName ?? "",
+            }));
           }
         });
       }
@@ -481,6 +487,10 @@ export const useAction = () => {
           player.attachMediaElement(videoElement! as HTMLMediaElement);
           player.load();
           player.play();
+
+          player.on(Mpegts.Events.ERROR, () => {
+            setErrorFlv(true);
+          });
 
           const handleTimeUpdate = () => {
             if (videoRef.current?.currentTime) {
@@ -522,6 +532,7 @@ export const useAction = () => {
     clickCamera,
     videoDuration,
     isShow,
+    errorFlv,
     setClickCamera,
     videoPlayback,
     getCameraStream,

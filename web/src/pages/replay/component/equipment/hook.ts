@@ -16,7 +16,6 @@ import {
   GetGenerateUrl,
   GetReplayDetail,
   PostGeneratePlayBack,
-  // PostGenerateRealtime,
   PostPlayBackGenerate,
 } from "@/services/replay";
 
@@ -192,22 +191,6 @@ export const useAction = () => {
       !isFirstGenerate
     ) {
       // 生成参数
-      // const data: IPlayBackGenerateRequest = {
-      //   locationId: replayDetailDto.equipment.locationId,
-      //   equipmentCode: replayDetailDto.equipment.equipmentCode,
-      //   startTime: dayjs
-      //     .utc(replayDetailDto.totalRecord.occurrenceTime)
-      //     .format("YYYY-MM-DDTHH:mm:ssZ"),
-      //   endTime: dayjs
-      //     .utc(replayDetailDto.totalRecord.occurrenceTime)
-      //     .add(replayDetailDto.totalRecord.duration, "second")
-      //     .format("YYYY-MM-DDTHH:mm:ssZ"),
-      //   monitorTypes: Array.from(
-      //     new Set(replayDetailDto.records.map((item) => item.monitorType))
-      //   ),
-      //   taskId: replayDetailDto.totalRecord.replayTaskId ?? "",
-      // };
-
       const data = getGenerateParams(replayDetailDto);
 
       const recordStatusArray = Array.from(
@@ -290,8 +273,6 @@ export const useAction = () => {
     }
   }, [isFirstGenerate]);
 
-  let i = 0;
-
   function executeWithDelay() {
     if (!continueExecution.current) return;
 
@@ -299,21 +280,17 @@ export const useAction = () => {
       .then((res) => {
         const totalRecord = res.totalRecord;
 
-        i++;
-
         if (
-          (totalRecord &&
-            totalRecord.playbackStatus === IPlayBackStatus.Success) ||
-          i > 0
+          totalRecord &&
+          totalRecord.playbackStatus === IPlayBackStatus.Success
         ) {
-          // setSuccessUrl(totalRecord.replayUrl);
+          setSuccessUrl(totalRecord.replayUrl);
           setIsSuccess(true);
           setIsFirstGenerate(false);
-          setSuccessUrl(
-            "https://video-builder.oss-cn-hongkong.aliyuncs.com/video/test-001.mp4"
-          );
+          // setSuccessUrl(
+          //   "https://video-builder.oss-cn-hongkong.aliyuncs.com/video/test-001.mp4"
+          // );
           continueExecution.current = false;
-          i = 0;
 
           return;
         } else if (
@@ -366,8 +343,12 @@ export const useAction = () => {
           equipmentCode,
           monitorTypes,
           locationId,
-          startTime: palyBackDate.startTime,
-          endTime: palyBackDate.endTime,
+          startTime: dayjs
+            .utc(palyBackDate.startTime)
+            .format("YYYY_MM_DD_HH_mm_ss"),
+          endTime: dayjs
+            .utc(palyBackDate.endTime)
+            .format("YYYY_MM_DD_HH_mm_ss"),
         };
 
         PostGeneratePlayBack(data)

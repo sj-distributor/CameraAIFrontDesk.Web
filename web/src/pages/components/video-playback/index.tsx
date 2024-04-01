@@ -74,6 +74,8 @@ export const VideoPlayback = (props: {
 
   const mpegtsPlayerPlayer = useRef<Mpegts.Player | null>(null);
 
+  const [isErrorFlv, setIsErrorFlv] = useState<boolean>(false);
+
   const [timeAxisList, setTimeAxisList] = useState<
     {
       timeList: string[][];
@@ -209,7 +211,11 @@ export const VideoPlayback = (props: {
         if (videoElement) {
           player.attachMediaElement(videoElement! as HTMLMediaElement);
           player.load();
-          // player.play();
+          player.play();
+
+          player.on(Mpegts.Events.ERROR, () => {
+            setIsErrorFlv(true);
+          });
 
           const handleTimeUpdate = () => {
             if (videoRef.current?.currentTime) {
@@ -259,7 +265,7 @@ export const VideoPlayback = (props: {
   return (
     <>
       <div className="bg-white h-[calc(100%-130px)] rounded-lg mt-4 relative">
-        {!timeAxisList && (
+        {!timeAxisList && !isErrorFlv && (
           <Spin
             tip={
               isLive
@@ -271,13 +277,20 @@ export const VideoPlayback = (props: {
             <div className="content" />
           </Spin>
         )}
-        <video
-          ref={videoRef}
-          onEnded={() => setIsPalyVideo(false)}
-          onLoadedMetadata={handleLoadedMetadata}
-          className="w-full h-full object-contain"
-          src={isLive ? "" : videoUrl}
-        />
+
+        {isErrorFlv ? (
+          <div className="absolute top-[40%] left-[45%]">
+            当前视频出现问题，无法播放
+          </div>
+        ) : (
+          <video
+            ref={videoRef}
+            onEnded={() => setIsPalyVideo(false)}
+            onLoadedMetadata={handleLoadedMetadata}
+            className="w-full h-full object-contain"
+            src={isLive ? "" : videoUrl}
+          />
+        )}
 
         <div
           className={`bg-[#1f1f3970] h-[4.5rem] absolute bottom-0 w-full flex items-center px-[1.5rem] py-[0.625rem] ${

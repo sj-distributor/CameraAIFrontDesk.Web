@@ -10,6 +10,8 @@ import KEYS from "@/i18n/keys/feedback-list";
 import { useAction } from "./hook";
 import { IFeedbackSearchDataContext } from "./props";
 
+import importImg from "../../assets/import.png";
+
 export const FeedbackSearchDataContext =
   createContext<IFeedbackSearchDataContext>(null!);
 
@@ -52,7 +54,7 @@ export const Feedback = () => {
         </div>
         <div className="flex space-x-6 flex-wrap">
           <Button
-            icon={<img src="../src/assets/import.png" />}
+            icon={<img src={importImg} />}
             className="h-12 w-[6.25rem] text-white bg-[#2866F1] !rounded-[3.5rem] hover:!text-white flex items-center justify-center hover:!bg-[#2866F1]"
             onClick={handleOnExportDebounceFn}
           >

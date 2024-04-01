@@ -25,6 +25,7 @@ export const Home = () => {
     equipmentCountList,
     videoDuration,
     isShow,
+    errorFlv,
     videoPlayback,
     getCameraStream,
     setVolume,
@@ -94,20 +95,24 @@ export const Home = () => {
         </div>
         {height && (
           <div
-            className="w-full rounded-lg relative"
+            className="w-full rounded-lg relative flex justify-center items-center"
             style={{ height: `${height}px` }}
           >
-            <video
-              id="homeVideo"
-              className="w-full h-full object-fill"
-              ref={videoRef}
-            />
+            {errorFlv ? (
+              <div className="">当前视频出现问题，无法播放</div>
+            ) : (
+              <video
+                id="homeVideo"
+                className="w-full h-full object-fill"
+                ref={videoRef}
+              />
+            )}
             {!isShow && (
               <div className="w-full h-full bg-black bg-opacity-100 absolute top-0 flex items-center justify-center">
                 <span className="select-none text-white">等待連接攝像頭</span>
               </div>
             )}
-            {isShow && (
+            {isShow && !errorFlv && (
               <div className="w-[calc(100%-8rem)] box-border h-12 absolute top-[85%] mx-16 rounded-[48px] bg-[#0F0F0F] bg-opacity-60 px-4 flex items-center">
                 <PlayCircleFilled
                   className="text-white text-[2rem] cursor-pointer"
