@@ -174,7 +174,7 @@ export const useAction = () => {
           setErrorFlv(false);
         })
         .catch(() => {
-          message.error("获取视频流失败");
+          message.error("生成視頻流失敗");
           setClickCamera({
             locationId: "",
             equipmentCode: "",
@@ -445,9 +445,11 @@ export const useAction = () => {
             setNowStream("");
             setIsFind(true);
             setIsGenerate(false);
+            setErrorFlv(true);
+            message.warning("生成的視頻流有問題，請重新生成");
             setClickCamera((prev) => ({
               ...prev,
-              equipmentName: item?.equipmentName ?? "",
+              equipmentName: "",
             }));
           }
         });
