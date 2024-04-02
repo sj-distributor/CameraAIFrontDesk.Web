@@ -7,7 +7,6 @@ import { ICameraAiMonitorType } from "@/dtos/default";
 import {
   ICameraAiEquipmentTypeLabel,
   IRegionEquipmentItem,
-  IRegionEquipmentListResponse,
 } from "@/dtos/monitor";
 import { IPlayBackStatus } from "@/dtos/replay";
 import { useAuth } from "@/hooks/use-auth";
@@ -42,12 +41,6 @@ export const useAction = () => {
     number: ScreenCountEnum.FOUR,
     successOrFailFlv: [],
   });
-
-  // const [equipmentDto, setEquipmentDto] =
-  //   useState<IRegionEquipmentListResponse>({
-  //     count: 0,
-  //     equipments: [],
-  //   });
 
   const [equipments, setEquipments] = useState<IRegionEquipmentItem[]>([]);
 
