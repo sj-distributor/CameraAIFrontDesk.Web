@@ -37,15 +37,29 @@ export const useAction = () => {
     }));
   };
 
-  const getRequestPrams = (pageIndex?: number, pageSize?: number) => {
+  const handleScroll = () => {
+    const e = new Event("resize");
+
+    window.dispatchEvent(e);
+  };
+
+  const loadWarningData = async (
+    pageIndex: number,
+    pageSize: number,
+    startTime?: string,
+    endTime?: string,
+    status?: IStatusType,
+    searchKeyWord?: string,
+    selectValues?: number[]
+  ) => {
     const data: IRecordRequest = {
-      PageIndex: pageIndex ?? dto.PageIndex,
-      PageSize: pageSize ?? dto.PageSize,
+      PageIndex: pageIndex,
+      PageSize: pageSize,
     };
 
-    if (timeDto.startTime && timeDto.endTime) {
-      data.StartTime = timeDto.startTime as string;
-      data.EndTime = timeDto.endTime as string;
+    if (startTime && endTime) {
+      data.StartTime = startTime as string;
+      data.EndTime = endTime as string;
     }
 
     if (status !== IStatusType.All) {
@@ -56,40 +70,47 @@ export const useAction = () => {
       data.EquipmentName = searchKeyWord;
     }
 
-    if (selectValues.length > 0) {
+    if (selectValues && selectValues.length > 0) {
       data.MonitorTypes = selectValues;
     }
 
-    return data;
-  };
-
-  const loadData = async () => {
     updateData("loading", true);
-
-    const data = getRequestPrams();
 
     const { count, records } = await GetRecordList(data);
 
     updateData("records", records ?? []);
     updateData("count", count ?? 0);
+    updateData("PageIndex", data.PageIndex);
+    updateData("PageSize", data.PageSize);
     updateData("loading", false);
   };
 
-  const handleScroll = () => {
-    const e = new Event("resize");
+  useEffect(() => {
+    loadWarningData(dto.PageIndex, dto.PageSize);
+  }, []);
 
-    window.dispatchEvent(e);
-  };
-
-  const onChangePage = (page: number, pageSize: number) => {
-    updateData("PageIndex", page);
-    updateData("PageSize", pageSize);
-    loadData();
+  const onChangePage = (pageIndex: number, pageSize: number) => {
+    loadWarningData(
+      pageIndex,
+      pageSize,
+      (timeDto.startTime as string) ?? "",
+      (timeDto.endTime as string) ?? "",
+      status,
+      searchKeyWord,
+      selectValues
+    );
   };
 
   useEffect(() => {
-    updateData("PageIndex", 1);
-    loadData();
+    loadWarningData(
+      1,
+      dto.PageSize,
+      (timeDto.startTime as string) ?? "",
+      (timeDto.endTime as string) ?? "",
+      status,
+      searchKeyWord,
+      selectValues
+    );
   }, [status, selectValues, timeDto, searchKeyWord]);
 
   return {
