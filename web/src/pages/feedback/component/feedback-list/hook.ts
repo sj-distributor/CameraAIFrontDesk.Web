@@ -35,51 +35,66 @@ export const useAction = () => {
     }));
   };
 
-  const getRequestPrams = () => {
-    const data: IRecordRequest = {
-      PageIndex: dto.PageIndex,
-      PageSize: dto.PageSize,
-      Status: IStatusType.Exception,
-    };
-
-    if (timeDto.startTime && timeDto.endTime) {
-      data.StartTime = timeDto.startTime as string;
-      data.EndTime = timeDto.endTime as string;
-    }
-
-    if (selectValues.length > 0) {
-      data.MonitorTypes = selectValues;
-    }
-
-    return data;
-  };
-
-  const loadData = async () => {
-    updateData("loading", true);
-
-    const data = getRequestPrams();
-
-    const { count, records } = await GetRecordList(data);
-
-    updateData("records", records ?? []);
-    updateData("count", count ?? 0);
-    updateData("loading", false);
-  };
-
   const handleScroll = () => {
     const e = new Event("resize");
     window.dispatchEvent(e);
   };
 
-  const onChangePage = (page: number, pageSize: number) => {
-    updateData("PageIndex", page);
-    updateData("PageSize", pageSize);
-    loadData();
+  const onChangePage = (pageIndex: number, pageSize: number) => {
+    loadFeedbackData(
+      pageIndex,
+      pageSize,
+      (timeDto.startTime as string) ?? "",
+      (timeDto.endTime as string) ?? "",
+      selectValues
+    );
+  };
+
+  const loadFeedbackData = async (
+    pageIndex: number,
+    pageSize: number,
+    startTime?: string,
+    endTime?: string,
+    selectValues?: number[]
+  ) => {
+    const data: IRecordRequest = {
+      PageIndex: pageIndex,
+      PageSize: pageSize,
+      Status: IStatusType.Exception,
+    };
+
+    if (startTime && endTime) {
+      data.StartTime = startTime as string;
+      data.EndTime = endTime as string;
+    }
+
+    if (selectValues && selectValues.length > 0) {
+      data.MonitorTypes = selectValues;
+    }
+
+    updateData("loading", true);
+
+    const { count, records } = await GetRecordList(data);
+
+    updateData("records", records ?? []);
+    updateData("count", count ?? 0);
+    updateData("PageIndex", data.PageIndex);
+    updateData("PageSize", data.PageSize);
+    updateData("loading", false);
   };
 
   useEffect(() => {
-    updateData("PageIndex", 1);
-    loadData();
+    loadFeedbackData(dto.PageIndex, dto.PageSize);
+  }, []);
+
+  useEffect(() => {
+    loadFeedbackData(
+      1,
+      dto.PageSize,
+      (timeDto.startTime as string) ?? "",
+      (timeDto.endTime as string) ?? "",
+      selectValues
+    );
   }, [selectValues, timeDto]);
 
   return { t, dto, handleScroll, navigate, onChangePage };
