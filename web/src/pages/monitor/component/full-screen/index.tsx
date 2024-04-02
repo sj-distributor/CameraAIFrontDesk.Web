@@ -16,6 +16,9 @@ export const FullScreen = () => {
     endSelectValues,
     isShow,
     successUrl,
+    errorFlv,
+    isReturnErrorStatus,
+    setErrorFlv,
   } = useAction();
 
   return (
@@ -63,33 +66,36 @@ export const FullScreen = () => {
         </Popconfirm>
       </div>
       <div className="flex-1 w-full h-[calc(100%-22px)] flex flex-col">
-        {!isShow ? (
-          <div className="mt-[15%]">
-            <Spin tip="直播連結中..." size="small">
-              <div className="content" />
-            </Spin>
-          </div>
-        ) : (
-          !!successUrl && (
-            <VideoPlayback
-              isLive={true}
-              warningDetails={{
-                name: "",
-                type: "",
-                content: "",
-                startTime: "2024-10-10",
-                address: "",
-                duration: "0",
-                warningDataList: {
-                  [ICameraAiMonitorType.AbnormalVehicles]: [],
-                  [ICameraAiMonitorType.People]: [],
-                  [ICameraAiMonitorType.Vehicles]: [],
-                },
-              }}
-              videoUrl={successUrl}
-            />
-          )
-        )}
+        {!isReturnErrorStatus &&
+          (!isShow ? (
+            <div className="mt-[15%]">
+              <Spin tip="直播連結中..." size="small">
+                <div className="content" />
+              </Spin>
+            </div>
+          ) : (
+            !!successUrl && (
+              <VideoPlayback
+                isLive={true}
+                warningDetails={{
+                  name: "",
+                  type: "",
+                  content: "",
+                  startTime: "2024-10-10",
+                  address: "",
+                  duration: "0",
+                  warningDataList: {
+                    [ICameraAiMonitorType.AbnormalVehicles]: [],
+                    [ICameraAiMonitorType.People]: [],
+                    [ICameraAiMonitorType.Vehicles]: [],
+                  },
+                }}
+                videoUrl={successUrl}
+                errorFlv={errorFlv}
+                setErrorFlv={setErrorFlv}
+              />
+            )
+          ))}
       </div>
     </div>
   );

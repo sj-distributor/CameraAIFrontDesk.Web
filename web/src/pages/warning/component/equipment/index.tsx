@@ -16,9 +16,10 @@ export const Equipment = () => {
     isShow,
     isOpenExportPlaybackModal,
     setIsOpenExportPlaybackModal,
-    handelGetVideoPlayBackUrl,
+    handelGetVideoPlayBackUrlDebounceFn,
     setPalyBlackData,
     warningData,
+    isError,
   } = useAction();
 
   return (
@@ -57,7 +58,7 @@ export const Equipment = () => {
               className="bg-[#2866F1] text-white rounded-[3.5rem] w-[4.25rem] h-[2.125rem] select-none"
               onClick={() => {
                 setIsOpenExportPlaybackModal(false);
-                handelGetVideoPlayBackUrl();
+                handelGetVideoPlayBackUrlDebounceFn();
               }}
             >
               {t(KEYS_VIDEO.CONFIRM, { ns: "videoPlayback" })}
@@ -98,20 +99,21 @@ export const Equipment = () => {
       </Modal>
 
       <div className="h-[calc(100%-7.5rem)] rounded-lg mt-4 flex flex-col">
-        {!isShow ? (
-          <div className="mt-[15%]">
-            <Spin tip="視頻加載中..." size="small">
-              <div className="content" />
-            </Spin>
-          </div>
-        ) : (
-          <VideoPlayback
-            isLive={false}
-            warningDetails={warningData}
-            videoUrl={successUrl}
-            setIsOpenExportPlaybackModal={setIsOpenExportPlaybackModal}
-          />
-        )}
+        {!isError &&
+          (!isShow ? (
+            <div className="mt-[15%]">
+              <Spin tip="視頻加載中..." size="small">
+                <div className="content" />
+              </Spin>
+            </div>
+          ) : (
+            <VideoPlayback
+              isLive={false}
+              warningDetails={warningData}
+              videoUrl={successUrl}
+              setIsOpenExportPlaybackModal={setIsOpenExportPlaybackModal}
+            />
+          ))}
       </div>
     </>
   );

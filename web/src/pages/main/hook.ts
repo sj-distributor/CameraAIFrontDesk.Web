@@ -46,6 +46,21 @@ export const useAction = () => {
     }));
   };
 
+  const jumpToBackstage = () => {
+    var myIframe = document.getElementById("myIframe");
+    if (myIframe) {
+      const token = localStorage.getItem((window as any).appsettings?.tokenKey);
+      (myIframe as any).contentWindow.postMessage(
+        token,
+        (window as any).appsettings?.cameraAIBackstageDomain
+      );
+      window.open(
+        (window as any).appsettings?.cameraAIBackstageDomain,
+        "_blank"
+      );
+    }
+  };
+
   const { run: handleOnSignOut } = useDebounceFn(signOut, {
     wait: 500,
   });
@@ -56,6 +71,10 @@ export const useAction = () => {
       wait: 500,
     }
   );
+
+  const { run: handleJumpToBackstage } = useDebounceFn(jumpToBackstage, {
+    wait: 500,
+  });
 
   const filterSelectKey = (key: string) => {
     if (!["/home", "/monitor", "/replay"].includes(key)) {
@@ -120,6 +139,7 @@ export const useAction = () => {
     languageStatus,
     handleOnSignOut,
     pagePermission,
+    handleJumpToBackstage,
     navigate,
     setStatus,
     setOpenKeys,

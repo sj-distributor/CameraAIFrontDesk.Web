@@ -55,10 +55,18 @@ export const VideoPlayback = (props: {
     };
   };
   videoUrl: string;
+  errorFlv?: boolean;
   setIsOpenExportPlaybackModal?: Dispatch<SetStateAction<boolean>>;
+  setErrorFlv?: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { warningDetails, videoUrl, isLive, setIsOpenExportPlaybackModal } =
-    props;
+  const {
+    warningDetails,
+    videoUrl,
+    isLive,
+    errorFlv,
+    setIsOpenExportPlaybackModal,
+    setErrorFlv,
+  } = props;
 
   const videoRef = useRef<HTMLVideoElement>(null!);
 
@@ -73,8 +81,6 @@ export const VideoPlayback = (props: {
   // const [videoSpeed, setVideoSpeed] = useState<Speed>(1);
 
   const mpegtsPlayerPlayer = useRef<Mpegts.Player | null>(null);
-
-  const [isErrorFlv, setIsErrorFlv] = useState<boolean>(false);
 
   const [timeAxisList, setTimeAxisList] = useState<
     {
@@ -214,7 +220,7 @@ export const VideoPlayback = (props: {
           player.play();
 
           player.on(Mpegts.Events.ERROR, () => {
-            setIsErrorFlv(true);
+            isLive && setErrorFlv && setErrorFlv(true);
           });
 
           const handleTimeUpdate = () => {
@@ -265,7 +271,7 @@ export const VideoPlayback = (props: {
   return (
     <>
       <div className="bg-white h-[calc(100%-130px)] rounded-lg mt-4 relative">
-        {!timeAxisList && !isErrorFlv && (
+        {!timeAxisList && !errorFlv && (
           <Spin
             tip={
               isLive
@@ -278,7 +284,7 @@ export const VideoPlayback = (props: {
           </Spin>
         )}
 
-        {isErrorFlv ? (
+        {errorFlv ? (
           <div className="absolute top-[40%] left-[45%]">
             当前视频出现问题，无法播放
           </div>

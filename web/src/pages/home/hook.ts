@@ -1,4 +1,4 @@
-import { useUpdateEffect } from "ahooks";
+import { useDebounceFn, useUpdateEffect } from "ahooks";
 import Mpegts from "mpegts.js";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -188,6 +188,10 @@ export const useAction = () => {
       message.info("正在獲取視頻流，請勿切換攝像頭");
     }
   };
+
+  const { run: handleGetCameraStream } = useDebounceFn(getCameraStream, {
+    wait: 300,
+  });
 
   const getHeight = () => {
     const videoTitle = document.getElementById("video-title")?.clientHeight;
@@ -537,7 +541,7 @@ export const useAction = () => {
     errorFlv,
     setClickCamera,
     videoPlayback,
-    getCameraStream,
+    handleGetCameraStream,
     setVolume,
     setSelectStatus,
     videoFullScreen,

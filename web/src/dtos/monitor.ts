@@ -76,23 +76,23 @@ export interface IRegionEquipmentItem {
   isOnline: boolean;
   equipmentTypeName: string;
   label: 0;
-  equipmentName: "string";
+  equipmentName: string;
   isBind: true;
   areaId: 0;
-  ipAddress: "string";
-  brand: "string";
-  username: "string";
-  password: "string";
-  taskId: "string";
-  areaName: "string";
-  locationId: "string";
-  regionAddress: "string";
-  liveStreaming: "string";
+  ipAddress: string;
+  brand: string;
+  username: string;
+  password: string;
+  taskId: string;
+  areaName: string;
+  locationId: string;
+  regionAddress: string;
+  liveStreaming: string;
   regionId: 0;
-  previewImg: "string";
+  previewImg: string;
   isDeleted: true;
   status: IPlayBackStatus;
-  createdTime: "2024-03-28T11:38:07.081Z";
+  createdTime: string;
 }
 
 export interface IMonitorDetailResponse {
