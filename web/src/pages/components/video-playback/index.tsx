@@ -58,12 +58,14 @@ export const VideoPlayback = (props: {
   errorFlv?: boolean;
   setIsOpenExportPlaybackModal?: Dispatch<SetStateAction<boolean>>;
   setErrorFlv?: Dispatch<SetStateAction<boolean>>;
+  canExportVideo?: boolean;
 }) => {
   const {
     warningDetails,
     videoUrl,
     isLive,
     errorFlv,
+    canExportVideo,
     setIsOpenExportPlaybackModal,
     setErrorFlv,
   } = props;
@@ -332,7 +334,7 @@ export const VideoPlayback = (props: {
               </span>
             </div>
           </div>
-          {!isLive && (
+          {!isLive && canExportVideo && (
             <div className="flex text-white font-semibold">
               <div
                 className="mr-[1.5rem] cursor-pointer"

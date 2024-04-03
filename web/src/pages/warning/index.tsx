@@ -35,6 +35,7 @@ export const Warning = () => {
     handleOnMarkDebounceFn,
     handleOnExportDebounceFn,
     markedStatus,
+    pagePermission,
     setTimeDto,
     setKeyWord,
     onTypeClick,
@@ -89,17 +90,21 @@ export const Warning = () => {
                 value={keyWord}
                 onChange={(e) => setKeyWord(e.target.value)}
               />
-              <Button
-                icon={<img src={importImg} />}
-                className="h-12 w-[6.25rem] text-white bg-[#2866F1] !rounded-[3.5rem] hover:!text-white flex items-center justify-center hover:!bg-[#2866F1]"
-                onClick={handleOnExportDebounceFn}
-              >
-                {t(KEYS.EXPORT, {
-                  ns: "alertList",
-                })}
-              </Button>
+              {pagePermission.canExportExcelWarning && (
+                <Button
+                  icon={<img src={importImg} />}
+                  className="h-12 w-[6.25rem] text-white bg-[#2866F1] !rounded-[3.5rem] hover:!text-white flex items-center justify-center hover:!bg-[#2866F1]"
+                  onClick={handleOnExportDebounceFn}
+                >
+                  {t(KEYS.EXPORT, {
+                    ns: "alertList",
+                  })}
+                </Button>
+              )}
             </>
-          ) : markedStatus !== null && markedStatus === IStatusType.Unmarked ? (
+          ) : markedStatus !== null &&
+            markedStatus === IStatusType.Unmarked &&
+            pagePermission.canMarkWarning ? (
             <Button
               icon={<img src={pinImg} />}
               className="h-12 w-[6.25rem] text-[#2866F1] bg-[#C2D5FF] !rounded-[3.5rem] hover:!text-[#2866F1] hover:!border-[#C2D5FF] flex justify-center items-center"

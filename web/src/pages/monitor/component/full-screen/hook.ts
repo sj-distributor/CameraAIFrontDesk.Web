@@ -13,7 +13,7 @@ import { PostStopRealtime } from "@/services/default";
 import { GetMonitorDetail, PostRealtimeGenerate } from "@/services/monitor";
 
 export const useAction = () => {
-  const { location, message } = useAuth();
+  const { location, message, pagePermission } = useAuth();
 
   const [paramsDto, setParamsDto] = useState<{
     regionId: string;
@@ -231,5 +231,6 @@ export const useAction = () => {
     errorFlv,
     setErrorFlv,
     isReturnErrorStatus,
+    pagePermission,
   };
 };

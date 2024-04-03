@@ -19,6 +19,7 @@ export const FullScreen = () => {
     errorFlv,
     isReturnErrorStatus,
     setErrorFlv,
+    pagePermission,
   } = useAction();
 
   return (
@@ -93,6 +94,7 @@ export const FullScreen = () => {
                 videoUrl={successUrl}
                 errorFlv={errorFlv}
                 setErrorFlv={setErrorFlv}
+                canExportVideo={pagePermission.canExportRealtimeVideo}
               />
             )
           ))}

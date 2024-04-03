@@ -2,6 +2,7 @@ import { useDebounceFn } from "ahooks";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/hooks/use-auth";
+import { Navigate } from "react-router-dom";
 
 interface IPasswordDto {
   currentPW: string;
@@ -47,17 +48,23 @@ export const useAction = () => {
   };
 
   const jumpToBackstage = () => {
-    var myIframe = document.getElementById("myIframe");
-    if (myIframe) {
-      const token = localStorage.getItem((window as any).appsettings?.tokenKey);
-      (myIframe as any).contentWindow.postMessage(
-        token,
-        (window as any).appsettings?.cameraAIBackstageDomain
-      );
-      window.open(
-        (window as any).appsettings?.cameraAIBackstageDomain,
-        "_blank"
-      );
+    if (pagePermission.canSwitchCameraAiBackend) {
+      var myIframe = document.getElementById("myIframe");
+      if (myIframe) {
+        const token = localStorage.getItem(
+          (window as any).appsettings?.tokenKey
+        );
+        (myIframe as any).contentWindow.postMessage(
+          token,
+          (window as any).appsettings?.cameraAIBackstageDomain
+        );
+        window.open(
+          (window as any).appsettings?.cameraAIBackstageDomain,
+          "_blank"
+        );
+      }
+    } else {
+      navigate("/none");
     }
   };
 

@@ -20,7 +20,7 @@ import {
 } from "@/services/replay";
 
 export const useAction = () => {
-  const { location, message } = useAuth();
+  const { location, message, pagePermission } = useAuth();
 
   const { typeList } = checkBoxUseAction();
 
@@ -466,5 +466,6 @@ export const useAction = () => {
     setIsOpenExportPlaybackModal,
     warningData,
     isError,
+    pagePermission,
   };
 };

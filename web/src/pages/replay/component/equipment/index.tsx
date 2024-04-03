@@ -21,6 +21,7 @@ export const Equipment = () => {
     setIsOpenExportPlaybackModal,
     warningData,
     isError,
+    pagePermission,
   } = useAction();
 
   return (
@@ -196,6 +197,7 @@ export const Equipment = () => {
               warningDetails={warningData}
               videoUrl={successUrl}
               setIsOpenExportPlaybackModal={setIsOpenExportPlaybackModal}
+              canExportVideo={pagePermission.canExportPlaybackVideo}
             />
           ))}
       </div>

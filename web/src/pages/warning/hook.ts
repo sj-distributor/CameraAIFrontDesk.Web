@@ -29,7 +29,7 @@ const keyName: IKey = {
 };
 
 export const useAction = () => {
-  const { location, message, t } = useAuth();
+  const { location, message, t, pagePermission } = useAuth();
 
   const state = location.state as {
     status: IStatusType;
@@ -279,6 +279,7 @@ export const useAction = () => {
     handleOnMarkDebounceFn,
     handleOnExportDebounceFn,
     markedStatus,
+    pagePermission,
     setTimeDto,
     setKeyWord,
     onTypeClick,
