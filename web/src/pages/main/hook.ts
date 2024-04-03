@@ -2,7 +2,6 @@ import { useDebounceFn } from "ahooks";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/hooks/use-auth";
-import { Navigate } from "react-router-dom";
 
 interface IPasswordDto {
   currentPW: string;
