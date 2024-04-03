@@ -16,7 +16,7 @@ interface IDto extends IPageDto, IRecordResponse {
 }
 
 export const useAction = () => {
-  const { t, navigate } = useAuth();
+  const { t, navigate, pagePermission } = useAuth();
 
   const { selectValues, timeDto } = useContext(FeedbackSearchDataContext);
 
@@ -97,5 +97,5 @@ export const useAction = () => {
     );
   }, [selectValues, timeDto]);
 
-  return { t, dto, handleScroll, navigate, onChangePage };
+  return { t, dto, pagePermission, handleScroll, navigate, onChangePage };
 };

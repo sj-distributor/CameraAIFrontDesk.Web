@@ -23,12 +23,17 @@ const statusComponent = (
   textColor: string,
   text: string,
   icon: ReactElement,
+  canViewDetailWarning: boolean,
   func: VoidFunction
 ) => {
+  const handleClick = () => {
+    if (canViewDetailWarning) func();
+  };
+
   return (
     <span
       className={`py-[0.25rem] px-[0.625rem] border border-solid rounded-lg space-x-1 cursor-pointer ${boxBorderColor}`}
-      onClick={func}
+      onClick={handleClick}
     >
       {icon}
       <span className={`${textColor} select-none`}>{text}</span>
@@ -37,7 +42,8 @@ const statusComponent = (
 };
 
 export const WarningList = () => {
-  const { t, dto, navigate, handleScroll, onChangePage } = useAction();
+  const { t, dto, pagePermission, navigate, handleScroll, onChangePage } =
+    useAction();
 
   const columns = [
     {
@@ -112,6 +118,7 @@ export const WarningList = () => {
               "text-[#18283C]",
               "待標記",
               <PlusOutlined className="text-[#18283C] text-sm" />,
+              pagePermission.canViewDetailWarning,
               () =>
                 navigate(`/warning/${record.id}`, {
                   state: {
@@ -126,6 +133,7 @@ export const WarningList = () => {
               "text-[#04B6B5]",
               "通過",
               <CheckOutlined className="text-[#04B6B5] text-sm" />,
+              pagePermission.canViewDetailWarning,
               () =>
                 navigate(`/warning/${record.id}`, {
                   state: {
@@ -140,6 +148,7 @@ export const WarningList = () => {
               "text-[#FF908C]",
               "異常",
               <ExclamationCircleOutlined className="text-[#FF908C] text-sm" />,
+              pagePermission.canViewDetailWarning,
               () =>
                 navigate(`/warning/${record.id}`, {
                   state: {

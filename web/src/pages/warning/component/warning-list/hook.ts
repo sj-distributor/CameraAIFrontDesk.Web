@@ -20,7 +20,7 @@ export const useAction = () => {
     WarningSearchDataContext
   );
 
-  const { navigate, t } = useAuth();
+  const { navigate, t, pagePermission } = useAuth();
 
   const [dto, setDto] = useState<IDto>({
     PageIndex: 1,
@@ -116,6 +116,7 @@ export const useAction = () => {
   return {
     t,
     dto,
+    pagePermission,
     navigate,
     handleScroll,
     onChangePage,

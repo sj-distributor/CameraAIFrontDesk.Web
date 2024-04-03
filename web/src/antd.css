@@ -112,3 +112,9 @@
 .exportModelRangePicker .ant-picker-input input {
   min-width: min-content !important;
 }
+
+.multiSelect .ant-select-selector {
+  border: none !important;
+  background: none !important;
+  color: #2866f1 !important;
+}

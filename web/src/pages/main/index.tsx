@@ -47,6 +47,7 @@ export const Main = () => {
     delModalStatus,
     handleOnSignOut,
     pagePermission,
+    handleJumpToBackstage,
     navigate,
     setStatus,
     setOpenKeys,
@@ -305,21 +306,7 @@ export const Main = () => {
                       name: "切換後台",
                       component: <SwapOutlined className="text-sm" />,
                       function: () => {
-                        var myIframe = document.getElementById("myIframe");
-                        if (myIframe) {
-                          const token = localStorage.getItem(
-                            (window as any).appsettings?.tokenKey
-                          );
-                          (myIframe as any).contentWindow.postMessage(
-                            token,
-                            (window as any).appsettings?.cameraAIBackstageDomain
-                          );
-                          window.open(
-                            (window as any).appsettings
-                              ?.cameraAIBackstageDomain,
-                            "_blank"
-                          );
-                        }
+                        handleJumpToBackstage();
                       },
                     },
                     {

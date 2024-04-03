@@ -27,7 +27,7 @@ export const Home = () => {
     isShow,
     errorFlv,
     videoPlayback,
-    getCameraStream,
+    handleGetCameraStream,
     setVolume,
     setSelectStatus,
     videoFullScreen,
@@ -73,7 +73,7 @@ export const Home = () => {
                             key={childIndex}
                             className="hover:bg-[#EBF1FF] hover:text-[#2866F1] rounded-lg p-2 truncate select-none cursor-pointer"
                             onClick={() => {
-                              getCameraStream(
+                              handleGetCameraStream(
                                 item.locationId,
                                 item.id,
                                 childItem.id,

@@ -1,4 +1,4 @@
-import { useUpdateEffect } from "ahooks";
+import { useDebounceFn, useUpdateEffect } from "ahooks";
 import dayjs from "dayjs";
 import { clone } from "ramda";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -20,12 +20,14 @@ import {
 } from "@/services/replay";
 
 export const useAction = () => {
-  const { location, message } = useAuth();
+  const { location, message, pagePermission } = useAuth();
 
   const { typeList } = checkBoxUseAction();
 
   // new
   const [correlationId, setCorrelationId] = useState("");
+
+  const [isError, setIsError] = useState<boolean>(false);
 
   const [replayDetailDto, setReplayDto] = useState<IReplayDetailResponse>({
     equipment: null,
@@ -297,6 +299,14 @@ export const useAction = () => {
           totalRecord &&
           totalRecord.playbackStatus === IPlayBackStatus.Failed
         ) {
+          message.error("获取视频流失败");
+          setIsError(true);
+          setSuccessUrl("");
+          setIsFirstGenerate(false);
+          continueExecution.current = false;
+
+          return;
+        } else {
           const data = getGenerateParams(replayDetailDto);
 
           PostPlayBackGenerate(data);
@@ -363,6 +373,13 @@ export const useAction = () => {
       }
     }
   };
+
+  const { run: handelGetVideoPlayBackUrlDebounceFn } = useDebounceFn(
+    handelGetVideoPlayBackUrl,
+    {
+      wait: 300,
+    }
+  );
 
   const isPlayBackCallBackData = useRef<boolean>(true);
 
@@ -443,10 +460,12 @@ export const useAction = () => {
     onSave,
     isShow,
     getGenerateParams,
-    handelGetVideoPlayBackUrl,
+    handelGetVideoPlayBackUrlDebounceFn,
     setPalyBlackDate,
     isOpenExportPlaybackModal,
     setIsOpenExportPlaybackModal,
     warningData,
+    isError,
+    pagePermission,
   };
 };

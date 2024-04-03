@@ -7,7 +7,8 @@ import KEYS from "@/i18n/keys/feedback-list";
 import { useAction } from "./hook";
 
 export const FeedbackList = () => {
-  const { t, dto, handleScroll, navigate, onChangePage } = useAction();
+  const { t, dto, pagePermission, handleScroll, navigate, onChangePage } =
+    useAction();
 
   const columns = [
     {
@@ -95,12 +96,14 @@ export const FeedbackList = () => {
             <div
               className="cursor-pointer line-clamp-2"
               onClick={() => {
-                navigate(`/warning/${record.id}`, {
-                  state: {
-                    status: IStatusType.Verifed,
-                    record: record,
-                  },
-                });
+                if (pagePermission.canViewDetailFeedback) {
+                  navigate(`/warning/${record.id}`, {
+                    state: {
+                      status: IStatusType.Verifed,
+                      record: record,
+                    },
+                  });
+                }
               }}
             >
               {text}

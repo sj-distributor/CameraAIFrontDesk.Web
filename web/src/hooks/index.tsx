@@ -196,6 +196,39 @@ export const AuthProvider = (props: { children: ReactElement }) => {
         permission: FrontRolePermissionEnum.CanViewCameraAiFeedbackListPage,
         variableName: "canViewFeedback",
       },
+      // 功能
+      {
+        permission: FrontRolePermissionEnum.CanSwitchCameraAiBackEnd,
+        variableName: "canSwitchCameraAiBackend",
+      },
+      {
+        permission: FrontRolePermissionEnum.CanExportCameraAiRealtimeVideo,
+        variableName: "canExportRealtimeVideo",
+      },
+      {
+        permission: FrontRolePermissionEnum.CanExportCameraAiPlaybackVideo,
+        variableName: "canExportPlaybackVideo",
+      },
+      {
+        permission: FrontRolePermissionEnum.CanExportExcelCameraAiWarning,
+        variableName: "canExportExcelWarning",
+      },
+      {
+        permission: FrontRolePermissionEnum.CanViewDetailCameraAiWarning,
+        variableName: "canViewDetailWarning",
+      },
+      {
+        permission: FrontRolePermissionEnum.CanMarkCameraAiWarning,
+        variableName: "canMarkWarning",
+      },
+      {
+        permission: FrontRolePermissionEnum.CanExportExcelCameraAiFeedback,
+        variableName: "canExportExcelFeedback",
+      },
+      {
+        permission: FrontRolePermissionEnum.CanViewDetailCameraAiFeedback,
+        variableName: "canViewDetailFeedback",
+      },
     ];
 
     const permissions: { [key: string]: boolean } = permissionsToCheck.reduce(

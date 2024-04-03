@@ -18,6 +18,7 @@ import {
   PostGeneratePlayBack,
   PostPlaybackGenerateApi,
 } from "@/services/warning";
+import { useDebounceFn } from "ahooks";
 
 export const useAction = () => {
   const { t } = useAuth();
@@ -42,6 +43,8 @@ export const useAction = () => {
   const [successUrl, setSuccessUrl] = useState<string>("");
 
   const [isShow, setIsShow] = useState<boolean>(false);
+
+  const [isError, setIsError] = useState<boolean>(false);
 
   const continueExecution = useRef<boolean>(true);
 
@@ -76,6 +79,13 @@ export const useAction = () => {
       }
     }
   };
+
+  const { run: handelGetVideoPlayBackUrlDebounceFn } = useDebounceFn(
+    handelGetVideoPlayBackUrl,
+    {
+      wait: 300,
+    }
+  );
 
   const [isPlayBackCallBackData, setIsPlayBackCallBackData] =
     useState<boolean>(false);
@@ -260,6 +270,13 @@ export const useAction = () => {
             record &&
             record.playbackStatus === IPlayBackStatus.Failed
           ) {
+            message.error("获取视频流失败");
+            setIsError(true);
+            setSuccessUrl("");
+            setIsFirstGenerate(false);
+            continueExecution.current = false;
+            return;
+          } else {
             const data = getGenerateParams(playDetailData);
 
             PostPlaybackGenerateApi(data);
@@ -359,8 +376,9 @@ export const useAction = () => {
     isShow,
     isOpenExportPlaybackModal,
     setIsOpenExportPlaybackModal,
-    handelGetVideoPlayBackUrl,
+    handelGetVideoPlayBackUrlDebounceFn,
     setPalyBlackData,
     warningData,
+    isError,
   };
 };

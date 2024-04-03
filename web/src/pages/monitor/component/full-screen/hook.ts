@@ -13,7 +13,7 @@ import { PostStopRealtime } from "@/services/default";
 import { GetMonitorDetail, PostRealtimeGenerate } from "@/services/monitor";
 
 export const useAction = () => {
-  const { location, message } = useAuth();
+  const { location, message, pagePermission } = useAuth();
 
   const [paramsDto, setParamsDto] = useState<{
     regionId: string;
@@ -21,6 +21,11 @@ export const useAction = () => {
   }>();
 
   const [isGenerate, setIsGenerate] = useState<boolean>(false);
+
+  const [errorFlv, setErrorFlv] = useState<boolean>(false);
+
+  const [isReturnErrorStatus, setIsReturnErrorStatus] =
+    useState<boolean>(false);
 
   const [monitorDetail, setMonitorDetail] =
     useState<IMonitorDetailResponse | null>(null);
@@ -70,6 +75,7 @@ export const useAction = () => {
             setSelectValues(endSelectValues);
             setIsGenerate(true);
             setIsSuccess(false);
+            setErrorFlv(false);
             continueExecution.current = true;
           })
           .catch(() => {
@@ -138,6 +144,7 @@ export const useAction = () => {
       PostRealtimeGenerate(data)
         .then(() => {
           setIsGenerate(true);
+          setErrorFlv(false);
           console.log("生成实时成功");
         })
         .catch(() => {
@@ -167,6 +174,17 @@ export const useAction = () => {
 
             return;
           } else if (res.status === IPlayBackStatus.Failed) {
+            message.error("获取视频流失败");
+            setIsReturnErrorStatus(true);
+            setIsSuccess(false);
+            setIsGenerate(false);
+            setSuccessUrl("");
+            continueExecution.current = false;
+
+            return;
+          } else {
+            setErrorFlv(false);
+
             const data = getGenerateParams(monitorDetail!);
 
             PostRealtimeGenerate(data);
@@ -210,5 +228,9 @@ export const useAction = () => {
     endSelectValues,
     setIsOpenExportPlaybackModal,
     isOpenExportPlaybackModal,
+    errorFlv,
+    setErrorFlv,
+    isReturnErrorStatus,
+    pagePermission,
   };
 };
