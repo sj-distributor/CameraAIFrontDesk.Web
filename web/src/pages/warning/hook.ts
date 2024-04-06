@@ -154,7 +154,7 @@ export const useAction = () => {
           ? dayjs(item.occurrenceTime).format("YYYY-MM-DD HH:mm:ss")
           : "",
         settingDuration: item.settingDuration
-          ? String(item.settingDuration / 60).padStart(2, "0") +
+          ? String(Math.round(item.settingDuration / 60)).padStart(2, "0") +
             "m" +
             (item.settingDuration % 60 !== 0
               ? String(item.settingDuration % 60).padStart(2, "0") + "s"

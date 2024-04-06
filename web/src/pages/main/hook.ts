@@ -2,6 +2,7 @@ import { useDebounceFn } from "ahooks";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/hooks/use-auth";
+import { message } from "antd";
 
 interface IPasswordDto {
   currentPW: string;
@@ -63,7 +64,7 @@ export const useAction = () => {
         );
       }
     } else {
-      navigate("/none");
+      message.warning("暫無權限切換後台");
     }
   };
 
