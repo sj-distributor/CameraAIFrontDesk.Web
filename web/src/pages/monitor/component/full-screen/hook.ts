@@ -201,18 +201,29 @@ export const useAction = () => {
   }
 
   useEffect(() => {
+    const cleanup = () => {
+      monitorDetailRef.current?.locationId &&
+        monitorDetailRef.current?.equipmentCode &&
+        monitorDetailRef.current?.taskId &&
+        PostStopRealtime({
+          stopList: [
+            {
+              locationId: monitorDetailRef.current?.locationId,
+              equipmentCode: monitorDetailRef.current?.equipmentCode,
+              taskId: monitorDetailRef.current?.taskId,
+            },
+          ],
+        });
+    };
+
+    window.addEventListener("beforeunload", cleanup);
+
     return () => {
       continueExecution.current = false;
 
-      PostStopRealtime({
-        stopList: [
-          {
-            locationId: monitorDetailRef.current?.locationId ?? "",
-            equipmentCode: monitorDetailRef.current?.equipmentCode ?? "",
-            taskId: monitorDetailRef.current?.taskId ?? "",
-          },
-        ],
-      });
+      window.removeEventListener("beforeunload", cleanup);
+
+      cleanup();
     };
   }, []);
 

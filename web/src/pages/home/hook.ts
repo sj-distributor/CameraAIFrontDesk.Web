@@ -401,15 +401,7 @@ export const useAction = () => {
   useEffect(() => {
     getCameraList();
 
-    return () => {
-      continueExecution.current = false;
-
-      mpegtsPlayerPlayer?.current?.unload();
-      mpegtsPlayerPlayer?.current?.pause();
-      mpegtsPlayerPlayer?.current?.detachMediaElement();
-      mpegtsPlayerPlayer?.current?.destroy();
-      mpegtsPlayerPlayer.current = null;
-
+    const cleanup = () => {
       clickCameraCameraRef.current.taskId &&
         clickCameraCameraRef.current.locationId &&
         clickCameraCameraRef.current.equipmentCode &&
@@ -422,6 +414,22 @@ export const useAction = () => {
             },
           ],
         });
+    };
+
+    window.addEventListener("beforeunload", cleanup);
+
+    return () => {
+      continueExecution.current = false;
+
+      window.removeEventListener("beforeunload", cleanup);
+
+      mpegtsPlayerPlayer?.current?.unload();
+      mpegtsPlayerPlayer?.current?.pause();
+      mpegtsPlayerPlayer?.current?.detachMediaElement();
+      mpegtsPlayerPlayer?.current?.destroy();
+      mpegtsPlayerPlayer.current = null;
+
+      cleanup();
     };
   }, []);
 
