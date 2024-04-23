@@ -307,9 +307,11 @@ export const useAction = () => {
         equipmentCode: item?.equipmentCode ?? [],
       }));
 
-      PostStopRealtime({
-        stopList: data ?? [],
-      });
+      if (data?.length) {
+        PostStopRealtime({
+          stopList: data,
+        });
+      }
     };
 
     window.addEventListener("beforeunload", cleanup);

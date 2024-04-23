@@ -202,15 +202,18 @@ export const useAction = () => {
 
   useEffect(() => {
     const cleanup = () => {
-      PostStopRealtime({
-        stopList: [
-          {
-            locationId: monitorDetailRef.current?.locationId ?? "",
-            equipmentCode: monitorDetailRef.current?.equipmentCode ?? "",
-            taskId: monitorDetailRef.current?.taskId ?? "",
-          },
-        ],
-      });
+      monitorDetailRef.current?.locationId &&
+        monitorDetailRef.current?.equipmentCode &&
+        monitorDetailRef.current?.taskId &&
+        PostStopRealtime({
+          stopList: [
+            {
+              locationId: monitorDetailRef.current?.locationId,
+              equipmentCode: monitorDetailRef.current?.equipmentCode,
+              taskId: monitorDetailRef.current?.taskId,
+            },
+          ],
+        });
     };
 
     window.addEventListener("beforeunload", cleanup);
