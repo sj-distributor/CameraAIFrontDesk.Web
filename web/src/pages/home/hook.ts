@@ -402,7 +402,6 @@ export const useAction = () => {
     getCameraList();
 
     const cleanup = () => {
-      console.log("cleanup");
       clickCameraCameraRef.current.taskId &&
         clickCameraCameraRef.current.locationId &&
         clickCameraCameraRef.current.equipmentCode &&
