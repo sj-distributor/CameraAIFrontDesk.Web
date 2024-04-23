@@ -300,17 +300,7 @@ export const useAction = () => {
   }, [equipments]);
 
   useEffect(() => {
-    return () => {
-      continueExecution.current = false;
-
-      if (mpegtsPlayerPlayer.current) {
-        mpegtsPlayerPlayer.current.pause();
-        mpegtsPlayerPlayer.current.unload();
-        mpegtsPlayerPlayer.current.detachMediaElement();
-        mpegtsPlayerPlayer.current.destroy();
-        mpegtsPlayerPlayer.current = null;
-      }
-
+    const cleanup = () => {
       const data = equipmentsRef.current?.map((item) => ({
         taskId: item?.taskId ?? [],
         locationId: item?.locationId ?? [],
@@ -320,6 +310,24 @@ export const useAction = () => {
       PostStopRealtime({
         stopList: data ?? [],
       });
+    };
+
+    window.addEventListener("beforeunload", cleanup);
+
+    return () => {
+      continueExecution.current = false;
+
+      window.removeEventListener("beforeunload", cleanup);
+
+      cleanup();
+
+      if (mpegtsPlayerPlayer.current) {
+        mpegtsPlayerPlayer.current.pause();
+        mpegtsPlayerPlayer.current.unload();
+        mpegtsPlayerPlayer.current.detachMediaElement();
+        mpegtsPlayerPlayer.current.destroy();
+        mpegtsPlayerPlayer.current = null;
+      }
     };
   }, []);
 

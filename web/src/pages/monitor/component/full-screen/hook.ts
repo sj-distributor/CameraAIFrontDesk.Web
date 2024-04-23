@@ -201,9 +201,7 @@ export const useAction = () => {
   }
 
   useEffect(() => {
-    return () => {
-      continueExecution.current = false;
-
+    const cleanup = () => {
       PostStopRealtime({
         stopList: [
           {
@@ -213,6 +211,16 @@ export const useAction = () => {
           },
         ],
       });
+    };
+
+    window.addEventListener("beforeunload", cleanup);
+
+    return () => {
+      continueExecution.current = false;
+
+      window.removeEventListener("beforeunload", cleanup);
+
+      cleanup();
     };
   }, []);
 

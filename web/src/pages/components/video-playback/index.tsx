@@ -295,7 +295,7 @@ export const VideoPlayback = (props: {
             ref={videoRef}
             onEnded={() => setIsPalyVideo(false)}
             onLoadedMetadata={handleLoadedMetadata}
-            className="w-full h-full object-contain"
+            className="w-full h-full object-fill"
             src={isLive ? "" : videoUrl}
           />
         )}
