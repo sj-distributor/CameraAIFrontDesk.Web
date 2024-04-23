@@ -166,13 +166,13 @@ export const Equipment = () => {
               setPalyBlackDate((prev) => ({
                 ...prev,
                 startTime:
-                  dates?.length >= 1
+                  dates && dates?.length >= 1
                     ? dates[0]
                       ? dates[0].toISOString()
                       : undefined
                     : undefined,
                 endTime:
-                  dates?.length >= 2
+                  dates && dates?.length >= 2
                     ? dates[1]
                       ? dates[1].toISOString()
                       : undefined
