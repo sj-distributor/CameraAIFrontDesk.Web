@@ -18,6 +18,7 @@ import {
   PostHomeStream,
 } from "@/services/home";
 import { IRealtimeGenerateRequest } from "@/dtos/monitor";
+import { Post } from "@/services/api";
 
 type EChartsOption = echarts.EChartsOption;
 
@@ -405,7 +406,7 @@ export const useAction = () => {
       clickCameraCameraRef.current.taskId &&
         clickCameraCameraRef.current.locationId &&
         clickCameraCameraRef.current.equipmentCode &&
-        PostStopRealtime({
+        Post("/api/CameraAi/media/realtime/stop", {
           stopList: [
             {
               taskId: clickCameraCameraRef.current.taskId,
