@@ -10,7 +10,7 @@ import {
 } from "@/dtos/home";
 import { IPlayBackStatus } from "@/dtos/replay";
 import { useAuth } from "@/hooks/use-auth";
-import { PostStopRealtime } from "@/services/default";
+import { PostStopRealtime } from "@/services/stop-media";
 import {
   GetCameraList,
   GetEquipmentOnlineList,
