@@ -15,7 +15,7 @@ import {
   PostRealtimeGenerate,
 } from "@/services/monitor";
 import { useUpdateEffect } from "ahooks";
-import { PostStopRealtime } from "@/services/default";
+import { PostStopRealtime } from "@/services/stop-media";
 
 enum ScreenCountEnum {
   FOUR = 4,

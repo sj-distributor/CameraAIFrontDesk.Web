@@ -10,7 +10,7 @@ import {
 } from "@/dtos/home";
 import { IPlayBackStatus } from "@/dtos/replay";
 import { useAuth } from "@/hooks/use-auth";
-import { PostStopRealtime } from "@/services/default";
+import { PostStopRealtime } from "@/services/stop-media";
 import {
   GetCameraList,
   GetEquipmentOnlineList,
@@ -18,7 +18,6 @@ import {
   PostHomeStream,
 } from "@/services/home";
 import { IRealtimeGenerateRequest } from "@/dtos/monitor";
-import { Post } from "@/services/api";
 
 type EChartsOption = echarts.EChartsOption;
 
@@ -406,7 +405,7 @@ export const useAction = () => {
       clickCameraCameraRef.current.taskId &&
         clickCameraCameraRef.current.locationId &&
         clickCameraCameraRef.current.equipmentCode &&
-        Post("/api/CameraAi/media/realtime/stop", {
+        PostStopRealtime({
           stopList: [
             {
               taskId: clickCameraCameraRef.current.taskId,

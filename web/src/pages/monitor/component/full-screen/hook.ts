@@ -9,7 +9,7 @@ import {
 } from "@/dtos/monitor";
 import { IPlayBackStatus } from "@/dtos/replay";
 import { useAuth } from "@/hooks/use-auth";
-import { PostStopRealtime } from "@/services/default";
+import { PostStopRealtime } from "@/services/stop-media";
 import { GetMonitorDetail, PostRealtimeGenerate } from "@/services/monitor";
 
 export const useAction = () => {
