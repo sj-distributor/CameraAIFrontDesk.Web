@@ -56,33 +56,33 @@ export const useAction = () => {
   const [clickCamera, setClickCamera] = useState<{
     locationId: string;
     equipmentCode: string;
-    taskId: string;
     regionId: number;
     cameraId: number;
     equipmentName: string;
+    equipmentId: number;
   }>({
     locationId: "",
     equipmentCode: "",
-    taskId: "",
     regionId: 0,
     cameraId: 0,
     equipmentName: "",
+    equipmentId: 0,
   });
 
   const clickCameraCameraRef = useRef<{
     locationId: string;
     equipmentCode: string;
-    taskId: string;
     regionId: number;
     cameraId: number;
     equipmentName: string;
+    equipmentId: number;
   }>({
     locationId: "",
     equipmentCode: "",
-    taskId: "",
     regionId: 0,
     cameraId: 0,
     equipmentName: "",
+    equipmentId: 0,
   });
 
   useUpdateEffect(() => {
@@ -132,7 +132,7 @@ export const useAction = () => {
         PostStopRealtime({
           stopList: [
             {
-              taskId: clickCamera.taskId,
+              equipmentId: clickCamera.equipmentId,
               locationId: clickCamera.locationId,
               equipmentCode: clickCamera.equipmentCode,
             },
@@ -147,14 +147,16 @@ export const useAction = () => {
           })
           .catch(() => {});
       }
+
       setClickCamera({
         locationId,
         equipmentCode: item?.equipmentCode ?? "",
-        taskId: item?.taskId ?? "",
         regionId: regionId,
         cameraId: cameraId,
         equipmentName: item?.equipmentName ?? "",
+        equipmentId: item?.id ?? 0,
       });
+
       const data: IRealtimeGenerateRequest = {
         lives: [
           {
@@ -178,10 +180,10 @@ export const useAction = () => {
           setClickCamera({
             locationId: "",
             equipmentCode: "",
-            taskId: "",
             regionId: 0,
             cameraId: 0,
             equipmentName: "",
+            equipmentId: 0,
           });
         });
     } else {
@@ -402,13 +404,13 @@ export const useAction = () => {
     getCameraList();
 
     const cleanup = () => {
-      clickCameraCameraRef.current.taskId &&
+      clickCameraCameraRef.current.equipmentId &&
         clickCameraCameraRef.current.locationId &&
         clickCameraCameraRef.current.equipmentCode &&
         PostStopRealtime({
           stopList: [
             {
-              taskId: clickCameraCameraRef.current.taskId,
+              equipmentId: clickCameraCameraRef.current.equipmentId,
               locationId: clickCameraCameraRef.current.locationId,
               equipmentCode: clickCameraCameraRef.current.equipmentCode,
             },
