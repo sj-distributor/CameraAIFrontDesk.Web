@@ -105,7 +105,7 @@ export const useAction = () => {
         EquipmentId: Number(paramsDto?.equipmentId),
       })
         .then((res) => {
-          setMonitorDetail(null);
+          setMonitorDetail(res ?? null);
           setIsGetMonitorDetail(true);
         })
         .catch(() => {
