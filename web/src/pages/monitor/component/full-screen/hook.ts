@@ -24,8 +24,9 @@ export const useAction = () => {
 
   const [errorFlv, setErrorFlv] = useState<boolean>(false);
 
-  const [isReturnErrorStatus, setIsReturnErrorStatus] =
-    useState<boolean>(false);
+  const [isStopLoading, setIsStopLoading] = useState<boolean>(false);
+
+  const [stopLoadingMessage, setStopLoadingMessage] = useState<string>("");
 
   const [monitorDetail, setMonitorDetail] =
     useState<IMonitorDetailResponse | null>(null);
@@ -65,6 +66,12 @@ export const useAction = () => {
   // 保存预警筛选
   const onSave = (isTrue: boolean) => {
     if (isTrue) {
+      if (!monitorDetail && isGetMonitorDetail) {
+        message.error("获取攝像頭失败，请退出当前页面重试");
+
+        return;
+      }
+
       if (!isGenerate && !continueExecution.current && isSuccess) {
         const data = getGenerateParams(monitorDetail!);
 
@@ -90,13 +97,16 @@ export const useAction = () => {
     }
   };
 
+  const [isGetMonitorDetail, setIsGetMonitorDetail] = useState<boolean>(false);
+
   useEffect(() => {
     if (paramsDto?.equipmentId) {
       GetMonitorDetail({
         EquipmentId: Number(paramsDto?.equipmentId),
       })
         .then((res) => {
-          setMonitorDetail(res ?? null);
+          setMonitorDetail(null);
+          setIsGetMonitorDetail(true);
         })
         .catch(() => {
           setMonitorDetail(null);
@@ -136,10 +146,16 @@ export const useAction = () => {
           console.log("生成实时成功");
         })
         .catch(() => {
+          setIsStopLoading(true);
           message.error("生成实时失败");
+          setStopLoadingMessage("生成实时失败");
         });
+    } else if (isGetMonitorDetail && !monitorDetail) {
+      setIsStopLoading(true);
+      message.error("获取攝像頭失败，请退出当前页面重试");
+      setStopLoadingMessage("获取攝像頭失败，请退出当前页面重试");
     }
-  }, [monitorDetail]);
+  }, [monitorDetail, isGetMonitorDetail]);
 
   useEffect(() => {
     if (isGenerate) {
@@ -163,19 +179,29 @@ export const useAction = () => {
             return;
           } else if (res.status === IPlayBackStatus.Failed) {
             message.error("获取视频流失败");
-            setIsReturnErrorStatus(true);
+            setIsStopLoading(true);
+            setStopLoadingMessage("获取视频流失败");
             setIsSuccess(false);
             setIsGenerate(false);
             setSuccessUrl("");
             continueExecution.current = false;
 
             return;
-          } else {
-            setErrorFlv(false);
           }
         }
       })
-      .catch()
+      .catch(() => {
+        message.error("獲取視頻流錯誤，請稍候重試");
+        setStopLoadingMessage("獲取視頻流錯誤，請稍候重試");
+
+        setIsStopLoading(true);
+        setIsSuccess(false);
+        setIsGenerate(false);
+        setSuccessUrl("");
+        continueExecution.current = false;
+
+        return;
+      })
       .finally(() => {
         // 等待1秒钟后再次执行
         setTimeout(() => {
@@ -237,7 +263,8 @@ export const useAction = () => {
     isOpenExportPlaybackModal,
     errorFlv,
     setErrorFlv,
-    isReturnErrorStatus,
+    isStopLoading,
     pagePermission,
+    stopLoadingMessage,
   };
 };
