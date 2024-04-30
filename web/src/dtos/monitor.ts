@@ -128,6 +128,6 @@ export interface IRealtimeGenerateRequest {
 export interface ILiveItem {
   locationId: string;
   equipmentCode: string;
-  taskId: string;
+  equipmentId: number;
   monitorTypes: ICameraAiMonitorType[];
 }

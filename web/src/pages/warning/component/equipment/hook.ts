@@ -187,7 +187,7 @@ export const useAction = () => {
     if (warningId !== undefined) {
       GetRecordDetailApi({ RecordId: warningId })
         .then((res) => {
-          if (res.record && res.regionAndArea) {
+          if (res && res.record && res.regionAndArea) {
             const resData = {
               areaAdress: res.regionAndArea.regionAddress,
               locationId: res.regionAndArea.locationId,

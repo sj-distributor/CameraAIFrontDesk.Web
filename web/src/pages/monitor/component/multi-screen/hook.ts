@@ -148,7 +148,7 @@ export const useAction = () => {
         return {
           locationId: item?.locationId ?? "",
           equipmentCode: item?.equipmentCode ?? "",
-          taskId: item?.taskId ?? "",
+          equipmentId: item?.id ?? "",
           monitorTypes: endSelectValues,
         };
       });
@@ -302,7 +302,7 @@ export const useAction = () => {
   useEffect(() => {
     const cleanup = () => {
       const data = equipmentsRef.current?.map((item) => ({
-        taskId: item?.taskId ?? [],
+        equipmentId: item?.id ?? [],
         locationId: item?.locationId ?? [],
         equipmentCode: item?.equipmentCode ?? [],
       }));

@@ -162,7 +162,7 @@ export const useAction = () => {
           {
             locationId: locationId ?? "",
             equipmentCode: item?.equipmentCode ?? "",
-            taskId: item?.taskId ?? "",
+            equipmentId: item?.id ?? "",
             monitorTypes: [],
           },
         ],

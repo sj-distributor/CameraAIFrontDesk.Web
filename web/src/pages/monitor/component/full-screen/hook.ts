@@ -91,18 +91,6 @@ export const useAction = () => {
   };
 
   useEffect(() => {
-    const params = location.pathname.split("/").filter((item) => item !== "");
-
-    const regionId = params[1],
-      equipmentId = params[2] ?? location.state?.equipmentId;
-
-    setParamsDto({
-      equipmentId,
-      regionId,
-    });
-  }, []);
-
-  useEffect(() => {
     if (paramsDto?.equipmentId) {
       GetMonitorDetail({
         EquipmentId: Number(paramsDto?.equipmentId),
@@ -126,7 +114,7 @@ export const useAction = () => {
         {
           locationId: monitorDetail?.locationId ?? "",
           equipmentCode: monitorDetail?.equipmentCode ?? "",
-          taskId: monitorDetail?.taskId ?? "",
+          equipmentId: monitorDetail?.id ?? 0,
           monitorTypes: selectValues,
         },
       ],
@@ -184,10 +172,6 @@ export const useAction = () => {
             return;
           } else {
             setErrorFlv(false);
-
-            const data = getGenerateParams(monitorDetail!);
-
-            PostRealtimeGenerate(data);
           }
         }
       })
@@ -201,16 +185,28 @@ export const useAction = () => {
   }
 
   useEffect(() => {
+    const params = location.pathname.split("/").filter((item) => item !== "");
+
+    const regionId = params[1],
+      equipmentId = params[2] ?? location.state?.equipmentId;
+
+    setParamsDto({
+      equipmentId,
+      regionId,
+    });
+
+    console.log("monitorDetailRef.current", monitorDetailRef.current);
+
     const cleanup = () => {
       monitorDetailRef.current?.locationId &&
         monitorDetailRef.current?.equipmentCode &&
-        monitorDetailRef.current?.taskId &&
+        equipmentId &&
         PostStopRealtime({
           stopList: [
             {
               locationId: monitorDetailRef.current?.locationId,
               equipmentCode: monitorDetailRef.current?.equipmentCode,
-              taskId: monitorDetailRef.current?.taskId,
+              equipmentId: Number(equipmentId),
             },
           ],
         });
