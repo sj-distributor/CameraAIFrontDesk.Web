@@ -150,11 +150,11 @@ export const useAction = () => {
           console.log("生成实时成功");
         })
         .catch(() => {
-          message.error("生成实时失败");
+          message.error("生成實時失败");
 
           setIsStopLoadingDto(() => ({
             isStopLoading: true,
-            message: "生成實時失敗",
+            message: "生成實時失败",
           }));
         });
     } else if (isGetMonitorDetail && !monitorDetail) {
