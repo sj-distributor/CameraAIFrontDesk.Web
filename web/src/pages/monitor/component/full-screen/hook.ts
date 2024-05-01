@@ -24,9 +24,13 @@ export const useAction = () => {
 
   const [errorFlv, setErrorFlv] = useState<boolean>(false);
 
-  const [isStopLoading, setIsStopLoading] = useState<boolean>(false);
-
-  const [stopLoadingMessage, setStopLoadingMessage] = useState<string>("");
+  const [isStopLoadingDto, setIsStopLoadingDto] = useState<{
+    isStopLoading: boolean;
+    message: string;
+  }>({
+    isStopLoading: false,
+    message: "",
+  });
 
   const [monitorDetail, setMonitorDetail] =
     useState<IMonitorDetailResponse | null>(null);
@@ -146,14 +150,20 @@ export const useAction = () => {
           console.log("生成实时成功");
         })
         .catch(() => {
-          setIsStopLoading(true);
           message.error("生成实时失败");
-          setStopLoadingMessage("生成实时失败");
+
+          setIsStopLoadingDto(() => ({
+            isStopLoading: true,
+            message: "生成實時失敗",
+          }));
         });
     } else if (isGetMonitorDetail && !monitorDetail) {
-      setIsStopLoading(true);
       message.error("获取攝像頭失败，请退出当前页面重试");
-      setStopLoadingMessage("获取攝像頭失败，请退出当前页面重试");
+
+      setIsStopLoadingDto(() => ({
+        isStopLoading: true,
+        message: "获取攝像頭失败，请退出当前页面重试",
+      }));
     }
   }, [monitorDetail, isGetMonitorDetail]);
 
@@ -179,8 +189,12 @@ export const useAction = () => {
             return;
           } else if (res.status === IPlayBackStatus.Failed) {
             message.error("获取视频流失败");
-            setIsStopLoading(true);
-            setStopLoadingMessage("获取视频流失败");
+
+            setIsStopLoadingDto(() => ({
+              isStopLoading: true,
+              message: "获取视频流失败",
+            }));
+
             setIsSuccess(false);
             setIsGenerate(false);
             setSuccessUrl("");
@@ -192,9 +206,11 @@ export const useAction = () => {
       })
       .catch(() => {
         message.error("獲取視頻流錯誤，請稍候重試");
-        setStopLoadingMessage("獲取視頻流錯誤，請稍候重試");
 
-        setIsStopLoading(true);
+        setIsStopLoadingDto(() => ({
+          isStopLoading: true,
+          message: "獲取視頻流錯誤，請稍候重試",
+        }));
         setIsSuccess(false);
         setIsGenerate(false);
         setSuccessUrl("");
@@ -220,8 +236,6 @@ export const useAction = () => {
       equipmentId,
       regionId,
     });
-
-    console.log("monitorDetailRef.current", monitorDetailRef.current);
 
     const cleanup = () => {
       monitorDetailRef.current?.locationId &&
@@ -263,8 +277,7 @@ export const useAction = () => {
     isOpenExportPlaybackModal,
     errorFlv,
     setErrorFlv,
-    isStopLoading,
     pagePermission,
-    stopLoadingMessage,
+    isStopLoadingDto,
   };
 };

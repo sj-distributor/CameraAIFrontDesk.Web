@@ -17,10 +17,9 @@ export const FullScreen = () => {
     isShow,
     successUrl,
     errorFlv,
-    isStopLoading,
     setErrorFlv,
     pagePermission,
-    stopLoadingMessage,
+    isStopLoadingDto,
   } = useAction();
 
   return (
@@ -68,7 +67,7 @@ export const FullScreen = () => {
         </Popconfirm>
       </div>
       <div className="flex-1 w-full h-[calc(100%-22px)] flex flex-col">
-        {!isStopLoading ? (
+        {!isStopLoadingDto.isStopLoading ? (
           !isShow ? (
             <div className="mt-[15%]">
               <Spin tip="直播連結中..." size="small">
@@ -101,7 +100,7 @@ export const FullScreen = () => {
           )
         ) : (
           <div className="flex justify-center mt-[15%]">
-            {stopLoadingMessage}
+            {isStopLoadingDto.message}
           </div>
         )}
       </div>
