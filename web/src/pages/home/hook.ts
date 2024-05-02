@@ -426,7 +426,7 @@ export const useAction = () => {
       window.removeEventListener("beforeunload", cleanup);
 
       mpegtsPlayerPlayer?.current?.unload();
-      mpegtsPlayerPlayer?.current?.pause();
+      videoRef.current && mpegtsPlayerPlayer?.current?.pause();
       mpegtsPlayerPlayer?.current?.detachMediaElement();
       mpegtsPlayerPlayer?.current?.destroy();
       mpegtsPlayerPlayer.current = null;
