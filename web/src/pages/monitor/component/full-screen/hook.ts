@@ -24,8 +24,13 @@ export const useAction = () => {
 
   const [errorFlv, setErrorFlv] = useState<boolean>(false);
 
-  const [isReturnErrorStatus, setIsReturnErrorStatus] =
-    useState<boolean>(false);
+  const [isStopLoadingDto, setIsStopLoadingDto] = useState<{
+    isStopLoading: boolean;
+    message: string;
+  }>({
+    isStopLoading: false,
+    message: "",
+  });
 
   const [monitorDetail, setMonitorDetail] =
     useState<IMonitorDetailResponse | null>(null);
@@ -65,6 +70,12 @@ export const useAction = () => {
   // 保存预警筛选
   const onSave = (isTrue: boolean) => {
     if (isTrue) {
+      if (!monitorDetail && isGetMonitorDetail) {
+        message.error("获取攝像頭失败，请退出当前页面重试");
+
+        return;
+      }
+
       if (!isGenerate && !continueExecution.current && isSuccess) {
         const data = getGenerateParams(monitorDetail!);
 
@@ -90,17 +101,7 @@ export const useAction = () => {
     }
   };
 
-  useEffect(() => {
-    const params = location.pathname.split("/").filter((item) => item !== "");
-
-    const regionId = params[1],
-      equipmentId = params[2] ?? location.state?.equipmentId;
-
-    setParamsDto({
-      equipmentId,
-      regionId,
-    });
-  }, []);
+  const [isGetMonitorDetail, setIsGetMonitorDetail] = useState<boolean>(false);
 
   useEffect(() => {
     if (paramsDto?.equipmentId) {
@@ -109,6 +110,7 @@ export const useAction = () => {
       })
         .then((res) => {
           setMonitorDetail(res ?? null);
+          setIsGetMonitorDetail(true);
         })
         .catch(() => {
           setMonitorDetail(null);
@@ -126,7 +128,7 @@ export const useAction = () => {
         {
           locationId: monitorDetail?.locationId ?? "",
           equipmentCode: monitorDetail?.equipmentCode ?? "",
-          taskId: monitorDetail?.taskId ?? "",
+          equipmentId: monitorDetail?.id ?? 0,
           monitorTypes: selectValues,
         },
       ],
@@ -148,10 +150,22 @@ export const useAction = () => {
           console.log("生成实时成功");
         })
         .catch(() => {
-          message.error("生成实时失败");
+          message.error("生成實時失败");
+
+          setIsStopLoadingDto(() => ({
+            isStopLoading: true,
+            message: "生成實時失败",
+          }));
         });
+    } else if (isGetMonitorDetail && !monitorDetail) {
+      message.error("获取攝像頭失败，请退出当前页面重试");
+
+      setIsStopLoadingDto(() => ({
+        isStopLoading: true,
+        message: "获取攝像頭失败，请退出当前页面重试",
+      }));
     }
-  }, [monitorDetail]);
+  }, [monitorDetail, isGetMonitorDetail]);
 
   useEffect(() => {
     if (isGenerate) {
@@ -175,23 +189,35 @@ export const useAction = () => {
             return;
           } else if (res.status === IPlayBackStatus.Failed) {
             message.error("获取视频流失败");
-            setIsReturnErrorStatus(true);
+
+            setIsStopLoadingDto(() => ({
+              isStopLoading: true,
+              message: "获取视频流失败",
+            }));
+
             setIsSuccess(false);
             setIsGenerate(false);
             setSuccessUrl("");
             continueExecution.current = false;
 
             return;
-          } else {
-            setErrorFlv(false);
-
-            const data = getGenerateParams(monitorDetail!);
-
-            PostRealtimeGenerate(data);
           }
         }
       })
-      .catch()
+      .catch(() => {
+        message.error("獲取視頻流錯誤，請稍候重試");
+
+        setIsStopLoadingDto(() => ({
+          isStopLoading: true,
+          message: "獲取視頻流錯誤，請稍候重試",
+        }));
+        setIsSuccess(false);
+        setIsGenerate(false);
+        setSuccessUrl("");
+        continueExecution.current = false;
+
+        return;
+      })
       .finally(() => {
         // 等待1秒钟后再次执行
         setTimeout(() => {
@@ -201,16 +227,26 @@ export const useAction = () => {
   }
 
   useEffect(() => {
+    const params = location.pathname.split("/").filter((item) => item !== "");
+
+    const regionId = params[1],
+      equipmentId = params[2] ?? location.state?.equipmentId;
+
+    setParamsDto({
+      equipmentId,
+      regionId,
+    });
+
     const cleanup = () => {
       monitorDetailRef.current?.locationId &&
         monitorDetailRef.current?.equipmentCode &&
-        monitorDetailRef.current?.taskId &&
+        equipmentId &&
         PostStopRealtime({
           stopList: [
             {
               locationId: monitorDetailRef.current?.locationId,
               equipmentCode: monitorDetailRef.current?.equipmentCode,
-              taskId: monitorDetailRef.current?.taskId,
+              equipmentId: Number(equipmentId),
             },
           ],
         });
@@ -241,7 +277,7 @@ export const useAction = () => {
     isOpenExportPlaybackModal,
     errorFlv,
     setErrorFlv,
-    isReturnErrorStatus,
     pagePermission,
+    isStopLoadingDto,
   };
 };

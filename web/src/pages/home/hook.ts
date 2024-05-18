@@ -56,33 +56,33 @@ export const useAction = () => {
   const [clickCamera, setClickCamera] = useState<{
     locationId: string;
     equipmentCode: string;
-    taskId: string;
     regionId: number;
     cameraId: number;
     equipmentName: string;
+    equipmentId: number;
   }>({
     locationId: "",
     equipmentCode: "",
-    taskId: "",
     regionId: 0,
     cameraId: 0,
     equipmentName: "",
+    equipmentId: 0,
   });
 
   const clickCameraCameraRef = useRef<{
     locationId: string;
     equipmentCode: string;
-    taskId: string;
     regionId: number;
     cameraId: number;
     equipmentName: string;
+    equipmentId: number;
   }>({
     locationId: "",
     equipmentCode: "",
-    taskId: "",
     regionId: 0,
     cameraId: 0,
     equipmentName: "",
+    equipmentId: 0,
   });
 
   useUpdateEffect(() => {
@@ -132,7 +132,7 @@ export const useAction = () => {
         PostStopRealtime({
           stopList: [
             {
-              taskId: clickCamera.taskId,
+              equipmentId: clickCamera.equipmentId,
               locationId: clickCamera.locationId,
               equipmentCode: clickCamera.equipmentCode,
             },
@@ -147,20 +147,22 @@ export const useAction = () => {
           })
           .catch(() => {});
       }
+
       setClickCamera({
         locationId,
         equipmentCode: item?.equipmentCode ?? "",
-        taskId: item?.taskId ?? "",
         regionId: regionId,
         cameraId: cameraId,
         equipmentName: item?.equipmentName ?? "",
+        equipmentId: item?.id ?? 0,
       });
+
       const data: IRealtimeGenerateRequest = {
         lives: [
           {
             locationId: locationId ?? "",
             equipmentCode: item?.equipmentCode ?? "",
-            taskId: item?.taskId ?? "",
+            equipmentId: item?.id ?? "",
             monitorTypes: [],
           },
         ],
@@ -178,10 +180,10 @@ export const useAction = () => {
           setClickCamera({
             locationId: "",
             equipmentCode: "",
-            taskId: "",
             regionId: 0,
             cameraId: 0,
             equipmentName: "",
+            equipmentId: 0,
           });
         });
     } else {
@@ -402,13 +404,13 @@ export const useAction = () => {
     getCameraList();
 
     const cleanup = () => {
-      clickCameraCameraRef.current.taskId &&
+      clickCameraCameraRef.current.equipmentId &&
         clickCameraCameraRef.current.locationId &&
         clickCameraCameraRef.current.equipmentCode &&
         PostStopRealtime({
           stopList: [
             {
-              taskId: clickCameraCameraRef.current.taskId,
+              equipmentId: clickCameraCameraRef.current.equipmentId,
               locationId: clickCameraCameraRef.current.locationId,
               equipmentCode: clickCameraCameraRef.current.equipmentCode,
             },
@@ -424,7 +426,7 @@ export const useAction = () => {
       window.removeEventListener("beforeunload", cleanup);
 
       mpegtsPlayerPlayer?.current?.unload();
-      mpegtsPlayerPlayer?.current?.pause();
+      videoRef.current && mpegtsPlayerPlayer?.current?.pause();
       mpegtsPlayerPlayer?.current?.detachMediaElement();
       mpegtsPlayerPlayer?.current?.destroy();
       mpegtsPlayerPlayer.current = null;
@@ -440,31 +442,57 @@ export const useAction = () => {
       );
 
       if (findCameraItem.length > 0) {
-        findCameraItem[0].cameras.forEach((item) => {
-          if (
-            item.id === clickCamera.cameraId &&
-            item.status === IPlayBackStatus.Success &&
-            !isFind
-          ) {
-            setNowStream(item.liveStreaming);
-            setIsFind(true);
-            setIsGenerate(false);
-          } else if (
-            item.id === clickCamera.cameraId &&
-            item.status === IPlayBackStatus.Failed &&
-            !isFind
-          ) {
-            setNowStream("");
-            setIsFind(true);
-            setIsGenerate(false);
-            setErrorFlv(true);
-            message.warning("生成的視頻流有問題，請重新生成");
-            setClickCamera((prev) => ({
-              ...prev,
-              equipmentName: "",
-            }));
-          }
-        });
+        if (
+          findCameraItem[0].cameras.some(
+            (item) => item.id === clickCamera.cameraId
+          )
+        ) {
+          findCameraItem[0].cameras.forEach((item) => {
+            if (
+              item.id === clickCamera.cameraId &&
+              item.status === IPlayBackStatus.Success &&
+              !isFind
+            ) {
+              setNowStream(item.liveStreaming);
+              setIsFind(true);
+              setIsGenerate(false);
+            } else if (
+              item.id === clickCamera.cameraId &&
+              item.status === IPlayBackStatus.Failed &&
+              !isFind
+            ) {
+              setNowStream("");
+              setIsFind(true);
+              setIsGenerate(false);
+              setErrorFlv(true);
+              message.warning("生成的視頻流有問題，請重新生成");
+              setClickCamera((prev) => ({
+                ...prev,
+                equipmentName: "",
+              }));
+            }
+          });
+        } else {
+          setNowStream("");
+          setIsFind(true);
+          setIsGenerate(false);
+          setErrorFlv(true);
+          setClickCamera((prev) => ({
+            ...prev,
+            equipmentName: "",
+          }));
+          message.error("获取當前攝像頭失败，请重新選擇攝像頭");
+        }
+      } else {
+        setNowStream("");
+        setIsFind(true);
+        setIsGenerate(false);
+        setErrorFlv(true);
+        setClickCamera((prev) => ({
+          ...prev,
+          equipmentName: "",
+        }));
+        message.error("获取當前攝像頭失败，请重新選擇攝像頭");
       }
     }
   }, [cameraList.regionCameras]);

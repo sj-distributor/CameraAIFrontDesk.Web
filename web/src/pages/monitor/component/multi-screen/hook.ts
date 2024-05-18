@@ -133,6 +133,7 @@ export const useAction = () => {
         })
         .catch(() => {
           setEquipments([]);
+          message.error("獲取設備詳情失敗");
         });
     }
   };
@@ -148,7 +149,7 @@ export const useAction = () => {
         return {
           locationId: item?.locationId ?? "",
           equipmentCode: item?.equipmentCode ?? "",
-          taskId: item?.taskId ?? "",
+          equipmentId: item?.id ?? "",
           monitorTypes: endSelectValues,
         };
       });
@@ -287,7 +288,19 @@ export const useAction = () => {
           return;
         }
       })
-      .catch(() => {})
+      .catch(() => {
+        message.error("獲取視頻流錯誤，請稍候重試");
+
+        setIsGenerate(false);
+
+        continueExecution.current = false;
+
+        setReturnErrorIndexs([]);
+
+        setErrorFlvIndexs([]);
+
+        return;
+      })
       .finally(() => {
         setTimeout(() => {
           loadEquipmentList();
@@ -302,7 +315,7 @@ export const useAction = () => {
   useEffect(() => {
     const cleanup = () => {
       const data = equipmentsRef.current?.map((item) => ({
-        taskId: item?.taskId ?? [],
+        equipmentId: item?.id ?? [],
         locationId: item?.locationId ?? [],
         equipmentCode: item?.equipmentCode ?? [],
       }));

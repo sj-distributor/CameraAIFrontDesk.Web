@@ -46,6 +46,14 @@ export const useAction = () => {
 
   const [endSelectValues, setEndSelectValues] = useState<number[]>([]);
 
+  const [isStopLoadingDto, setIsStopLoadingDto] = useState<{
+    isStopLoading: boolean;
+    message: string;
+  }>({
+    isStopLoading: false,
+    message: "",
+  });
+
   useUpdateEffect(() => {
     setEndSelectValues(selectValues ?? []);
   }, [selectValues]);
@@ -80,6 +88,11 @@ export const useAction = () => {
           })
           .catch(() => {
             message.error("生成回放失败,请重试");
+
+            setIsStopLoadingDto(() => ({
+              isStopLoading: true,
+              message: "生成回放失败,请重试",
+            }));
           });
       } else {
         message.info("在生成視頻，請視頻生成完再更換預警篩選條件");
@@ -111,6 +124,13 @@ export const useAction = () => {
           });
         })
         .catch(() => {
+          message.error("获回放詳情數據失敗");
+
+          setIsStopLoadingDto(() => ({
+            isStopLoading: true,
+            message: "获回放詳情數據失敗",
+          }));
+
           setReplayDto({
             equipment: null,
             totalRecord: null,
@@ -300,19 +320,31 @@ export const useAction = () => {
           totalRecord.playbackStatus === IPlayBackStatus.Failed
         ) {
           message.error("获取视频流失败");
+
+          setIsStopLoadingDto(() => ({
+            isStopLoading: true,
+            message: "获取视频流失败",
+          }));
+
           setIsError(true);
           setSuccessUrl("");
           setIsFirstGenerate(false);
           continueExecution.current = false;
 
           return;
-        } else {
-          const data = getGenerateParams(replayDetailDto);
-
-          PostPlayBackGenerate(data);
         }
       })
-      .catch(() => {})
+      .catch(() => {
+        message.error("獲取視頻錯誤，請稍候重試");
+        setIsStopLoadingDto(() => ({
+          isStopLoading: true,
+          message: "獲取視頻錯誤，請稍候重試",
+        }));
+        setIsError(true);
+        setSuccessUrl("");
+        setIsFirstGenerate(false);
+        continueExecution.current = false;
+      })
       .finally(() => {
         setTimeout(() => {
           executeWithDelay(); // 递归调用自己
@@ -467,5 +499,6 @@ export const useAction = () => {
     warningData,
     isError,
     pagePermission,
+    isStopLoadingDto,
   };
 };

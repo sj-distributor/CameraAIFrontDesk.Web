@@ -56,7 +56,7 @@ export interface IStopRealtimeResquest {
 }
 
 export interface IStopItem {
-  taskId: string;
+  equipmentId: number;
   locationId: string;
   equipmentCode: string;
 }
