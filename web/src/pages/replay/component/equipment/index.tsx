@@ -22,6 +22,7 @@ export const Equipment = () => {
     warningData,
     isError,
     pagePermission,
+    isStopLoadingDto,
   } = useAction();
 
   return (
@@ -184,7 +185,8 @@ export const Equipment = () => {
       </Modal>
 
       <div className="flex-1 w-full h-[calc(100%-22px)] flex flex-col">
-        {!isError &&
+        {!isStopLoadingDto.isStopLoading ? (
+          !isError &&
           (!successUrl ? (
             <div className="mt-[15%]">
               <Spin tip="視頻加載中..." size="small">
@@ -199,7 +201,12 @@ export const Equipment = () => {
               setIsOpenExportPlaybackModal={setIsOpenExportPlaybackModal}
               canExportVideo={pagePermission.canExportPlaybackVideo}
             />
-          ))}
+          ))
+        ) : (
+          <div className="flex justify-center mt-[15%]">
+            {isStopLoadingDto.message}
+          </div>
+        )}
       </div>
     </div>
   );
