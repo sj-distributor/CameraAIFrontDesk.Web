@@ -185,7 +185,7 @@ export const Equipment = () => {
       </Modal>
 
       <div className="flex-1 w-full h-[calc(100%-22px)] flex flex-col">
-        {!isStopLoadingDto.isStopLoading ? (
+        {/* {!isStopLoadingDto.isStopLoading ? (
           !isError &&
           (!successUrl ? (
             <div className="mt-[15%]">
@@ -205,8 +205,17 @@ export const Equipment = () => {
         ) : (
           <div className="flex justify-center mt-[15%]">
             {isStopLoadingDto.message}
-          </div>
-        )}
+          </div>"https://video-builder.oss-cn-hongkong.aliyuncs.com/video/test-001.mp4"
+        )} */}
+        <VideoPlayback
+          isLive={false}
+          warningDetails={warningData}
+          videoUrl={
+            "https://video-builder.oss-cn-hongkong.aliyuncs.com/video/test-001.mp4"
+          }
+          setIsOpenExportPlaybackModal={setIsOpenExportPlaybackModal}
+          canExportVideo={pagePermission.canExportPlaybackVideo}
+        />
       </div>
     </div>
   );
