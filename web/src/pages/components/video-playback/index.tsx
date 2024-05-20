@@ -271,7 +271,7 @@ export const VideoPlayback = (props: {
   return (
     <>
       <div className="bg-white h-[calc(100%-130px)] rounded-lg mt-4 relative">
-        {false && (
+        {!timeAxisList && !errorFlv && (
           <Spin
             tip={
               isLive

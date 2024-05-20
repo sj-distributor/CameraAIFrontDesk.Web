@@ -205,7 +205,7 @@ export const Equipment = () => {
         ) : (
           <div className="flex justify-center mt-[15%]">
             {isStopLoadingDto.message}
-          </div>"https://video-builder.oss-cn-hongkong.aliyuncs.com/video/test-001.mp4"
+          </div>
         )}
       </div>
     </div>
