@@ -463,7 +463,7 @@ export const VideoPlayback = (props: {
                                       : ""}
                                   </div>
                                   <div
-                                    className={` relative h-2 w-px bg-[#ccc] ${
+                                    className={`relative h-2 w-px bg-[#ccc] ${
                                       index === 0 || index === 4
                                         ? "h-3"
                                         : "h-2 "
