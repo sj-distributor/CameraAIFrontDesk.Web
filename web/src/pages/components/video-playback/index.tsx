@@ -92,38 +92,6 @@ export const VideoPlayback = (props: {
 
   const { t } = useAuth();
 
-  const handleLoadedMetadata = () => {
-    if (videoRef.current) {
-      const duration =
-        videoRef.current.duration !== Infinity
-          ? videoRef.current.duration
-          : 86000;
-
-      // setVideoDuration(duration);
-
-      let initialTime = dayjs(warningDetails.startTime)
-        .subtract(120, "second")
-        .utc();
-
-      const arr = Array.from({ length: Math.ceil(duration / 3000) }).map(() => {
-        const timeList = Array.from({ length: 5 }).map(() => {
-          const innerTimeList = Array.from({ length: 5 }).map(() => {
-            initialTime = initialTime.add(120, "second").utc();
-
-            return initialTime.toISOString();
-          });
-
-          return innerTimeList;
-        });
-
-        return { timeList };
-      });
-
-      console.log(arr);
-      setTimeAxisList(arr);
-    }
-  };
-
   const handleSetPalyVideo = (duration?: number) => {
     if (videoRef?.current) {
       if (duration) {
@@ -267,6 +235,36 @@ export const VideoPlayback = (props: {
   }, [videoUrl]);
 
   useEffect(() => {
+    if (warningDetails.startTime && warningDetails.duration) {
+      const duration = isNaN(Number(warningDetails.duration))
+        ? 86000
+        : Number(warningDetails.duration);
+
+      // setVideoDuration(duration);
+
+      let initialTime = dayjs(warningDetails.startTime)
+        .subtract(120, "second")
+        .utc();
+
+      const arr = Array.from({ length: Math.ceil(duration / 3000) }).map(() => {
+        const timeList = Array.from({ length: 5 }).map(() => {
+          const innerTimeList = Array.from({ length: 5 }).map(() => {
+            initialTime = initialTime.add(120, "second").utc();
+
+            return initialTime.toISOString();
+          });
+
+          return innerTimeList;
+        });
+
+        return { timeList };
+      });
+
+      setTimeAxisList(arr);
+    }
+  }, [warningDetails]);
+
+  useEffect(() => {
     timeAxisList && mpegtsPlayerPlayer.current?.play();
   }, [timeAxisList]);
 
@@ -294,7 +292,6 @@ export const VideoPlayback = (props: {
           <video
             ref={videoRef}
             onEnded={() => setIsPalyVideo(false)}
-            onLoadedMetadata={handleLoadedMetadata}
             className="w-full h-full object-fill"
             src={isLive ? "" : videoUrl}
           />
@@ -430,35 +427,68 @@ export const VideoPlayback = (props: {
                     {item.timeList.map((item, i) => {
                       const startTime = dayjs(warningDetails.startTime).utc();
 
-                      return (
+                      const endTime = startTime
+                        .add(Number(warningDetails.duration ?? 0), "second")
+                        .add(5, "minute");
+
+                      return endTime < dayjs(item[0]).utc() ? (
+                        <div className="w-1/4 flex flex-col" key={i} />
+                      ) : (
                         <div className="w-1/4 flex flex-col" key={i}>
                           <div className="flex items-end">
-                            {item.map((item, index) => {
-                              const duration = dayjs(item)
+                            {item.map((time, index) => {
+                              const duration = dayjs(time)
                                 .utc()
                                 .diff(startTime, "second");
 
-                              return (
+                              const endTime = startTime
+                                .add(
+                                  Number(warningDetails.duration ?? 0),
+                                  "second"
+                                )
+                                .add(2, "second");
+
+                              const endTimeIndex = item.findIndex(
+                                (item) => dayjs(item) > endTime
+                              );
+
+                              const node = (
                                 <div
                                   key={index}
                                   className={`w-1/5 h-max relative`}
                                 >
                                   <div className="text-start text-[#5F6279] font-semibold text-[0.875rem] text-nowrap absolute top-[-16px]">
-                                    {dayjs(item).get("minute") % 5 === 0
-                                      ? dayjs(item).format("hh:mm A")
+                                    {index === 0 || index === 4
+                                      ? dayjs(time).format("hh:mm A")
                                       : ""}
                                   </div>
                                   <div
-                                    className={`cursor-pointer h-2 w-px bg-[#ccc] ${
-                                      dayjs(item).get("minute") % 5 === 0
+                                    className={`relative h-2 w-px bg-[#ccc] ${
+                                      index === 0 || index === 4
                                         ? "h-3"
                                         : "h-2 "
                                     }`}
+                                  />
+                                  <span
+                                    className="absolute cursor-pointer w-2 h-2 top-1 left-[-4px]"
                                     onClick={() => {
                                       handleSetPalyVideo(duration);
                                     }}
                                   />
                                 </div>
+                              );
+
+                              return endTimeIndex ? (
+                                index <= endTimeIndex ? (
+                                  node
+                                ) : (
+                                  <div
+                                    key={index}
+                                    className={`w-1/5 h-max relative`}
+                                  />
+                                )
+                              ) : (
+                                node
                               );
                             })}
                           </div>
