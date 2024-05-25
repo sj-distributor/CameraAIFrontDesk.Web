@@ -161,7 +161,7 @@ export const useAction = () => {
     {
       label: `${t(KEYS.ALERT_CONTENT, { ns: "alertList" })}：`,
       value:
-        `${record?.equipmentName},${record?.monitorTypeName}(${record?.plateNumber})出現超過${record?.monitorDuration}秒` ??
+        `${record?.equipmentName},${record?.monitorTypeName}(${record?.name})出現超過${record?.monitorDuration}秒` ??
         "----",
     },
     {
@@ -332,7 +332,7 @@ export const useAction = () => {
       ]);
 
       const data = {
-        name: warningRecordDetail.record.faceName,
+        name: warningRecordDetail.record.name,
         type: warningRecordDetail.record.monitorType,
         content: warningRecordDetail.record.exceptionReason,
         startTime: warningRecordDetail.record.occurrenceTime,

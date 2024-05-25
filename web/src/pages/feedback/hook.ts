@@ -81,7 +81,7 @@ export const useAction = () => {
       const column = newData.map((item) => ({
         equipmentName: item.equipmentName,
         monitorTypeName: item.monitorTypeName,
-        monitorContent: `${item.equipmentName},${item.monitorTypeName}（${item.plateNumber}）出現超過 ${item.monitorDuration} 秒`,
+        monitorContent: `${item.equipmentName},${item.monitorTypeName}（${item.name}）出現超過 ${item.monitorDuration} 秒`,
         exceptionReason: item.exceptionReason,
         occurrenceTime: item.occurrenceTime
           ? dayjs(item.occurrenceTime).format("YYYY-MM-DD HH:mm:ss")

@@ -49,8 +49,7 @@ export interface IReplayRecordItem {
   settingDuration: number;
   recordStatus: IStatusType;
   exceptionReason: string;
-  plateNumber: string;
-  faceName: string;
+  name: string;
   replayTaskId: string;
   replayUrl: string;
   isRegistered: boolean;

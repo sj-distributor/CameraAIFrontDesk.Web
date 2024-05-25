@@ -98,8 +98,7 @@ export const WarningList = () => {
       render: (_: string, record: IRecordItem) => {
         return (
           <div className="w-full text-wrap select-none">
-            {record.equipmentName},{record.monitorTypeName}（
-            {record.plateNumber}
+            {record.equipmentName},{record.monitorTypeName}（{record.name}
             ）出現超過 {record.monitorDuration} 秒
           </div>
         );
