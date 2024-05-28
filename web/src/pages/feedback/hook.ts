@@ -81,16 +81,16 @@ export const useAction = () => {
       const column = newData.map((item) => ({
         equipmentName: item.equipmentName,
         monitorTypeName: item.monitorTypeName,
-        monitorContent: `${item.equipmentName},${item.monitorTypeName}（${item.name}）出現超過 ${item.monitorDuration} 秒`,
+        monitorContent: `${item.equipmentName},${item.monitorTypeName}（${item.name}）出現超過 ${item.settingDuration} 秒`,
         exceptionReason: item.exceptionReason,
         occurrenceTime: item.occurrenceTime
           ? dayjs(item.occurrenceTime).format("YYYY-MM-DD HH:mm:ss")
           : "",
-        settingDuration: item.settingDuration
-          ? String(Math.round(item.settingDuration / 60)).padStart(2, "0") +
+        monitorDuration: item.monitorDuration
+          ? String(Math.round(item.monitorDuration / 60)).padStart(2, "0") +
             "m" +
-            (item.settingDuration % 60 !== 0
-              ? String(item.settingDuration % 60).padStart(2, "0") + "s"
+            (item.monitorDuration % 60 !== 0
+              ? String(item.monitorDuration % 60).padStart(2, "0") + "s"
               : "")
           : "",
       }));

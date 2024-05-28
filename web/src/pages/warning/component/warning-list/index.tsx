@@ -99,7 +99,7 @@ export const WarningList = () => {
         return (
           <div className="w-full text-wrap select-none">
             {record.equipmentName},{record.monitorTypeName}（{record.name}
-            ）出現超過 {record.monitorDuration} 秒
+            ）出現超過 {record.settingDuration} 秒
           </div>
         );
       },
@@ -176,8 +176,8 @@ export const WarningList = () => {
     },
     {
       title: t(KEYS.CONTINUE_TIME, { ns: "alertList" }),
-      dataIndex: "settingDuration",
-      key: "settingDuration",
+      dataIndex: "monitorDuration",
+      key: "monitorDuration",
       width: 180,
       render: (text: number) => {
         return text ? (

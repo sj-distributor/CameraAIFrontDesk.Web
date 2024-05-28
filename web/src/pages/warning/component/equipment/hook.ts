@@ -161,7 +161,7 @@ export const useAction = () => {
     {
       label: `${t(KEYS.ALERT_CONTENT, { ns: "alertList" })}：`,
       value:
-        `${record?.equipmentName},${record?.monitorTypeName}(${record?.name})出現超過${record?.monitorDuration}秒` ??
+        `${record?.equipmentName},${record?.monitorTypeName}(${record?.name})出現超過${record?.settingDuration}秒` ??
         "----",
     },
     {
@@ -171,10 +171,10 @@ export const useAction = () => {
     {
       label: `${t(KEYS.CONTINUE_TIME, { ns: "alertList" })}：`,
       value:
-        `${String(Math.round(record?.settingDuration / 60)).padStart(
+        `${String(Math.round(record?.monitorDuration / 60)).padStart(
           2,
           "0"
-        )}:${String(record?.settingDuration % 60).padStart(2, "0")}` ?? "----",
+        )}:${String(record?.monitorDuration % 60).padStart(2, "0")}` ?? "----",
     },
     {
       label: `${t(KEYS.START_TIME, { ns: "alertList" })}：`,
