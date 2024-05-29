@@ -276,10 +276,6 @@ export const useAction = () => {
             setIsFirstGenerate(false);
             continueExecution.current = false;
             return;
-          } else {
-            const data = getGenerateParams(playDetailData);
-
-            PostPlaybackGenerateApi(data);
           }
         })
         .catch(() => message.error("一直調用的接口失敗啦"));
