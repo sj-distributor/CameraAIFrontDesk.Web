@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { useUpdateEffect } from "ahooks";
 
 import {
   IPageDto,
@@ -87,7 +88,7 @@ export const useAction = () => {
     loadFeedbackData(dto.PageIndex, dto.PageSize);
   }, []);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     loadFeedbackData(
       1,
       dto.PageSize,

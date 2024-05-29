@@ -8,6 +8,7 @@ import {
 } from "@/dtos/default";
 import { useAuth } from "@/hooks/use-auth";
 import { GetRecordList } from "@/services/default";
+import { useUpdateEffect } from "ahooks";
 
 import { WarningSearchDataContext } from "../..";
 
@@ -101,7 +102,7 @@ export const useAction = () => {
     );
   };
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     loadWarningData(
       1,
       dto.PageSize,
