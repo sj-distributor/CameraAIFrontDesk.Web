@@ -23,9 +23,8 @@ export const GetRecordDetailApi = async (data: { RecordId: string }) => {
 export const PostPlaybackGenerateApi = async (
   data: IPostPlayBackGenerateRequest
 ) => {
-  const response = await api.post("/api/CameraAi/playback/generate", {
-    data,
-  });
+  console.log("data-api", data);
+  const response = await api.post("/api/CameraAi/playback/generate", data);
 
   return response.data;
 };
