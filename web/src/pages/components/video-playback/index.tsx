@@ -425,13 +425,13 @@ export const VideoPlayback = (props: {
                   </div>
                   <div className="w-full flex">
                     {item.timeList.map((item, i) => {
-                      const startTime = dayjs(warningDetails.startTime).utc();
+                      const startTime = dayjs(warningDetails.startTime);
 
                       const endTime = startTime
                         .add(Number(warningDetails.duration ?? 0), "second")
                         .add(5, "minute");
 
-                      return endTime < dayjs(item[0]).utc() ? (
+                      return endTime < dayjs(item[0]) ? (
                         <div className="w-1/4 flex flex-col" key={i} />
                       ) : (
                         <div className="w-1/4 flex flex-col" key={i}>
@@ -458,15 +458,13 @@ export const VideoPlayback = (props: {
                                   className={`w-1/5 h-max relative`}
                                 >
                                   <div className="text-start text-[#5F6279] font-semibold text-[0.875rem] text-nowrap absolute top-[-16px]">
-                                    {index === 0 || index === 4
+                                    {index / 4 === 0
                                       ? dayjs(time).format("hh:mm A")
                                       : ""}
                                   </div>
                                   <div
                                     className={`relative h-2 w-px bg-[#ccc] ${
-                                      index === 0 || index === 4
-                                        ? "h-3"
-                                        : "h-2 "
+                                      index / 4 === 0 ? "h-3" : "h-2 "
                                     }`}
                                   />
                                   <span
@@ -478,8 +476,8 @@ export const VideoPlayback = (props: {
                                 </div>
                               );
 
-                              return endTimeIndex ? (
-                                index <= endTimeIndex ? (
+                              return endTimeIndex >= 0 ? (
+                                index <= endTimeIndex + 2 ? (
                                   node
                                 ) : (
                                   <div
