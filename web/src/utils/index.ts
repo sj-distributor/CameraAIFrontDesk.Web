@@ -32,7 +32,7 @@ export const onDownLoadWorkbook = (
 };
 
 const saveWorkbook = (workbook: Workbook, fileName: string) => {
-  workbook.xlsx.writeBuffer().then((data) => {
+  workbook.xlsx.writeBuffer().then((data: ArrayBuffer) => {
     const blob = new Blob([data], { type: "" });
 
     saveAs(blob, fileName);

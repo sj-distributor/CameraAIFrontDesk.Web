@@ -14,7 +14,7 @@ interface IKey {
   monitorContent: string;
   exceptionReason: string;
   occurrenceTime: string;
-  settingDuration: string;
+  monitorDuration: string;
 }
 
 const keyName: IKey = {
@@ -23,7 +23,7 @@ const keyName: IKey = {
   monitorContent: "預警內容",
   exceptionReason: "異常原因",
   occurrenceTime: "開始時間",
-  settingDuration: "持續時間",
+  monitorDuration: "持續時間",
 };
 
 export const useAction = () => {
