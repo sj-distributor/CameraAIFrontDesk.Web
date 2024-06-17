@@ -51,6 +51,14 @@ export const useAction = () => {
   const [isOpenExportPlaybackModal, setIsOpenExportPlaybackModal] =
     useState<boolean>(false);
 
+  const [stopLoadingDto, setStopLoadingDto] = useState<{
+    isStopLoading: boolean;
+    message: string;
+  }>({
+    isStopLoading: false,
+    message: "",
+  });
+
   // 導出視頻接口邏輯
   const handelGetVideoPlayBackUrl = () => {
     {
@@ -107,7 +115,12 @@ export const useAction = () => {
             return;
           }
         })
-        .catch(() => {});
+        .catch(() => {
+          setStopLoadingDto(() => ({
+            isStopLoading: true,
+            message: "生成回放失败,请重试",
+          }));
+        });
 
     setTimeout(() => {
       handelGetVideoPlayBackData(id);
@@ -213,11 +226,21 @@ export const useAction = () => {
               })
               .catch(() => {
                 message.error("生成回放失敗");
+
+                setStopLoadingDto(() => ({
+                  isStopLoading: true,
+                  message: "生成回放失败",
+                }));
               });
           }
         })
         .catch(() => {
           message.error("獲取當前數據失敗");
+
+          setStopLoadingDto(() => ({
+            isStopLoading: true,
+            message: "獲取當前數據失敗",
+          }));
         });
     } else {
       message.error("無效數據");
@@ -271,6 +294,12 @@ export const useAction = () => {
             record.playbackStatus === IPlayBackStatus.Failed
           ) {
             message.error("获取视频流失败");
+
+            setStopLoadingDto(() => ({
+              isStopLoading: true,
+              message: "获取视频流失败",
+            }));
+
             setIsError(true);
             setSuccessUrl("");
             setIsFirstGenerate(false);
@@ -278,7 +307,14 @@ export const useAction = () => {
             return;
           }
         })
-        .catch(() => message.error("一直調用的接口失敗啦"));
+        .catch(() => {
+          message.error("獲取視頻流失敗，請刷新頁面重試");
+
+          setStopLoadingDto(() => ({
+            isStopLoading: true,
+            message: "獲取視頻流失敗，請刷新頁面重試",
+          }));
+        });
     }
 
     // 等待5秒钟后再次执行
@@ -376,5 +412,6 @@ export const useAction = () => {
     setPalyBlackData,
     warningData,
     isError,
+    stopLoadingDto,
   };
 };

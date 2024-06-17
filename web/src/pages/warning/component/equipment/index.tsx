@@ -20,6 +20,7 @@ export const Equipment = () => {
     setPalyBlackData,
     warningData,
     isError,
+    stopLoadingDto,
   } = useAction();
 
   return (
@@ -98,8 +99,14 @@ export const Equipment = () => {
         </div>
       </Modal>
 
-      <div className="h-[calc(100%-7.5rem)] rounded-lg mt-4 flex flex-col">
-        {!isError &&
+      <div
+        className={`h-[calc(100%-7.5rem)] rounded-lg mt-4 flex flex-col ${
+          (stopLoadingDto.isStopLoading || isError) &&
+          "bg-black bg-opacity-80 text-white"
+        }`}
+      >
+        {!stopLoadingDto.isStopLoading ? (
+          !isError &&
           (!isShow ? (
             <div className="mt-[15%]">
               <Spin tip="視頻加載中..." size="small">
@@ -113,7 +120,12 @@ export const Equipment = () => {
               videoUrl={successUrl}
               setIsOpenExportPlaybackModal={setIsOpenExportPlaybackModal}
             />
-          ))}
+          ))
+        ) : (
+          <div className="flex justify-center mt-[15%]">
+            {stopLoadingDto.message}
+          </div>
+        )}
       </div>
     </>
   );
