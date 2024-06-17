@@ -101,6 +101,8 @@ export const useAction = () => {
   // 回調獲取導出視頻url
 
   const handelGetVideoPlayBackData = (id: string) => {
+    let playbackTimer: NodeJS.Timeout | null = null;
+
     if (isPlayBackCallBackData) return;
 
     id &&
@@ -112,7 +114,7 @@ export const useAction = () => {
             handelDownloadUrl(generateUrl);
             setIsPlayBackCallBackData(true);
 
-            return;
+            playbackTimer && clearTimeout(playbackTimer);
           }
         })
         .catch(() => {
@@ -122,7 +124,7 @@ export const useAction = () => {
           }));
         });
 
-    setTimeout(() => {
+    playbackTimer = setTimeout(() => {
       handelGetVideoPlayBackData(id);
     }, 5000);
   };
