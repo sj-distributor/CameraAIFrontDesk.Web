@@ -1,6 +1,6 @@
 import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import ExcelJS, { Workbook } from "ExcelJS";
+import ExcelJS, { Workbook } from "exceljs";
 import saveAs from "file-saver";
 
 export interface IExcelProps {
