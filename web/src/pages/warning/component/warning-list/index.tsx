@@ -182,7 +182,7 @@ export const WarningList = () => {
       render: (text: number) => {
         return text ? (
           <span className="select-none">
-            {`${String(Math.round(text / 60)).padStart(2, "0")}:${String(
+            {`${String(Math.floor(text / 60)).padStart(2, "0")}:${String(
               text % 60
             ).padStart(2, "0")}`}
           </span>

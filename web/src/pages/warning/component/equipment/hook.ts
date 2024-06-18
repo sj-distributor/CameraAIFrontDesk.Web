@@ -184,7 +184,7 @@ export const useAction = () => {
     {
       label: `${t(KEYS.CONTINUE_TIME, { ns: "alertList" })}：`,
       value:
-        `${String(Math.round(record?.monitorDuration / 60)).padStart(
+        `${String(Math.floor(record?.monitorDuration / 60)).padStart(
           2,
           "0"
         )}:${String(record?.monitorDuration % 60).padStart(2, "0")}` ?? "----",

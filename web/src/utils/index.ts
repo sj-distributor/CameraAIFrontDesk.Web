@@ -1,6 +1,6 @@
 import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import ExcelJS, { Workbook } from "ExcelJS";
+import ExcelJS, { Workbook } from "exceljs";
 import saveAs from "file-saver";
 
 export interface IExcelProps {
@@ -32,7 +32,7 @@ export const onDownLoadWorkbook = (
 };
 
 const saveWorkbook = (workbook: Workbook, fileName: string) => {
-  workbook.xlsx.writeBuffer().then((data) => {
+  workbook.xlsx.writeBuffer().then((data: ArrayBuffer) => {
     const blob = new Blob([data], { type: "" });
 
     saveAs(blob, fileName);
