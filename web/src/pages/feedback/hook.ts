@@ -14,7 +14,7 @@ interface IKey {
   monitorContent: string;
   exceptionReason: string;
   occurrenceTime: string;
-  settingDuration: string;
+  monitorDuration: string;
 }
 
 const keyName: IKey = {
@@ -23,7 +23,7 @@ const keyName: IKey = {
   monitorContent: "預警內容",
   exceptionReason: "異常原因",
   occurrenceTime: "開始時間",
-  settingDuration: "持續時間",
+  monitorDuration: "持續時間",
 };
 
 export const useAction = () => {
@@ -87,7 +87,7 @@ export const useAction = () => {
           ? dayjs(item.occurrenceTime).format("YYYY-MM-DD HH:mm:ss")
           : "",
         monitorDuration: item.monitorDuration
-          ? String(Math.round(item.monitorDuration / 60)).padStart(2, "0") +
+          ? String(Math.floor(item.monitorDuration / 60)).padStart(2, "0") +
             "m" +
             (item.monitorDuration % 60 !== 0
               ? String(item.monitorDuration % 60).padStart(2, "0") + "s"
