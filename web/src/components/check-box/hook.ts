@@ -24,6 +24,10 @@ export const useAction = () => {
       label: t(KEYS.ABNORMALVEHICLES, { ns: "alertList" }),
       value: ICameraAiMonitorType.AbnormalVehicles,
     },
+    {
+      label: t(KEYS.SECURITY, { ns: "alertList" }),
+      value: ICameraAiMonitorType.Security,
+    },
   ];
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);

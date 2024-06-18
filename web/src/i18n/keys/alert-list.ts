@@ -21,6 +21,7 @@ export default {
   PEOPLE: "People",
   VEHICLES: "Vehicles",
   ABNORMALVEHICLES: "AbnormalVehicles",
+  SECURITY: "Security",
   TOTAL: "Total",
   TOTAL_DATA: "Total Data",
   JUMPT_TO: "Jumpt To",
