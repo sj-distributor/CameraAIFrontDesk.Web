@@ -7,9 +7,10 @@ import { useAction } from "./hook";
 import { ICheckBoxComponentProps } from "./props";
 
 export const CheckBoxComponent = (props: ICheckBoxComponentProps) => {
-  const { title, selectValues, onClick } = props;
+  const { title, selectValues, monitorSummary = false, onClick } = props;
 
-  const { t, wrapperRef, isOpen, typeList, toggleDropdown } = useAction();
+  const { t, wrapperRef, isOpen, checkTypeList, toggleDropdown } =
+    useAction(monitorSummary);
 
   return (
     <div className="flex items-center">
@@ -30,7 +31,7 @@ export const CheckBoxComponent = (props: ICheckBoxComponentProps) => {
         </div>
         {isOpen && (
           <div className="absolute max-h-60 overflow-auto bg-white mt-1 p-2 rounded-lg box-content w-[11rem] space-y-1 -left-[50%] z-50">
-            {typeList.map((item, index) => (
+            {checkTypeList.map((item, index) => (
               <div
                 key={index}
                 className={`py-2 hover:bg-[#EBF1FF] space-x-2 cursor-pointer text-sm px-4 rounded-lg ${

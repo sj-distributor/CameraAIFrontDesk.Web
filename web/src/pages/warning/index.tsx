@@ -69,6 +69,7 @@ export const Warning = () => {
                 title={t(KEYS.ALERT_SELECT, { ns: "alertList" })}
                 selectValues={selectValues}
                 onClick={onTypeClick}
+                monitorSummary={true}
               />
               <SelectComponent
                 title={t(KEYS.STATUS, { ns: "alertList" }) + "："}
