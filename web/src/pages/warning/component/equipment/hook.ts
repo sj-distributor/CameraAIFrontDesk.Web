@@ -218,7 +218,10 @@ export const useAction = () => {
 
             PostPlaybackGenerateApi({
               ...data,
-              monitorTypes: [res.record.monitorType],
+              monitorTypes:
+                res.record.monitorType === ICameraAiMonitorType.Security
+                  ? []
+                  : [res.record.monitorType],
             })
               .then(() => {
                 setIsFirstGenerate(true);
