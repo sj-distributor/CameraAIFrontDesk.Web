@@ -76,11 +76,25 @@ export const VideoPlayback = (props: {
 
   const [isPalyVideo, setIsPalyVideo] = useState<boolean>(false);
 
-  // const [videoDuration, setVideoDuration] = useState<number>(0);
+  const [playDuration, setPlayDuration] = useState<number>(0);
+
+  const [oldDuration, setOldDuration] = useState<number>(0);
+
+  const [videoDuration, setVideoDuration] = useState<number>(0);
 
   const [isOpenSpeedList, setIsOpenSpeedList] = useState<boolean>(false);
 
   // const [videoSpeed, setVideoSpeed] = useState<Speed>(1);
+
+  const prevValueRef = useRef();
+
+  useEffect(() => {
+    // 初次渲染时，设置前一个值
+
+    prevValueRef.current = videoDuration;
+  }, []);
+
+  const [liveStatTime, setLiveStartTime] = useState<string>("");
 
   const mpegtsPlayerPlayer = useRef<Mpegts.Player | null>(null);
 
@@ -94,7 +108,12 @@ export const VideoPlayback = (props: {
 
   const handleSetPalyVideo = (duration?: number) => {
     if (videoRef?.current) {
-      if (duration) {
+      if (typeof duration === "number") {
+        if (isLive && mpegtsPlayerPlayer && mpegtsPlayerPlayer.current) {
+          setOldDuration(mpegtsPlayerPlayer.current.currentTime);
+          mpegtsPlayerPlayer.current.currentTime = duration;
+          return;
+        }
         videoRef.current.currentTime = duration;
 
         videoRef.current.play();
@@ -171,15 +190,15 @@ export const VideoPlayback = (props: {
             cors: true,
           },
           {
-            enableWorker: true, // 启用分离的线程进行转换（如果不想看到控制台频繁报错把它设置为false，官方的回答是这个属性还不稳定，所以要测试实时视频流的话设置为true控制台经常报错）
-            enableStashBuffer: false, // 关闭IO隐藏缓冲区（如果需要最小延迟，则设置为false，此项设置针对直播视频流）
-            stashInitialSize: 128, // 减少首帧等待时长（针对实时视频流）
-            lazyLoad: false, // 关闭懒加载模式（针对实时视频流）
-            lazyLoadMaxDuration: 0.2, // 懒加载的最大时长。单位：秒。建议针对直播：调整为200毫秒
-            deferLoadAfterSourceOpen: false, // 在MediaSource sourceopen事件触发后加载。在Chrome上，在后台打开的标签页可能不会触发sourceopen事件，除非切换到该标签页。
-            liveBufferLatencyChasing: true, // 追踪内部缓冲区导致的实时流延迟
-            liveBufferLatencyMaxLatency: 1.5, // HTMLMediaElement 中可接受的最大缓冲区延迟（以秒为单位）之前使用flv.js发现延时严重，还有延时累加的问题，而mpegts.js对此做了优化，不需要我们自己设置快进追帧了
-            liveBufferLatencyMinRemain: 0.3, // HTMLMediaElement 中可接受的最小缓冲区延迟（以秒为单位）
+            // enableWorker: true, // 启用分离的线程进行转换（如果不想看到控制台频繁报错把它设置为false，官方的回答是这个属性还不稳定，所以要测试实时视频流的话设置为true控制台经常报错）
+            // enableStashBuffer: false, // 关闭IO隐藏缓冲区（如果需要最小延迟，则设置为false，此项设置针对直播视频流）
+            // stashInitialSize: 128, // 减少首帧等待时长（针对实时视频流）
+            // lazyLoad: false, // 关闭懒加载模式（针对实时视频流）
+            // lazyLoadMaxDuration: 0.2, // 懒加载的最大时长。单位：秒。建议针对直播：调整为200毫秒
+            // deferLoadAfterSourceOpen: false, // 在MediaSource sourceopen事件触发后加载。在Chrome上，在后台打开的标签页可能不会触发sourceopen事件，除非切换到该标签页。
+            // liveBufferLatencyChasing: true, // 追踪内部缓冲区导致的实时流延迟
+            // liveBufferLatencyMaxLatency: 1.5, // HTMLMediaElement 中可接受的最大缓冲区延迟（以秒为单位）之前使用flv.js发现延时严重，还有延时累加的问题，而mpegts.js对此做了优化，不需要我们自己设置快进追帧了
+            // liveBufferLatencyMinRemain: 0.3, // HTMLMediaElement 中可接受的最小缓冲区延迟（以秒为单位）
           }
         );
 
@@ -207,7 +226,7 @@ export const VideoPlayback = (props: {
 
               console.log(`${paddedMinutes}:${paddedSeconds}`);
 
-              // setVideoDuration(`${paddedMinutes}:${paddedSeconds}`);
+              setVideoDuration(min);
             }
 
             // return `${paddedMinutes}:${paddedSeconds}`;
@@ -235,7 +254,7 @@ export const VideoPlayback = (props: {
   }, [videoUrl]);
 
   useEffect(() => {
-    if (warningDetails.startTime && warningDetails.duration) {
+    if (warningDetails.startTime && warningDetails.duration && !isLive) {
       const duration = isNaN(Number(warningDetails.duration))
         ? 86000
         : Number(warningDetails.duration);
@@ -265,8 +284,41 @@ export const VideoPlayback = (props: {
   }, [warningDetails]);
 
   useEffect(() => {
-    timeAxisList && mpegtsPlayerPlayer.current?.play();
-  }, [timeAxisList]);
+    if ((playDuration < 60 || playDuration % 3000 === 0) && isLive) {
+      const duration = isNaN(Number(playDuration)) ? 0 : Number(playDuration);
+
+      // setVideoDuration(duration);
+
+      let initialTime = dayjs(dayjs(liveStatTime))
+        .subtract(120, "second")
+        .utc();
+
+      const arr = Array.from({ length: Math.ceil(duration / 3000) }).map(() => {
+        const timeList = Array.from({ length: 5 }).map(() => {
+          const innerTimeList = Array.from({ length: 5 }).map(() => {
+            initialTime = initialTime.add(120, "second").utc();
+
+            return initialTime.toISOString();
+          });
+
+          return innerTimeList;
+        });
+
+        return { timeList };
+      });
+      console.log(arr);
+      setTimeAxisList(arr);
+    }
+  }, [playDuration]);
+
+  useEffect(() => {
+    if (prevValueRef.current !== videoDuration) {
+      // 执行需要的操作
+      setPlayDuration((prev) => prev + 1);
+    }
+    // 更新前一个值为当前值
+    prevValueRef.current = videoDuration;
+  }, [videoDuration]);
 
   return (
     <>
@@ -291,9 +343,13 @@ export const VideoPlayback = (props: {
         ) : (
           <video
             ref={videoRef}
+            controls
             onEnded={() => setIsPalyVideo(false)}
             className="w-full h-full object-fill"
             src={isLive ? "" : videoUrl}
+            onLoadedMetadata={(e) =>
+              setLiveStartTime(dayjs().format("YYYY-MM-DD HH:mm:ss"))
+            }
           />
         )}
 
@@ -393,7 +449,9 @@ export const VideoPlayback = (props: {
           <ArrowLeftIcon />
         </div>
         {timeAxisList?.map((item, index) => {
-          const currentStartTime = dayjs(warningDetails.startTime)
+          const currentStartTime = dayjs(
+            isLive ? liveStatTime : warningDetails.startTime
+          )
             .add(index + 1 * 40, "minute")
             .utc();
 
@@ -425,74 +483,68 @@ export const VideoPlayback = (props: {
                   </div>
                   <div className="w-full flex">
                     {item.timeList.map((item, i) => {
-                      const startTime = dayjs(warningDetails.startTime).utc();
+                      const startTime = dayjs(
+                        isLive ? liveStatTime : warningDetails.startTime
+                      ).utc();
 
-                      const endTime = startTime
-                        .add(Number(warningDetails.duration ?? 0), "second")
-                        .add(5, "minute");
+                      const duration = isLive
+                        ? playDuration
+                        : warningDetails.duration;
 
-                      return endTime < dayjs(item[0]).utc() ? (
-                        <div className="w-1/4 flex flex-col" key={i} />
-                      ) : (
-                        <div className="w-1/4 flex flex-col" key={i}>
-                          <div className="flex items-end">
-                            {item.map((time, index) => {
-                              const duration = dayjs(time)
-                                .utc()
-                                .diff(startTime, "second");
+                      const endTime = startTime.add(
+                        Number(duration ?? 0),
+                        "second"
+                      );
 
-                              const endTime = startTime
-                                .add(
-                                  Number(warningDetails.duration ?? 0),
+                      return (
+                        endTime > dayjs(item[0]) && (
+                          <div className="w-1/4 flex flex-col" key={i}>
+                            <div className="flex items-end">
+                              {item.map((time, index) => {
+                                const duration = dayjs(time)
+                                  .utc()
+                                  .diff(startTime, "second");
+
+                                const endTime = startTime.add(
+                                  Number(
+                                    isLive
+                                      ? playDuration
+                                      : warningDetails.duration ?? 0
+                                  ),
                                   "second"
-                                )
-                                .add(2, "second");
+                                );
 
-                              const endTimeIndex = item.findIndex(
-                                (item) => dayjs(item) > endTime
-                              );
-
-                              const node = (
-                                <div
-                                  key={index}
-                                  className={`w-1/5 h-max relative`}
-                                >
-                                  <div className="text-start text-[#5F6279] font-semibold text-[0.875rem] text-nowrap absolute top-[-16px]">
-                                    {index === 0 || index === 4
-                                      ? dayjs(time).format("hh:mm A")
-                                      : ""}
-                                  </div>
-                                  <div
-                                    className={`relative h-2 w-px bg-[#ccc] ${
-                                      index === 0 || index === 4
-                                        ? "h-3"
-                                        : "h-2 "
-                                    }`}
-                                  />
-                                  <span
-                                    className="absolute cursor-pointer w-2 h-2 top-1 left-[-4px]"
-                                    onClick={() => {
-                                      handleSetPalyVideo(duration);
-                                    }}
-                                  />
-                                </div>
-                              );
-
-                              return endTimeIndex ? (
-                                index <= endTimeIndex ? (
-                                  node
-                                ) : (
+                                const node = (
                                   <div
                                     key={index}
                                     className={`w-1/5 h-max relative`}
-                                  />
-                                )
-                              ) : (
-                                node
-                              );
-                            })}
+                                  >
+                                    <div className="text-start text-[#5F6279] font-semibold text-[0.875rem] text-nowrap absolute top-[-16px]">
+                                      {index === 0 || index === 5
+                                        ? dayjs(time).format("hh:mm A")
+                                        : ""}
+                                    </div>
+                                    <div
+                                      className={`relative h-2 w-px bg-[#ccc] ${
+                                        index === 0 || index === 5
+                                          ? "h-3"
+                                          : "h-2 "
+                                      }`}
+                                    />
+                                    <span
+                                      className="absolute cursor-pointer w-2 h-2 top-1 left-[-4px]"
+                                      onClick={() => {
+                                        handleSetPalyVideo(duration);
+                                      }}
+                                    />
+                                  </div>
+                                );
+
+                                return endTime > dayjs(time) && node;
+                              })}
+                            </div>
                           </div>
-                        </div>
+                        )
                       );
                     })}
                   </div>
