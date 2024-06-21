@@ -343,7 +343,6 @@ export const VideoPlayback = (props: {
         ) : (
           <video
             ref={videoRef}
-            controls
             onEnded={() => setIsPalyVideo(false)}
             className="w-full h-full object-fill"
             src={isLive ? "" : videoUrl}
