@@ -315,9 +315,8 @@ export const VideoPlayback = (props: {
     if (prevValueRef.current !== videoDuration) {
       // 执行需要的操作
       setPlayDuration((prev) => prev + 1);
+      prevValueRef.current = videoDuration;
     }
-    // 更新前一个值为当前值
-    prevValueRef.current = videoDuration;
   }, [videoDuration]);
 
   return (
@@ -369,7 +368,9 @@ export const VideoPlayback = (props: {
           )}
           <div className="flex font-semibold text-white items-center">
             <span style={{ userSelect: "none" }}>
-              {dayjs(warningDetails.startTime).format("dddd HH:MM:ss A")}
+              {dayjs(
+                isLive ? dayjs(liveStatTime) : warningDetails.startTime
+              ).format("dddd HH:MM:ss A")}
             </span>
             <div
               className={`cursor-pointer flex rounded ml-[1.5rem] items-center px-2 text-white border border-white border-solid ${
