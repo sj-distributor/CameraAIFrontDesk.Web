@@ -23,6 +23,7 @@ export enum ICameraAiMonitorType {
   People,
   Vehicles,
   AbnormalVehicles,
+  Security = 6,
 }
 
 export interface IRecordResponse {

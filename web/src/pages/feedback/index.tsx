@@ -49,6 +49,7 @@ export const Feedback = () => {
             <CheckBoxComponent
               title={t(KEYS.ALERT_SELECT, { ns: "feedbackList" })}
               selectValues={selectValues}
+              monitorSummary={true}
               onClick={onTypeClick}
             />
           </div>

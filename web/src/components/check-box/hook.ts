@@ -8,7 +8,7 @@ import KEYS from "@/i18n/keys/alert-list";
 
 // import { useTypeList } from "@/hooks/hook";
 
-export const useAction = () => {
+export const useAction = (monitorSummary?: boolean) => {
   const { t } = useAuth();
 
   const typeList = [
@@ -25,6 +25,13 @@ export const useAction = () => {
       value: ICameraAiMonitorType.AbnormalVehicles,
     },
   ];
+
+  const securityItem = {
+    label: t(KEYS.SECURITY, { ns: "alertList" }),
+    value: ICameraAiMonitorType.Security,
+  };
+
+  const checkTypeList = monitorSummary ? [...typeList, securityItem] : typeList;
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
@@ -56,6 +63,7 @@ export const useAction = () => {
     wrapperRef,
     isOpen,
     typeList,
+    checkTypeList,
     toggleDropdown,
   };
 };
