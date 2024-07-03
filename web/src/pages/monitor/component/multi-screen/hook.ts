@@ -101,6 +101,8 @@ export const useAction = () => {
     // ICameraAiMonitorType.AbnormalVehicles,
   ]);
 
+  console.log(selectValues);
+
   // 获取设备详情
   const getEquipmentList = () => {
     if (mpegtsPlayerPlayer.current) {
