@@ -24,6 +24,25 @@ export const useAction = (monitorSummary?: boolean) => {
       label: t(KEYS.ABNORMALVEHICLES, { ns: "alertList" }),
       value: ICameraAiMonitorType.AbnormalVehicles,
     },
+    {
+      label: t(KEYS.ANIMAL, { ns: "alertList" }),
+      value: ICameraAiMonitorType.Animal,
+    },
+  ];
+
+  const animalList = [
+    {
+      label: "猫",
+      value: ICameraAiMonitorType.Cat,
+    },
+    {
+      label: "狗",
+      value: ICameraAiMonitorType.Dog,
+    },
+    {
+      label: "鸟",
+      value: ICameraAiMonitorType.Bird,
+    },
   ];
 
   const securityItem = {
@@ -38,6 +57,8 @@ export const useAction = (monitorSummary?: boolean) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
+
+  const [selectAnimal, setSelectAnimal] = useState<ICameraAiMonitorType[]>([]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -65,5 +86,8 @@ export const useAction = (monitorSummary?: boolean) => {
     typeList,
     checkTypeList,
     toggleDropdown,
+    animalList,
+    selectAnimal,
+    setSelectAnimal,
   };
 };

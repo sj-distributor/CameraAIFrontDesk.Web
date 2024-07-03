@@ -89,6 +89,10 @@ export const useAction = () => {
       label: "識別異常車輛",
       value: ICameraAiMonitorType.AbnormalVehicles,
     },
+    {
+      label: "動物入侵識別",
+      value: ICameraAiMonitorType.Animal,
+    },
   ];
 
   const [selectValues, setSelectValues] = useState<ICameraAiMonitorType[]>([
