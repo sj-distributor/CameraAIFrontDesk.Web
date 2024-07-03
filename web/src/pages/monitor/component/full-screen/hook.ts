@@ -1,4 +1,4 @@
-import { useUpdateEffect } from "ahooks";
+import { useUpdate, useUpdateEffect } from "ahooks";
 import { clone } from "ramda";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -38,9 +38,9 @@ export const useAction = () => {
   const monitorDetailRef = useRef<IMonitorDetailResponse | null>(null);
 
   const [selectValues, setSelectValues] = useState<ICameraAiMonitorType[]>([
-    ICameraAiMonitorType.People,
-    ICameraAiMonitorType.Vehicles,
-    ICameraAiMonitorType.AbnormalVehicles,
+    // ICameraAiMonitorType.People,
+    // ICameraAiMonitorType.Vehicles,
+    // ICameraAiMonitorType.AbnormalVehicles,
   ]);
 
   const [endSelectValues, setEndSelectValues] = useState<number[]>([]);
@@ -54,17 +54,40 @@ export const useAction = () => {
   const [isOpenExportPlaybackModal, setIsOpenExportPlaybackModal] =
     useState<boolean>(false);
 
-  const onTypeClick = (id: number) => {
-    setEndSelectValues((prev) => {
-      let newData = clone(prev);
+  const onTypeClick = (
+    id: number | number[],
+    isCheckAllAnimal: boolean = false
+  ) => {
+    if (typeof id === "number") {
+      setEndSelectValues((prev) => {
+        let newData = clone(prev);
 
-      const isExist = newData.findIndex((item) => item === id) !== -1;
+        const isExist = newData.findIndex((item) => item === id) !== -1;
 
-      if (isExist) newData = newData.filter((item) => item !== id);
-      else newData.push(id);
+        if (isExist) newData = newData.filter((item) => item !== id);
+        else newData.push(id);
 
-      return newData;
-    });
+        return newData;
+      });
+    } else {
+      setEndSelectValues((prev) => {
+        let newData = clone(prev);
+
+        if (isCheckAllAnimal) {
+          return id;
+        } else {
+          id.forEach((i) => {
+            const isExist = newData.includes(i);
+            if (isExist) {
+              newData = newData.filter((item) => item !== i);
+            } else {
+              newData.push(i);
+            }
+          });
+          return newData;
+        }
+      });
+    }
   };
 
   // 保存预警筛选
@@ -118,10 +141,6 @@ export const useAction = () => {
     }
   }, [paramsDto?.equipmentId]);
 
-  useUpdateEffect(() => {
-    setEndSelectValues(selectValues ?? []);
-  }, [selectValues]);
-
   const getGenerateParams = (monitorDetail: IMonitorDetailResponse) => {
     const data: IRealtimeGenerateRequest = {
       lives: [
@@ -129,7 +148,7 @@ export const useAction = () => {
           locationId: monitorDetail?.locationId ?? "",
           equipmentCode: monitorDetail?.equipmentCode ?? "",
           equipmentId: monitorDetail?.id ?? 0,
-          monitorTypes: selectValues,
+          monitorTypes: endSelectValues,
         },
       ],
     };
