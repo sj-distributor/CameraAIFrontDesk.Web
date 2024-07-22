@@ -51,21 +51,15 @@ export const useAction = () => {
     if (pagePermission.canSwitchCameraAiBackend) {
       var myIframe = document.getElementById("myIframe") as HTMLIFrameElement;
 
-      if (myIframe) {
-        const onIframeLoad = () => {
-          const token = localStorage.getItem(
-            (window as any).appsettings?.tokenKey
-          );
+      if (myIframe && myIframe.contentWindow) {
+        const token = localStorage.getItem(
+          (window as any).appsettings?.tokenKey
+        );
 
-          if (myIframe.contentWindow) {
-            (myIframe as any).contentWindow.postMessage(
-              token,
-              (window as any).appsettings?.cameraAIBackstageDomain
-            );
-          }
-        };
-
-        myIframe.addEventListener("load", onIframeLoad, { once: true });
+        (myIframe as any).contentWindow.postMessage(
+          token,
+          (window as any).appsettings?.cameraAIBackstageDomain
+        );
 
         window.open(
           (window as any).appsettings?.cameraAIBackstageDomain,
