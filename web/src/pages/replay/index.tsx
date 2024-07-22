@@ -1,16 +1,16 @@
-import { SearchOutlined } from "@ant-design/icons";
-import { Input } from "antd";
+import { DownOutlined, SearchOutlined } from "@ant-design/icons";
+import { Input, Popconfirm } from "antd";
 import { createContext } from "react";
 import { useOutlet } from "react-router-dom";
 
 import { BreadcrumbComponent } from "@/components/breadcrumb";
-import { CheckBoxComponent } from "@/components/check-box";
 import { RangePickerComponent } from "@/components/date-range-picker";
 
 import { useAction } from "./hook";
 import { IReplaySearchDataContext } from "./props";
 
 import KEYS from "@/i18n/keys/video-playback";
+import { WarningSelect } from "@/components/warning-select";
 
 export const ReplaySearchDataContext = createContext<IReplaySearchDataContext>(
   null!
@@ -55,13 +55,33 @@ export const Replay = () => {
                   setTimeDto={setTimeDto}
                 />
               </div>
-              <CheckBoxComponent
+
+              <Popconfirm
+                title=""
+                icon={<></>}
+                placement="bottom"
+                description={WarningSelect}
+                okText="保存"
+                cancelText="取消"
+              >
+                <div className="flex justify-center items-center space-x-2">
+                  <div className="font-medium text-sm text-[#566172]">
+                    預警篩選：
+                  </div>
+                  <div className="text-[#2866F1] text-[1rem] cursor-pointer">
+                    請選擇
+                  </div>
+                  <DownOutlined className="text-xs" />
+                </div>
+              </Popconfirm>
+
+              {/* <CheckBoxComponent
                 title={t(KEYS.ALERT_FILTER, {
                   ns: "videoPlayback",
                 })}
                 selectValues={selectValues}
                 onClick={onTypeClick}
-              />
+              /> */}
             </div>
           )}
         </div>

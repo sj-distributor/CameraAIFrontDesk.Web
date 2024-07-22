@@ -24,6 +24,10 @@ export const useAction = (monitorSummary?: boolean) => {
       label: t(KEYS.ABNORMALVEHICLES, { ns: "alertList" }),
       value: ICameraAiMonitorType.AbnormalVehicles,
     },
+    {
+      label: t(KEYS.ANIMAL, { ns: "alertList" }),
+      value: ICameraAiMonitorType.Animal,
+    },
   ];
 
   const securityItem = {

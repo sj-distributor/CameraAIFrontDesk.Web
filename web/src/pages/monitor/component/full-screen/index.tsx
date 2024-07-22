@@ -1,14 +1,12 @@
-import { Button, Checkbox, Popconfirm, Spin } from "antd";
+import { Button, Popconfirm, Spin } from "antd";
 
-import { useAction as checkBoxUseAction } from "@/components/check-box/hook";
 import { ICameraAiMonitorType } from "@/dtos/default";
 import { VideoPlayback } from "@/pages/components/video-playback";
 
 import { useAction } from "./hook";
+import { WarningSelect } from "@/components/warning-select";
 
 export const FullScreen = () => {
-  const { typeList } = checkBoxUseAction();
-
   const {
     // new
     onTypeClick,
@@ -26,34 +24,10 @@ export const FullScreen = () => {
     <div className="w-full h-full flex flex-col">
       <div>
         <Popconfirm
-          title="預警篩選"
-          description={
-            <div>
-              {typeList.map((item, index) => (
-                <div
-                  key={index}
-                  className={`py-2 hover:bg-[#EBF1FF] space-x-2 cursor-pointer text-sm px-4 rounded-lg ${
-                    endSelectValues.findIndex(
-                      (option) => item.value === option
-                    ) !== -1
-                      ? "bg-[#EBF1FF] text-[#2866F1]"
-                      : "bg-white text-black"
-                  }`}
-                  onClick={() => onTypeClick(item.value)}
-                >
-                  <Checkbox
-                    checked={
-                      endSelectValues.findIndex(
-                        (option) => option === item.value
-                      ) !== -1
-                    }
-                  />
-                  <span className="select-none">{item.label}</span>
-                </div>
-              ))}
-            </div>
-          }
-          placement="bottom"
+          title=""
+          icon={<></>}
+          placement="bottomLeft"
+          description={WarningSelect}
           onConfirm={() => {
             onSave(true);
           }}
