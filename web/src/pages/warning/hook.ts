@@ -3,7 +3,11 @@ import dayjs, { Dayjs } from "dayjs";
 import { clone } from "ramda";
 import { useEffect, useRef, useState } from "react";
 
-import { IRecordRequest, IStatusType } from "@/dtos/default";
+import {
+  ICameraAiMonitorType,
+  IRecordRequest,
+  IStatusType,
+} from "@/dtos/default";
 import { IRegisterRecordRequest } from "@/dtos/warning";
 import { useAuth } from "@/hooks/use-auth";
 import { GetRecordList } from "@/services/default";
@@ -75,14 +79,41 @@ export const useAction = () => {
     setStatus(value);
   };
 
-  const onTypeClick = (id: number) => {
+  const onTypeClick = (id: number, childId?: number[]) => {
     setSelectValues((prev) => {
       let newData = clone(prev);
 
-      const isExist = newData.findIndex((item) => item === id) !== -1;
+      const animalData = [
+        ICameraAiMonitorType.Cat,
+        ICameraAiMonitorType.Dog,
+        ICameraAiMonitorType.Bird,
+      ];
 
-      if (isExist) newData = newData.filter((item) => item !== id);
-      else newData.push(id);
+      if (childId) {
+        newData = newData.filter((value) => !animalData.includes(value));
+
+        newData = newData.concat(childId);
+
+        newData.push(ICameraAiMonitorType.Animal);
+
+        newData = newData.filter(
+          (value, index, self) => self.indexOf(value) === index
+        );
+      } else {
+        if (id === ICameraAiMonitorType.Animal) {
+          newData = newData.concat(animalData);
+        }
+
+        const isExist = newData.findIndex((item) => item === id) !== -1;
+
+        if (isExist) {
+          newData = newData.filter((item) => item !== id);
+
+          if (id === ICameraAiMonitorType.Animal) {
+            newData = newData.filter((value) => !animalData.includes(value));
+          }
+        } else newData.push(id);
+      }
 
       return newData;
     });

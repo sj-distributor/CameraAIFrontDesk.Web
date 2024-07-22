@@ -89,13 +89,19 @@ export const useAction = () => {
       label: "識別異常車輛",
       value: ICameraAiMonitorType.AbnormalVehicles,
     },
+    {
+      label: "動物入侵識別",
+      value: ICameraAiMonitorType.Animal,
+    },
   ];
 
   const [selectValues, setSelectValues] = useState<ICameraAiMonitorType[]>([
-    ICameraAiMonitorType.People,
-    ICameraAiMonitorType.Vehicles,
-    ICameraAiMonitorType.AbnormalVehicles,
+    // ICameraAiMonitorType.People,
+    // ICameraAiMonitorType.Vehicles,
+    // ICameraAiMonitorType.AbnormalVehicles,
   ]);
+
+  console.log(selectValues);
 
   // 获取设备详情
   const getEquipmentList = () => {
@@ -143,7 +149,7 @@ export const useAction = () => {
   }, [numberDto.number]);
 
   // 通过设备详情，调用生成接口
-  useEffect(() => {
+  useUpdateEffect(() => {
     if (!isGenerate) {
       const data = equipments.map((item) => {
         return {
@@ -171,17 +177,40 @@ export const useAction = () => {
     }
   }, [isGenerate]);
 
-  const onTypeClick = (id: number) => {
-    setEndSelectValues((prev) => {
-      let newData = clone(prev);
+  const onTypeClick = (
+    id: number | number[],
+    isCheckAllAnimal: boolean = false
+  ) => {
+    if (typeof id === "number") {
+      setEndSelectValues((prev) => {
+        let newData = clone(prev);
 
-      const isExist = newData.findIndex((item) => item === id) !== -1;
+        const isExist = newData.findIndex((item) => item === id) !== -1;
 
-      if (isExist) newData = newData.filter((item) => item !== id);
-      else newData.push(id);
+        if (isExist) newData = newData.filter((item) => item !== id);
+        else newData.push(id);
 
-      return newData;
-    });
+        return newData;
+      });
+    } else {
+      setEndSelectValues((prev) => {
+        let newData = clone(prev);
+
+        if (isCheckAllAnimal) {
+          return id;
+        } else {
+          id.forEach((i) => {
+            const isExist = newData.includes(i);
+            if (isExist) {
+              newData = newData.filter((item) => item !== i);
+            } else {
+              newData.push(i);
+            }
+          });
+          return newData;
+        }
+      });
+    }
   };
 
   const navigateToFullScreem = (index: number) => {
@@ -197,9 +226,9 @@ export const useAction = () => {
     );
   };
 
-  useUpdateEffect(() => {
-    setEndSelectValues(selectValues ?? []);
-  }, [selectValues]);
+  // useUpdateEffect(() => {
+  //   setEndSelectValues(selectValues ?? []);
+  // }, [selectValues]);
 
   const loadEquipmentList = () => {
     if (!continueExecution.current) return;
