@@ -1,4 +1,4 @@
-import { useDebounceEffect } from "ahooks";
+import { useDebounceEffect, useUpdateEffect } from "ahooks";
 import { Dayjs } from "dayjs";
 import { clone } from "ramda";
 import { useEffect, useRef, useState } from "react";
@@ -29,11 +29,15 @@ export const useAction = () => {
 
   const [height, setHeight] = useState<number | null>(null);
 
-  const onTypeClick = (id: number) => {
+  const onTypeClick = (id: number, childId?: number[]) => {
     setSelectValues((prev) => {
       let newData = clone(prev);
 
-      const isExist = newData.findIndex((item) => item === id) !== -1;
+      const animalData = [
+        ICameraAiMonitorType.Cat,
+        ICameraAiMonitorType.Dog,
+        ICameraAiMonitorType.Bird,
+      ];
 
       const costumeData = [
         ICameraAiMonitorType.FluorescentClothing,
@@ -57,35 +61,42 @@ export const useAction = () => {
         if (!childId.length) {
           newData = newData.filter((value) => value !== id);
         }
+        if (childId) {
+          newData = newData.filter((value) => !animalData.includes(value));
 
-        newData = newData.filter(
-          (value, index, self) => self.indexOf(value) === index
-        );
-      } else {
-        if (id === ICameraAiMonitorType.Animal) {
-          newData = newData.concat(animalData);
-        }
+          newData = newData.concat(childId);
 
-        if (id === ICameraAiMonitorType.Costume) {
-          newData = newData.concat(costumeData);
-        }
+          newData.push(ICameraAiMonitorType.Animal);
 
-        const isExist = newData.findIndex((item) => item === id) !== -1;
-
-        if (isExist) {
-          newData = newData.filter((item) => item !== id);
-
+          newData = newData.filter(
+            (value, index, self) => self.indexOf(value) === index
+          );
+        } else {
           if (id === ICameraAiMonitorType.Animal) {
-            newData = newData.filter((value) => !animalData.includes(value));
+            newData = newData.concat(animalData);
           }
 
           if (id === ICameraAiMonitorType.Costume) {
-            newData = newData.filter((value) => !costumeData.includes(value));
+            newData = newData.concat(costumeData);
           }
-        } else newData.push(id);
-      }
 
-      console.log(newData);
+          const isExist = newData.findIndex((item) => item === id) !== -1;
+
+          if (isExist) {
+            newData = newData.filter((item) => item !== id);
+
+            if (id === ICameraAiMonitorType.Animal) {
+              newData = newData.filter((value) => !animalData.includes(value));
+            }
+
+            if (id === ICameraAiMonitorType.Costume) {
+              newData = newData.filter((value) => !costumeData.includes(value));
+            }
+          } else newData.push(id);
+        }
+
+        console.log(newData);
+      } else newData.push(id);
 
       return newData;
     });

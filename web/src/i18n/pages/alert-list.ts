@@ -56,7 +56,7 @@ export default {
     [KEYS.PEOPLE]: "識別人員",
     [KEYS.VEHICLES]: "識別車輛",
     [KEYS.ABNORMALVEHICLES]: "識別異常車輛",
-    [KEYS.ANIMAL]: "動物入侵檢測",
+    [KEYS.ANIMAL]: "動物入侵識別",
     [KEYS.SECURITY]: "防盜功能",
     [KEYS.TOTAL]: "共",
     [KEYS.TOTAL_DATA]: "條數據",

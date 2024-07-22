@@ -72,6 +72,21 @@ export const useAction = (monitorSummary?: boolean) => {
     },
   ];
 
+  const animalList = [
+    {
+      label: "猫",
+      value: ICameraAiMonitorType.Cat,
+    },
+    {
+      label: "狗",
+      value: ICameraAiMonitorType.Dog,
+    },
+    {
+      label: "鸟",
+      value: ICameraAiMonitorType.Bird,
+    },
+  ];
+
   const securityItem = {
     label: t(KEYS.SECURITY, { ns: "alertList" }),
     value: ICameraAiMonitorType.Security,
