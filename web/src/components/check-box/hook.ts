@@ -28,6 +28,48 @@ export const useAction = (monitorSummary?: boolean) => {
       label: t(KEYS.ANIMAL, { ns: "alertList" }),
       value: ICameraAiMonitorType.Animal,
     },
+    {
+      label: "識別吸煙",
+      value: ICameraAiMonitorType.Smoke,
+    },
+    {
+      label: "識別打架",
+      value: ICameraAiMonitorType.Fight,
+    },
+    {
+      label: "識別安全配備",
+      value: ICameraAiMonitorType.Costume,
+    },
+  ];
+
+  const animalList = [
+    {
+      label: "猫",
+      value: ICameraAiMonitorType.Cat,
+    },
+    {
+      label: "狗",
+      value: ICameraAiMonitorType.Dog,
+    },
+    {
+      label: "鸟",
+      value: ICameraAiMonitorType.Bird,
+    },
+  ];
+
+  const costumeList = [
+    {
+      label: "螢光衣",
+      value: ICameraAiMonitorType.FluorescentClothing,
+    },
+    {
+      label: "手套",
+      value: ICameraAiMonitorType.Gloves,
+    },
+    {
+      label: "安全鞋",
+      value: ICameraAiMonitorType.SafetyShoes,
+    },
   ];
 
   const securityItem = {
@@ -42,6 +84,12 @@ export const useAction = (monitorSummary?: boolean) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
+
+  const [selectAnimal, setSelectAnimal] = useState<ICameraAiMonitorType[]>([]);
+
+  const [selectCostume, setSelectCostume] = useState<ICameraAiMonitorType[]>(
+    []
+  );
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -69,5 +117,11 @@ export const useAction = (monitorSummary?: boolean) => {
     typeList,
     checkTypeList,
     toggleDropdown,
+    animalList,
+    selectAnimal,
+    costumeList,
+    selectCostume,
+    setSelectCostume,
+    setSelectAnimal,
   };
 };

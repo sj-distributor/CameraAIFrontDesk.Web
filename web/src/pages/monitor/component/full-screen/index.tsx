@@ -1,4 +1,4 @@
-import { Button, Popconfirm, Spin } from "antd";
+import { Button, Checkbox, Popconfirm, Spin } from "antd";
 
 import { ICameraAiMonitorType } from "@/dtos/default";
 import { VideoPlayback } from "@/pages/components/video-playback";

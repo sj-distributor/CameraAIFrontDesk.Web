@@ -4,6 +4,7 @@ import { clone } from "ramda";
 import { useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/hooks/use-auth";
+import { ICameraAiMonitorType } from "@/dtos/default";
 
 export const useAction = () => {
   const { t } = useAuth();
@@ -34,8 +35,57 @@ export const useAction = () => {
 
       const isExist = newData.findIndex((item) => item === id) !== -1;
 
-      if (isExist) newData = newData.filter((item) => item !== id);
-      else newData.push(id);
+      const costumeData = [
+        ICameraAiMonitorType.FluorescentClothing,
+        ICameraAiMonitorType.Gloves,
+        ICameraAiMonitorType.SafetyShoes,
+      ];
+
+      if (childId) {
+        if (id === ICameraAiMonitorType.Costume) {
+          newData = newData.filter((value) => !costumeData.includes(value));
+        }
+
+        if (id === ICameraAiMonitorType.Animal) {
+          newData = newData.filter((value) => !animalData.includes(value));
+        }
+
+        newData = newData.concat(childId);
+
+        newData.push(id);
+
+        if (!childId.length) {
+          newData = newData.filter((value) => value !== id);
+        }
+
+        newData = newData.filter(
+          (value, index, self) => self.indexOf(value) === index
+        );
+      } else {
+        if (id === ICameraAiMonitorType.Animal) {
+          newData = newData.concat(animalData);
+        }
+
+        if (id === ICameraAiMonitorType.Costume) {
+          newData = newData.concat(costumeData);
+        }
+
+        const isExist = newData.findIndex((item) => item === id) !== -1;
+
+        if (isExist) {
+          newData = newData.filter((item) => item !== id);
+
+          if (id === ICameraAiMonitorType.Animal) {
+            newData = newData.filter((value) => !animalData.includes(value));
+          }
+
+          if (id === ICameraAiMonitorType.Costume) {
+            newData = newData.filter((value) => !costumeData.includes(value));
+          }
+        } else newData.push(id);
+      }
+
+      console.log(newData);
 
       return newData;
     });

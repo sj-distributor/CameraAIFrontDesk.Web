@@ -5,12 +5,24 @@ import KEYS from "@/i18n/keys/alert-list";
 
 import { useAction } from "./hook";
 import { ICheckBoxComponentProps } from "./props";
+import { ICameraAiMonitorType } from "@/dtos/default";
 
 export const CheckBoxComponent = (props: ICheckBoxComponentProps) => {
   const { title, selectValues, monitorSummary = false, onClick } = props;
 
-  const { t, wrapperRef, isOpen, checkTypeList, toggleDropdown } =
-    useAction(monitorSummary);
+  const {
+    t,
+    wrapperRef,
+    isOpen,
+    checkTypeList,
+    toggleDropdown,
+    animalList,
+    selectAnimal,
+    costumeList,
+    selectCostume,
+    setSelectCostume,
+    setSelectAnimal,
+  } = useAction(monitorSummary);
 
   return (
     <div className="flex items-center">
@@ -40,16 +52,80 @@ export const CheckBoxComponent = (props: ICheckBoxComponentProps) => {
                     ? "bg-[#EBF1FF] text-[#2866F1]"
                     : "bg-white text-black"
                 }`}
-                onClick={() => onClick(item.value)}
+                onClick={() => {
+                  !(
+                    item.value === ICameraAiMonitorType.Animal ||
+                    item.value === ICameraAiMonitorType.Costume
+                  ) && onClick(item.value);
+                }}
               >
                 <Checkbox
                   checked={
                     selectValues.findIndex(
                       (option) => option === item.value
-                    ) !== -1
+                    ) !== -1 ||
+                    (item.value === ICameraAiMonitorType.Animal &&
+                      selectAnimal.length === animalList.length) ||
+                    (item.value === ICameraAiMonitorType.Costume &&
+                      selectCostume.length === costumeList.length)
                   }
+                  indeterminate={
+                    (item.value === ICameraAiMonitorType.Animal &&
+                      selectAnimal.length > 0 &&
+                      selectAnimal.length < animalList.length) ||
+                    (item.value === ICameraAiMonitorType.Costume &&
+                      selectCostume.length > 0 &&
+                      selectCostume.length < costumeList.length)
+                  }
+                  onChange={(e) => {
+                    if (item.value === ICameraAiMonitorType.Animal) {
+                      onClick(item.value);
+
+                      setSelectAnimal(
+                        e.target.checked
+                          ? animalList.map((item) => item.value)
+                          : []
+                      );
+                    }
+
+                    if (item.value === ICameraAiMonitorType.Costume) {
+                      onClick(item.value);
+
+                      setSelectCostume(
+                        e.target.checked
+                          ? costumeList.map((item) => item.value)
+                          : []
+                      );
+                    }
+                  }}
                 />
                 <span className="select-none">{item.label}</span>
+
+                {item.value === ICameraAiMonitorType.Animal && (
+                  <Checkbox.Group
+                    className="mt-4"
+                    options={animalList}
+                    value={selectAnimal}
+                    onChange={(list) => {
+                      setSelectAnimal(list);
+
+                      onClick(ICameraAiMonitorType.Animal, list);
+                    }}
+                  />
+                )}
+
+                {item.value === ICameraAiMonitorType.Costume && (
+                  <Checkbox.Group
+                    className="mt-4"
+                    options={costumeList}
+                    value={selectCostume}
+                    onChange={(list) => {
+                      setSelectCostume(list);
+
+                      onClick(ICameraAiMonitorType.Costume, list);
+                    }}
+                  />
+                )}
               </div>
             ))}
           </div>
