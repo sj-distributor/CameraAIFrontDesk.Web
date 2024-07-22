@@ -1,8 +1,9 @@
 import "@/antd.css";
 import "./i18n/i18n";
 
-import { App as MessageApp } from "antd";
+import { ConfigProvider, App as MessageApp } from "antd";
 import dayjs from "dayjs";
+import locale from "antd/locale/zh_CN";
 import utc from "dayjs/plugin/utc";
 import { BrowserRouter } from "react-router-dom";
 
@@ -19,9 +20,14 @@ function App() {
     <BrowserRouter>
       <MessageApp>
         {isLoaded ? (
-          <AuthProvider>
-            <Router />
-          </AuthProvider>
+          <ConfigProvider
+            locale={locale}
+            theme={{ token: { colorPrimary: "#2866F1" } }}
+          >
+            <AuthProvider>
+              <Router />
+            </AuthProvider>
+          </ConfigProvider>
         ) : (
           <></>
         )}

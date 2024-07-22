@@ -1,8 +1,8 @@
-import { Button, Checkbox, Popconfirm, Spin } from "antd";
+import { Button, Popconfirm, Spin } from "antd";
 
-import { useAction as checkBoxUseAction } from "@/components/check-box/hook";
 import { ICameraAiMonitorType } from "@/dtos/default";
 import { VideoPlayback } from "@/pages/components/video-playback";
+import { useAction as checkBoxUseAction } from "@/components/check-box/hook";
 
 import { useAction } from "./hook";
 import { clone } from "ramda";
