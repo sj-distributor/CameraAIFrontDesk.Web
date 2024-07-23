@@ -51,20 +51,47 @@ export const useAction = () => {
     if (pagePermission.canSwitchCameraAiBackend) {
       var myIframe = document.getElementById("myIframe") as HTMLIFrameElement;
 
+      const token = localStorage.getItem((window as any).appsettings?.tokenKey);
+
+      const newWindow = window.open(
+        (window as any).appsettings?.cameraAIBackstageDomain,
+        "_blank"
+      );
+
+      const sendMessage = () => {
+        console.log("sendMessage");
+
+        if (newWindow && newWindow.document.readyState === "complete") {
+          (myIframe as any).contentWindow.postMessage(
+            token,
+            (window as any).appsettings?.cameraAIBackstageDomain
+          );
+        } else {
+          setTimeout(sendMessage, 100);
+        }
+      };
+
+      const recieve = () => {
+        window.addEventListener("message", (event) => {
+          console.log("recieve", event);
+
+          if (
+            event.origin ===
+              (window as any).appsettings?.cameraAIBackstageDomain &&
+            event.data === "requestToken"
+          ) {
+            (myIframe as any).contentWindow.postMessage(
+              token,
+              (window as any).appsettings?.cameraAIBackstageDomain
+            );
+          }
+        });
+      };
+
       if (myIframe && myIframe.contentWindow) {
-        const token = localStorage.getItem(
-          (window as any).appsettings?.tokenKey
-        );
+        sendMessage();
 
-        (myIframe as any).contentWindow.postMessage(
-          token,
-          (window as any).appsettings?.cameraAIBackstageDomain
-        );
-
-        window.open(
-          (window as any).appsettings?.cameraAIBackstageDomain,
-          "_blank"
-        );
+        recieve();
       }
     } else {
       message.warning("暫無權限切換後台");
