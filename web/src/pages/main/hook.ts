@@ -47,27 +47,29 @@ export const useAction = () => {
     }));
   };
 
-  const sendMessage = () => {
-    const newWindow = window.open(
-      (window as any).appsettings?.cameraAIBackstageDomain,
-      "_blank"
-    );
-
-    const token = localStorage.getItem((window as any).appsettings?.tokenKey);
-
-    if (newWindow && newWindow.document.readyState === "complete") {
-      newWindow.postMessage(
-        token,
-        (window as any).appsettings?.cameraAIBackstageDomain
-      );
-    } else {
-      setTimeout(sendMessage, 100);
-    }
-  };
-
   const jumpToBackstage = () => {
     if (pagePermission.canSwitchCameraAiBackend) {
       var myIframe = document.getElementById("myIframe") as HTMLIFrameElement;
+
+      const newWindow = window.open(
+        (window as any).appsettings?.cameraAIBackstageDomain,
+        "_blank"
+      );
+
+      const sendMessage = () => {
+        const token = localStorage.getItem(
+          (window as any).appsettings?.tokenKey
+        );
+
+        if (newWindow && newWindow.document.readyState === "complete") {
+          newWindow.postMessage(
+            token,
+            (window as any).appsettings?.cameraAIBackstageDomain
+          );
+        } else {
+          setTimeout(sendMessage, 100);
+        }
+      };
 
       if (myIframe && myIframe.contentWindow) {
         sendMessage();
