@@ -71,6 +71,8 @@ export const useAction = () => {
 
       const recieve = () => {
         window.addEventListener("message", (event) => {
+          console.log(event);
+
           if (
             event.origin ===
               (window as any).appsettings?.cameraAIBackstageDomain &&
