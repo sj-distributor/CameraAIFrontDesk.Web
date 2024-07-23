@@ -51,16 +51,14 @@ export const useAction = () => {
     if (pagePermission.canSwitchCameraAiBackend) {
       var myIframe = document.getElementById("myIframe") as HTMLIFrameElement;
 
+      const token = localStorage.getItem((window as any).appsettings?.tokenKey);
+
       const newWindow = window.open(
         (window as any).appsettings?.cameraAIBackstageDomain,
         "_blank"
       );
 
       const sendMessage = () => {
-        const token = localStorage.getItem(
-          (window as any).appsettings?.tokenKey
-        );
-
         if (newWindow && newWindow.document.readyState === "complete") {
           newWindow.postMessage(
             token,
