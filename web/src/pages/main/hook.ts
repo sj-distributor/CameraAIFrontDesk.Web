@@ -59,6 +59,8 @@ export const useAction = () => {
       );
 
       const sendMessage = () => {
+        console.log("sendMessage");
+
         if (newWindow && newWindow.document.readyState === "complete") {
           (myIframe as any).contentWindow.postMessage(
             token,
@@ -71,7 +73,7 @@ export const useAction = () => {
 
       const recieve = () => {
         window.addEventListener("message", (event) => {
-          console.log(event);
+          console.log("recieve", event);
 
           if (
             event.origin ===
