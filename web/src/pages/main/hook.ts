@@ -69,8 +69,26 @@ export const useAction = () => {
         }
       };
 
+      const recieve = () => {
+        window.addEventListener("message", (event) => {
+          if (
+            event.origin ===
+              (window as any).appsettings?.cameraAIBackstageDomain &&
+            event.data === "requestToken" &&
+            newWindow
+          ) {
+            newWindow.postMessage(
+              token,
+              (window as any).appsettings?.cameraAIBackstageDomain
+            );
+          }
+        });
+      };
+
       if (myIframe && myIframe.contentWindow) {
         sendMessage();
+
+        recieve();
       }
     } else {
       message.warning("暫無權限切換後台");
