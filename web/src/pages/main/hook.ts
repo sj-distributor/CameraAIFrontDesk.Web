@@ -60,7 +60,7 @@ export const useAction = () => {
 
       const sendMessage = () => {
         if (newWindow && newWindow.document.readyState === "complete") {
-          newWindow.postMessage(
+          (myIframe as any).contentWindow.postMessage(
             token,
             (window as any).appsettings?.cameraAIBackstageDomain
           );
@@ -74,10 +74,9 @@ export const useAction = () => {
           if (
             event.origin ===
               (window as any).appsettings?.cameraAIBackstageDomain &&
-            event.data === "requestToken" &&
-            newWindow
+            event.data === "requestToken"
           ) {
-            newWindow.postMessage(
+            (myIframe as any).contentWindow.postMessage(
               token,
               (window as any).appsettings?.cameraAIBackstageDomain
             );
