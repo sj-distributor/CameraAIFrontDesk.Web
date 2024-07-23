@@ -1,0 +1,36 @@
+import KEYS from "../keys/feedback-list";
+
+export default {
+  en: {
+    [KEYS.SELECT_DATE_TIME]: "Select Date：",
+    [KEYS.ALERT_SELECT]: "Alert Filter：",
+    [KEYS.EXPORT]: "Export",
+    [KEYS.DEVICE]: "Device",
+    [KEYS.ALERT_TYPE]: "Alert Name",
+    [KEYS.ALERT_CONTENT]: "Alert Content",
+    [KEYS.ABNORMAL_REASON]: "Abnormal Reason",
+    [KEYS.START_TIME]: "Start Time",
+    [KEYS.CONTINUE_TIME]: "Continue Time",
+    [KEYS.TOTAL]: "Total",
+    [KEYS.TOTAL_DATA]: "pieces of data",
+    [KEYS.JUMPT_TO]: "Jumpt to",
+    [KEYS.ITEMS_PER_PAGE]: "/page",
+    [KEYS.PAGE]: "page",
+  },
+  ch: {
+    [KEYS.SELECT_DATE_TIME]: "選擇日期時間：",
+    [KEYS.ALERT_SELECT]: "預警篩選：",
+    [KEYS.EXPORT]: "導出",
+    [KEYS.DEVICE]: "設備名稱",
+    [KEYS.ALERT_TYPE]: "預警類型",
+    [KEYS.ALERT_CONTENT]: "預警內容",
+    [KEYS.ABNORMAL_REASON]: "異常原因",
+    [KEYS.START_TIME]: "開始時間",
+    [KEYS.CONTINUE_TIME]: "持續時間",
+    [KEYS.TOTAL]: "共",
+    [KEYS.TOTAL_DATA]: "條數據",
+    [KEYS.JUMPT_TO]: "跳至",
+    [KEYS.ITEMS_PER_PAGE]: "條/頁",
+    [KEYS.PAGE]: "頁",
+  },
+};

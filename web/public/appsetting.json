@@ -1,0 +1,6 @@
+{
+  "serverUrl": "https://testsmarties.yamimeal.ca",
+  "tokenKey": "token",
+  "userNameKey": "userName",
+  "cameraAIBackstageDomain": ""
+}

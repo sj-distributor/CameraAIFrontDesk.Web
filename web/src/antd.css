@@ -1,0 +1,120 @@
+.ant-table-wrapper {
+  flex: 1;
+  height: 100%;
+}
+
+.ant-spin-nested-loading {
+  height: 100%;
+}
+
+.ant-spin-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ant-table {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ant-table-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ant-table-body {
+  flex: 1;
+}
+
+.ant-breadcrumb-separator {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.ant-pagination-total-text {
+  flex: 1 !important;
+}
+
+.ant-pagination {
+  padding: 0 16px;
+}
+
+.customModalStyle .ant-modal-content {
+  padding: 20px 0 !important;
+}
+
+.mark .ant-modal-content {
+  padding: 20px 0 !important;
+}
+
+@media (max-width: 575px) {
+  :where(.css-dev-only-do-not-override-i46qwz).ant-form:not(.ant-form-inline)
+    .ant-form-item
+    .ant-form-item-label:not([class*=" ant-col-xs"]) {
+    max-width: none;
+    flex: none;
+  }
+
+  .customModalStyle .ant-modal-body {
+    padding: 32px 64px !important;
+  }
+}
+
+.customModalStyle .ant-modal-body > .item:not(:last-child) {
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 575px) {
+  .customModalStyle .ant-modal-body {
+    padding: 32px 128px !important;
+    border-bottom: 1px solid #e9edf2;
+  }
+}
+
+.navigationIconBox {
+  min-width: 0.125rem !important;
+}
+
+.ant-picker-ranges .ant-picker-ok button {
+  background-color: #1677ff;
+}
+
+.ant-picker-presets li:hover {
+  color: #1677ff;
+}
+
+.ant-pagination .ant-pagination-item {
+  border-radius: 50% !important;
+}
+
+.ant-menu-item {
+  margin-bottom: 0.75rem !important;
+}
+
+.ant-menu-submenu .ant-menu {
+  background-color: white !important;
+}
+
+.ant-menu-submenu .ant-menu .ant-menu-item {
+  margin: 0px !important;
+  background-color: white !important;
+  height: 3rem;
+}
+
+.exportModelRangePicker .ant-picker-suffix {
+  margin-left: 1rem;
+}
+
+.exportModelRangePicker .ant-picker-input input {
+  min-width: min-content !important;
+}
+
+.multiSelect .ant-select-selector {
+  border: none !important;
+  background: none !important;
+  color: #2866f1 !important;
+}
