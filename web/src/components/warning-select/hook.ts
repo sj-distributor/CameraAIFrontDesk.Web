@@ -3,86 +3,91 @@ import { IItemProps, IWarningListProps, IWarningType } from "./props";
 import { useState } from "react";
 import { clone } from "ramda";
 
-const warningList: IWarningListProps[] = [
-  {
-    label: "人員",
-    value: IWarningType.People,
-    children: [
-      {
-        label: "人員檢測",
-        value: ICameraAiMonitorType.People,
-        defaultCheck: true,
-      },
-      {
-        label: "吸煙檢測",
-        value: ICameraAiMonitorType.Smoke,
-      },
-      {
-        label: "打架檢測",
-        value: ICameraAiMonitorType.Fight,
-      },
-      {
-        label: "安全配備檢測",
-        value: ICameraAiMonitorType.Costume,
-        children: [
-          {
-            label: "螢光衣",
-            value: ICameraAiMonitorType.FluorescentClothing,
-          },
-          {
-            label: "手套",
-            value: ICameraAiMonitorType.Gloves,
-          },
-          {
-            label: "安全鞋",
-            value: ICameraAiMonitorType.SafetyShoes,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    label: "車輛",
-    value: IWarningType.Vehicles,
-    children: [
-      {
-        label: "識別車輛",
-        value: ICameraAiMonitorType.Vehicles,
-        defaultCheck: true,
-      },
-      {
-        label: "識別異常車輛",
-        value: ICameraAiMonitorType.AbnormalVehicles,
-      },
-    ],
-  },
-  {
-    label: "物體",
-    value: IWarningType.Element,
-    children: [
-      {
-        label: "動物入侵",
-        value: ICameraAiMonitorType.Animal,
-        children: [
-          {
-            label: "貓",
-            value: ICameraAiMonitorType.Cat,
-          },
-          {
-            label: "狗",
-            value: ICameraAiMonitorType.Dog,
-          },
-          {
-            label: "鳥",
-            value: ICameraAiMonitorType.Bird,
-          },
-        ],
-      },
-    ],
-  },
-];
+import KEYS from "@/i18n/keys/alert-list";
+import { useAuth } from "@/hooks/use-auth";
 
 export const useAction = () => {
+  const { t } = useAuth();
+
+  const warningList: IWarningListProps[] = [
+    {
+      label: t(KEYS.PEOPLE_TYPE, { ns: "alertList" }),
+      value: IWarningType.People,
+      children: [
+        {
+          label: t(KEYS.PEOPLE, { ns: "alertList" }),
+          value: ICameraAiMonitorType.People,
+          defaultCheck: true,
+        },
+        {
+          label: t(KEYS.SMOKE, { ns: "alertList" }),
+          value: ICameraAiMonitorType.Smoke,
+        },
+        {
+          label: t(KEYS.FIGHT, { ns: "alertList" }),
+          value: ICameraAiMonitorType.Fight,
+        },
+        {
+          label: t(KEYS.COSTUME, { ns: "alertList" }),
+          value: ICameraAiMonitorType.Costume,
+          children: [
+            {
+              label: t(KEYS.FlUORESCENTCLOTHING, { ns: "alertList" }),
+              value: ICameraAiMonitorType.FluorescentClothing,
+            },
+            {
+              label: t(KEYS.GLOVES, { ns: "alertList" }),
+              value: ICameraAiMonitorType.Gloves,
+            },
+            {
+              label: t(KEYS.SAFETYSHOES, { ns: "alertList" }),
+              value: ICameraAiMonitorType.SafetyShoes,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      label: t(KEYS.VEHICLES_TYPE, { ns: "alertList" }),
+      value: IWarningType.Vehicles,
+      children: [
+        {
+          label: t(KEYS.VEHICLES, { ns: "alertList" }),
+          value: ICameraAiMonitorType.Vehicles,
+          defaultCheck: true,
+        },
+        {
+          label: t(KEYS.ABNORMALVEHICLES, { ns: "alertList" }),
+          value: ICameraAiMonitorType.AbnormalVehicles,
+        },
+      ],
+    },
+    {
+      label: t(KEYS.ELEMENT_TYPE, { ns: "alertList" }),
+      value: IWarningType.Element,
+      children: [
+        {
+          label: t(KEYS.ANIMAL, { ns: "alertList" }),
+          value: ICameraAiMonitorType.Animal,
+          children: [
+            {
+              label: t(KEYS.CAT, { ns: "alertList" }),
+              value: ICameraAiMonitorType.Cat,
+            },
+            {
+              label: t(KEYS.DOG, { ns: "alertList" }),
+              value: ICameraAiMonitorType.Dog,
+            },
+            {
+              label: t(KEYS.BIRD, { ns: "alertList" }),
+              value: ICameraAiMonitorType.Bird,
+            },
+          ],
+        },
+      ],
+    },
+  ];
+
   const [selectValues, setSelectValues] = useState<ICameraAiMonitorType[]>([]);
 
   const [checkIndex, setCheckIndex] = useState<IWarningType[]>([]);

@@ -62,6 +62,7 @@ export const Replay = () => {
 
               <Popconfirm
                 title=""
+                overlayStyle={{ height: "20rem" }}
                 icon={<></>}
                 placement="bottom"
                 description={<WarningSelect ref={warningSelectRef} />}

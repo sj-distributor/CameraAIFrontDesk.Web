@@ -59,7 +59,7 @@ export const WarningSelect = forwardRef((_, ref) => {
   };
 
   return (
-    <div className="w-[25rem] bg-red-300 rounded-[.5rem] pt-[1.3rem] px-[1.3rem] overflow-y-auto">
+    <div className="w-[25rem] rounded-[.5rem] pt-[1.3rem] px-[1.3rem] h-[60vh] max-h-[35rem] overflow-y-auto">
       {warningList.map((item, index) => {
         return (
           <div className="mb-[2.5rem]" key={index}>

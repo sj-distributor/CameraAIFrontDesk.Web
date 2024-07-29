@@ -29,45 +29,45 @@ export const useAction = (monitorSummary?: boolean) => {
       value: ICameraAiMonitorType.Animal,
     },
     {
-      label: "識別吸煙",
+      label: t(KEYS.SMOKE, { ns: "alertList" }),
       value: ICameraAiMonitorType.Smoke,
     },
     {
-      label: "識別打架",
+      label: t(KEYS.FIGHT, { ns: "alertList" }),
       value: ICameraAiMonitorType.Fight,
     },
     {
-      label: "識別安全配備",
+      label: t(KEYS.COSTUME, { ns: "alertList" }),
       value: ICameraAiMonitorType.Costume,
     },
   ];
 
   const animalList = [
     {
-      label: "猫",
+      label: t(KEYS.ANIMAL, { ns: "alertList" }),
       value: ICameraAiMonitorType.Cat,
     },
     {
-      label: "狗",
+      label: t(KEYS.ANIMAL, { ns: "alertList" }),
       value: ICameraAiMonitorType.Dog,
     },
     {
-      label: "鸟",
+      label: t(KEYS.ANIMAL, { ns: "alertList" }),
       value: ICameraAiMonitorType.Bird,
     },
   ];
 
   const costumeList = [
     {
-      label: "螢光衣",
+      label: t(KEYS.FlUORESCENTCLOTHING, { ns: "alertList" }),
       value: ICameraAiMonitorType.FluorescentClothing,
     },
     {
-      label: "手套",
+      label: t(KEYS.GLOVES, { ns: "alertList" }),
       value: ICameraAiMonitorType.Gloves,
     },
     {
-      label: "安全鞋",
+      label: t(KEYS.SAFETYSHOES, { ns: "alertList" }),
       value: ICameraAiMonitorType.SafetyShoes,
     },
   ];
