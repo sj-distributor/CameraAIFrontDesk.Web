@@ -48,6 +48,7 @@ export interface IRecordItem {
   equipmentName: string;
   equipmentCode: string;
   monitorTypeId: number;
+  monitorType: ICameraAiMonitorType;
   monitorTypeName: string;
   monitorDuration: number;
   settingDuration: number;
@@ -58,6 +59,7 @@ export interface IRecordItem {
   replayUrl: string;
   isRegistered: boolean;
   licensePlateImageUrl: string;
+  costumesDetected: string;
   occurrenceTime: string;
   createdTime: string;
 }

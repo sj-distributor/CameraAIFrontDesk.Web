@@ -10,7 +10,7 @@ import Table from "antd/es/table";
 import dayjs from "dayjs";
 import { ReactElement } from "react";
 
-import { IRecordItem, IStatusType } from "@/dtos/default";
+import { ICameraAiMonitorType, IRecordItem, IStatusType } from "@/dtos/default";
 import KEYS from "@/i18n/keys/alert-list";
 
 import carImg from "../../../../assets/car.png";
@@ -39,6 +39,18 @@ const statusComponent = (
       <span className={`${textColor} select-none`}>{text}</span>
     </span>
   );
+};
+
+const warningContentTips = (record: IRecordItem) => {
+  if (record.monitorType === ICameraAiMonitorType.Costume) {
+    return (
+      <div>
+        {record.name}無配戴{record.costumesDetected}
+      </div>
+    );
+  } else {
+    return <div>{record.name}</div>;
+  }
 };
 
 export const WarningList = () => {
@@ -98,7 +110,8 @@ export const WarningList = () => {
       render: (_: string, record: IRecordItem) => {
         return (
           <div className="w-full text-wrap select-none">
-            {record.equipmentName},{record.monitorTypeName}（{record.name}
+            {record.equipmentName},{record.monitorTypeName}（
+            {warningContentTips(record)}
             ）出現超過 {record.settingDuration} 秒
           </div>
         );

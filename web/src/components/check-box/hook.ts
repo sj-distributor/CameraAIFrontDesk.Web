@@ -44,15 +44,15 @@ export const useAction = (monitorSummary?: boolean) => {
 
   const animalList = [
     {
-      label: t(KEYS.ANIMAL, { ns: "alertList" }),
+      label: t(KEYS.CAT, { ns: "alertList" }),
       value: ICameraAiMonitorType.Cat,
     },
     {
-      label: t(KEYS.ANIMAL, { ns: "alertList" }),
+      label: t(KEYS.DOG, { ns: "alertList" }),
       value: ICameraAiMonitorType.Dog,
     },
     {
-      label: t(KEYS.ANIMAL, { ns: "alertList" }),
+      label: t(KEYS.BIRD, { ns: "alertList" }),
       value: ICameraAiMonitorType.Bird,
     },
   ];

@@ -1,7 +1,7 @@
 import { Pagination, Table, Tooltip } from "antd/es";
 import dayjs from "dayjs";
 
-import { IRecordItem, IStatusType } from "@/dtos/default";
+import { ICameraAiMonitorType, IRecordItem, IStatusType } from "@/dtos/default";
 import KEYS from "@/i18n/keys/feedback-list";
 
 import { useAction } from "./hook";
@@ -9,6 +9,18 @@ import { useAction } from "./hook";
 export const FeedbackList = () => {
   const { t, dto, pagePermission, handleScroll, navigate, onChangePage } =
     useAction();
+
+  const warningContentTips = (record: IRecordItem) => {
+    if (record.monitorType === ICameraAiMonitorType.Costume) {
+      return (
+        <div>
+          {record.name}無配戴{record.costumesDetected}
+        </div>
+      );
+    } else {
+      return <div>{record.name}</div>;
+    }
+  };
 
   const columns = [
     {
@@ -78,7 +90,8 @@ export const FeedbackList = () => {
       render: (_: string, record: IRecordItem) => {
         return (
           <div className="w-full text-wrap select-none">
-            {record.equipmentName},{record.monitorTypeName}（{record.name}
+            {record.equipmentName},{record.monitorTypeName}（
+            {warningContentTips(record)}
             ）出現超過 {record.settingDuration} 秒
           </div>
         );
