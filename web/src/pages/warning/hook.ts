@@ -3,11 +3,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { clone } from "ramda";
 import { useEffect, useRef, useState } from "react";
 
-import {
-  ICameraAiMonitorType,
-  IRecordRequest,
-  IStatusType,
-} from "@/dtos/default";
+import { IRecordRequest, IStatusType } from "@/dtos/default";
 import { IRegisterRecordRequest } from "@/dtos/warning";
 import { useAuth } from "@/hooks/use-auth";
 import { GetRecordList } from "@/services/default";

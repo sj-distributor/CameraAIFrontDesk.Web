@@ -1,6 +1,6 @@
 import { DownOutlined, SearchOutlined } from "@ant-design/icons";
 import { Input, Popconfirm } from "antd";
-import { createContext, useEffect } from "react";
+import { createContext } from "react";
 import { useOutlet } from "react-router-dom";
 
 import { BreadcrumbComponent } from "@/components/breadcrumb";
