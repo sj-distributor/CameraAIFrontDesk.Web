@@ -174,8 +174,11 @@ export const useAction = () => {
     {
       label: `${t(KEYS.ALERT_CONTENT, { ns: "alertList" })}：`,
       value:
-        `${record?.equipmentName},${record?.monitorTypeName}(${record?.name})出現超過${record?.settingDuration}秒` ??
-        "----",
+        `${record?.equipmentName},${record?.monitorTypeName}(${record?.name}${
+          record.monitorType === ICameraAiMonitorType.Costume
+            ? `未配戴${record?.costumesDetected}`
+            : ""
+        })出現超過${record?.settingDuration}秒` ?? "----",
     },
     {
       label: `${t(KEYS.AREA_ADRESS, { ns: "alertList" })}：`,

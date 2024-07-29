@@ -47,69 +47,83 @@ export const useAction = () => {
     endTime: null,
   });
 
-  const onTypeClick = (id: number, childId?: number[]) => {
+  const onTypeClick = (id: number) => {
     setSelectValues((prev) => {
       let newData = clone(prev);
 
-      const animalData = [
-        ICameraAiMonitorType.Cat,
-        ICameraAiMonitorType.Dog,
-        ICameraAiMonitorType.Bird,
-      ];
+      const isExist = newData.findIndex((item) => item === id) !== -1;
 
-      const costumeData = [
-        ICameraAiMonitorType.FluorescentClothing,
-        ICameraAiMonitorType.Gloves,
-        ICameraAiMonitorType.SafetyShoes,
-      ];
-
-      if (childId) {
-        if (id === ICameraAiMonitorType.Costume) {
-          newData = newData.filter((value) => !costumeData.includes(value));
-        }
-
-        if (id === ICameraAiMonitorType.Animal) {
-          newData = newData.filter((value) => !animalData.includes(value));
-        }
-
-        newData = newData.concat(childId);
-
-        newData.push(id);
-
-        if (!childId.length) {
-          newData = newData.filter((value) => value !== id);
-        }
-
-        newData = newData.filter(
-          (value, index, self) => self.indexOf(value) === index
-        );
-      } else {
-        if (id === ICameraAiMonitorType.Animal) {
-          newData = newData.concat(animalData);
-        }
-
-        if (id === ICameraAiMonitorType.Costume) {
-          newData = newData.concat(costumeData);
-        }
-
-        const isExist = newData.findIndex((item) => item === id) !== -1;
-
-        if (isExist) {
-          newData = newData.filter((item) => item !== id);
-
-          if (id === ICameraAiMonitorType.Animal) {
-            newData = newData.filter((value) => !animalData.includes(value));
-          }
-
-          if (id === ICameraAiMonitorType.Costume) {
-            newData = newData.filter((value) => !costumeData.includes(value));
-          }
-        } else newData.push(id);
-      }
+      if (isExist) newData = newData.filter((item) => item !== id);
+      else newData.push(id);
 
       return newData;
     });
   };
+
+  // 动物、安全配备 细分小项（后端没支持）
+  // const onTypeClick = (id: number, childId?: number[]) => {
+  //   setSelectValues((prev) => {
+  //     let newData = clone(prev);
+
+  //     const animalData = [
+  //       ICameraAiMonitorType.Cat,
+  //       ICameraAiMonitorType.Dog,
+  //       ICameraAiMonitorType.Bird,
+  //     ];
+
+  //     const costumeData = [
+  //       ICameraAiMonitorType.FluorescentClothing,
+  //       ICameraAiMonitorType.Gloves,
+  //       ICameraAiMonitorType.SafetyShoes,
+  //     ];
+
+  //     if (childId) {
+  //       if (id === ICameraAiMonitorType.Costume) {
+  //         newData = newData.filter((value) => !costumeData.includes(value));
+  //       }
+
+  //       if (id === ICameraAiMonitorType.Animal) {
+  //         newData = newData.filter((value) => !animalData.includes(value));
+  //       }
+
+  //       newData = newData.concat(childId);
+
+  //       newData.push(id);
+
+  //       if (!childId.length) {
+  //         newData = newData.filter((value) => value !== id);
+  //       }
+
+  //       newData = newData.filter(
+  //         (value, index, self) => self.indexOf(value) === index
+  //       );
+  //     } else {
+  //       if (id === ICameraAiMonitorType.Animal) {
+  //         newData = newData.concat(animalData);
+  //       }
+
+  //       if (id === ICameraAiMonitorType.Costume) {
+  //         newData = newData.concat(costumeData);
+  //       }
+
+  //       const isExist = newData.findIndex((item) => item === id) !== -1;
+
+  //       if (isExist) {
+  //         newData = newData.filter((item) => item !== id);
+
+  //         if (id === ICameraAiMonitorType.Animal) {
+  //           newData = newData.filter((value) => !animalData.includes(value));
+  //         }
+
+  //         if (id === ICameraAiMonitorType.Costume) {
+  //           newData = newData.filter((value) => !costumeData.includes(value));
+  //         }
+  //       } else newData.push(id);
+  //     }
+
+  //     return newData;
+  //   });
+  // };
 
   // 导出最大数字 2147483647
   const exportData = async () => {
