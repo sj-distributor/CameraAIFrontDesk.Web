@@ -5,11 +5,19 @@ import { useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/hooks/use-auth";
 import { ICameraAiMonitorType } from "@/dtos/default";
+import { IWarningType } from "@/components/warning-select/props";
 
 export const useAction = () => {
   const { t } = useAuth();
 
   const replayHeaderRef = useRef<HTMLDivElement>(null);
+
+  const warningSelectRef = useRef({
+    selectValues: [],
+    checkIndex: [],
+    setSelectValues: (_: ICameraAiMonitorType[]) => {},
+    setCheckIndex: (_: IWarningType[]) => {},
+  });
 
   const { location } = useAuth();
 
@@ -21,86 +29,17 @@ export const useAction = () => {
     endTime: null,
   });
 
-  const [selectValues, setSelectValues] = useState<number[]>([]);
+  const [lastSelectValues, setLastSelectValues] = useState<
+    ICameraAiMonitorType[]
+  >([]);
+
+  const [lastCheckIndex, setLastCheckIndex] = useState<IWarningType[]>([]);
 
   const [keyWord, setKeyWord] = useState<string>("");
 
   const [searchKeyWord, setSearchKeyWord] = useState<string>("");
 
   const [height, setHeight] = useState<number | null>(null);
-
-  const onTypeClick = (id: number, childId?: number[]) => {
-    setSelectValues((prev) => {
-      let newData = clone(prev);
-
-      const animalData = [
-        ICameraAiMonitorType.Cat,
-        ICameraAiMonitorType.Dog,
-        ICameraAiMonitorType.Bird,
-      ];
-
-      const costumeData = [
-        ICameraAiMonitorType.FluorescentClothing,
-        ICameraAiMonitorType.Gloves,
-        ICameraAiMonitorType.SafetyShoes,
-      ];
-
-      if (childId) {
-        if (id === ICameraAiMonitorType.Costume) {
-          newData = newData.filter((value) => !costumeData.includes(value));
-        }
-
-        if (id === ICameraAiMonitorType.Animal) {
-          newData = newData.filter((value) => !animalData.includes(value));
-        }
-
-        newData = newData.concat(childId);
-
-        newData.push(id);
-
-        if (!childId.length) {
-          newData = newData.filter((value) => value !== id);
-        }
-        if (childId) {
-          newData = newData.filter((value) => !animalData.includes(value));
-
-          newData = newData.concat(childId);
-
-          newData.push(ICameraAiMonitorType.Animal);
-
-          newData = newData.filter(
-            (value, index, self) => self.indexOf(value) === index
-          );
-        } else {
-          if (id === ICameraAiMonitorType.Animal) {
-            newData = newData.concat(animalData);
-          }
-
-          if (id === ICameraAiMonitorType.Costume) {
-            newData = newData.concat(costumeData);
-          }
-
-          const isExist = newData.findIndex((item) => item === id) !== -1;
-
-          if (isExist) {
-            newData = newData.filter((item) => item !== id);
-
-            if (id === ICameraAiMonitorType.Animal) {
-              newData = newData.filter((value) => !animalData.includes(value));
-            }
-
-            if (id === ICameraAiMonitorType.Costume) {
-              newData = newData.filter((value) => !costumeData.includes(value));
-            }
-          } else newData.push(id);
-        }
-
-        console.log(newData);
-      } else newData.push(id);
-
-      return newData;
-    });
-  };
 
   const getHeight = () => {
     if (replayHeaderRef.current) {
@@ -149,11 +88,14 @@ export const useAction = () => {
     timeDto,
     location,
     replayHeaderRef,
-    selectValues,
+    lastSelectValues,
     searchKeyWord,
     t,
+    warningSelectRef,
+    lastCheckIndex,
+    setLastSelectValues,
     setKeyWord,
-    onTypeClick,
     setTimeDto,
+    setLastCheckIndex,
   };
 };

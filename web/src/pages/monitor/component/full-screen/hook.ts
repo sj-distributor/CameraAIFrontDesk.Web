@@ -1,4 +1,3 @@
-import { clone } from "ramda";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ICameraAiMonitorType } from "@/dtos/default";
@@ -10,9 +9,24 @@ import { IPlayBackStatus } from "@/dtos/replay";
 import { useAuth } from "@/hooks/use-auth";
 import { PostStopRealtime } from "@/services/stop-media";
 import { GetMonitorDetail, PostRealtimeGenerate } from "@/services/monitor";
+import { IWarningType } from "@/components/warning-select/props";
+import { useUpdateEffect } from "ahooks";
 
 export const useAction = () => {
   const { location, message, pagePermission } = useAuth();
+
+  const warningSelectRef = useRef({
+    selectValues: [],
+    checkIndex: [],
+    setSelectValues: (_: ICameraAiMonitorType[]) => {},
+    setCheckIndex: (_: IWarningType[]) => {},
+  });
+
+  const [lastSelectValues, setLastSelectValues] = useState<
+    ICameraAiMonitorType[]
+  >([]);
+
+  const [lastCheckIndex, setLastCheckIndex] = useState<IWarningType[]>([]);
 
   const [paramsDto, setParamsDto] = useState<{
     regionId: string;
@@ -36,92 +50,11 @@ export const useAction = () => {
 
   const monitorDetailRef = useRef<IMonitorDetailResponse | null>(null);
 
-  const [selectValues, setSelectValues] = useState<ICameraAiMonitorType[]>([
-    // ICameraAiMonitorType.People,
-    // ICameraAiMonitorType.Vehicles,
-    // ICameraAiMonitorType.AbnormalVehicles,
-  ]);
-
-  const [endSelectValues, setEndSelectValues] = useState<number[]>([]);
-
   const continueExecution = useRef<boolean>(true);
 
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
   const [successUrl, setSuccessUrl] = useState<string>("");
-
-  const [isOpenExportPlaybackModal, setIsOpenExportPlaybackModal] =
-    useState<boolean>(false);
-
-  const onTypeClick = (
-    id: number | number[],
-    isCheckAllAnimal: boolean = false
-  ) => {
-    if (typeof id === "number") {
-      setEndSelectValues((prev) => {
-        let newData = clone(prev);
-
-        const isExist = newData.findIndex((item) => item === id) !== -1;
-
-        if (isExist) newData = newData.filter((item) => item !== id);
-        else newData.push(id);
-
-        return newData;
-      });
-    } else {
-      setEndSelectValues((prev) => {
-        let newData = clone(prev);
-
-        if (isCheckAllAnimal) {
-          return id;
-        } else {
-          id.forEach((i) => {
-            const isExist = newData.includes(i);
-            if (isExist) {
-              newData = newData.filter((item) => item !== i);
-            } else {
-              newData.push(i);
-            }
-          });
-          return newData;
-        }
-      });
-    }
-  };
-
-  // 保存预警筛选
-  const onSave = (isTrue: boolean) => {
-    if (isTrue) {
-      if (!monitorDetail && isGetMonitorDetail) {
-        message.error("获取攝像頭失败，请退出当前页面重试");
-
-        return;
-      }
-
-      if (!isGenerate && !continueExecution.current && isSuccess) {
-        const data = getGenerateParams(monitorDetail!);
-
-        // 调用生成回放
-        PostRealtimeGenerate(data)
-          .then(() => {
-            console.log("生成回放成功");
-            setSelectValues(endSelectValues);
-            setIsGenerate(true);
-            setIsSuccess(false);
-            setErrorFlv(false);
-            continueExecution.current = true;
-          })
-          .catch(() => {
-            message.error("生成回放失败,请重试");
-          });
-      } else {
-        message.info("在生成視頻，請視頻生成完再更換預警篩選條件");
-        setEndSelectValues(selectValues ?? []);
-      }
-    } else {
-      setEndSelectValues(selectValues ?? []);
-    }
-  };
 
   const [isGetMonitorDetail, setIsGetMonitorDetail] = useState<boolean>(false);
 
@@ -147,7 +80,7 @@ export const useAction = () => {
           locationId: monitorDetail?.locationId ?? "",
           equipmentCode: monitorDetail?.equipmentCode ?? "",
           equipmentId: monitorDetail?.id ?? 0,
-          monitorTypes: endSelectValues,
+          monitorTypes: lastSelectValues,
         },
       ],
     };
@@ -285,17 +218,45 @@ export const useAction = () => {
     return !continueExecution.current && !isGenerate && isSuccess;
   }, [continueExecution, isGenerate, isSuccess]);
 
+  // 预警选项改变后重新调用生成
+  useUpdateEffect(() => {
+    if (!monitorDetail && isGetMonitorDetail) {
+      message.error("获取攝像頭失败，请退出当前页面重试");
+
+      return;
+    }
+
+    if (!isGenerate && !continueExecution.current && isSuccess) {
+      const data = getGenerateParams(monitorDetail!);
+
+      // 调用生成回放
+      PostRealtimeGenerate(data)
+        .then(() => {
+          console.log("生成回放成功");
+          setIsGenerate(true);
+          setIsSuccess(false);
+          setErrorFlv(false);
+          continueExecution.current = true;
+        })
+        .catch(() => {
+          message.error("生成回放失败,请重试");
+        });
+    } else {
+      message.info("在生成視頻，請視頻生成完再更換預警篩選條件");
+    }
+  }, [lastSelectValues]);
+
   return {
-    onTypeClick,
-    onSave,
-    successUrl,
     isShow,
-    endSelectValues,
-    setIsOpenExportPlaybackModal,
-    isOpenExportPlaybackModal,
+    successUrl,
     errorFlv,
-    setErrorFlv,
     pagePermission,
     isStopLoadingDto,
+    warningSelectRef,
+    lastSelectValues,
+    lastCheckIndex,
+    setErrorFlv,
+    setLastSelectValues,
+    setLastCheckIndex,
   };
 };

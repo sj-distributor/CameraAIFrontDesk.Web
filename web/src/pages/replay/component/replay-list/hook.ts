@@ -161,7 +161,7 @@ export const useAction = () => {
     replayDto.PageIndex,
     replayDto.PageSize,
     searchKeyWord,
-    // selectValues,
+    selectValues,
   ]);
 
   return {

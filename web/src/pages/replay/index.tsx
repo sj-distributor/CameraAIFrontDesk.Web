@@ -1,6 +1,6 @@
 import { DownOutlined, SearchOutlined } from "@ant-design/icons";
 import { Input, Popconfirm } from "antd";
-import { createContext } from "react";
+import { createContext, useEffect } from "react";
 import { useOutlet } from "react-router-dom";
 
 import { BreadcrumbComponent } from "@/components/breadcrumb";
@@ -11,6 +11,7 @@ import { IReplaySearchDataContext } from "./props";
 
 import KEYS from "@/i18n/keys/video-playback";
 import { WarningSelect } from "@/components/warning-select";
+import { isEmpty } from "ramda";
 
 export const ReplaySearchDataContext = createContext<IReplaySearchDataContext>(
   null!
@@ -23,14 +24,17 @@ export const Replay = () => {
     replayHeaderRef,
     location,
     timeDto,
-    selectValues,
+    lastSelectValues,
     keyWord,
     height,
     searchKeyWord,
     t,
-    onTypeClick,
+    warningSelectRef,
+    lastCheckIndex,
+    setLastSelectValues,
     setTimeDto,
     setKeyWord,
+    setLastCheckIndex,
   } = useAction();
 
   return (
@@ -60,28 +64,30 @@ export const Replay = () => {
                 title=""
                 icon={<></>}
                 placement="bottom"
-                description={WarningSelect}
+                description={<WarningSelect ref={warningSelectRef} />}
                 okText="保存"
                 cancelText="取消"
+                onConfirm={() => {
+                  setLastSelectValues(warningSelectRef.current.selectValues);
+                  setLastCheckIndex(warningSelectRef.current.checkIndex);
+                }}
+                onOpenChange={(open) => {
+                  if (open) {
+                    warningSelectRef.current.setSelectValues(lastSelectValues);
+                    warningSelectRef.current.setCheckIndex(lastCheckIndex);
+                  }
+                }}
               >
                 <div className="flex justify-center items-center space-x-2">
                   <div className="font-medium text-sm text-[#566172]">
                     預警篩選：
                   </div>
                   <div className="text-[#2866F1] text-[1rem] cursor-pointer">
-                    請選擇
+                    {isEmpty(lastSelectValues) ? "請選擇" : "已選擇"}
                   </div>
                   <DownOutlined className="text-xs" />
                 </div>
               </Popconfirm>
-
-              {/* <CheckBoxComponent
-                title={t(KEYS.ALERT_FILTER, {
-                  ns: "videoPlayback",
-                })}
-                selectValues={selectValues}
-                onClick={onTypeClick}
-              /> */}
             </div>
           )}
         </div>
@@ -110,7 +116,7 @@ export const Replay = () => {
           value={{
             searchKeyWord: searchKeyWord,
             timeDto: timeDto,
-            selectValues: selectValues,
+            selectValues: lastSelectValues,
           }}
         >
           {outlet}

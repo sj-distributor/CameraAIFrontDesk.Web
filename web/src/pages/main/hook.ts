@@ -49,15 +49,24 @@ export const useAction = () => {
 
   const jumpToBackstage = () => {
     if (pagePermission.canSwitchCameraAiBackend) {
-      var myIframe = document.getElementById("myIframe");
+      var myIframe = document.getElementById("myIframe") as HTMLIFrameElement;
+
       if (myIframe) {
-        const token = localStorage.getItem(
-          (window as any).appsettings?.tokenKey
-        );
-        (myIframe as any).contentWindow.postMessage(
-          token,
-          (window as any).appsettings?.cameraAIBackstageDomain
-        );
+        const onIframeLoad = () => {
+          const token = localStorage.getItem(
+            (window as any).appsettings?.tokenKey
+          );
+
+          if (myIframe.contentWindow) {
+            (myIframe as any).contentWindow.postMessage(
+              token,
+              (window as any).appsettings?.cameraAIBackstageDomain
+            );
+          }
+        };
+
+        myIframe.addEventListener("load", onIframeLoad, { once: true });
+
         window.open(
           (window as any).appsettings?.cameraAIBackstageDomain,
           "_blank"

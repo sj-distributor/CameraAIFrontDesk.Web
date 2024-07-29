@@ -1,31 +1,57 @@
-import { Checkbox, Popconfirm, Select } from "antd";
+import { Popconfirm, Select } from "antd";
 
 import { useAction } from "./hook";
 import { DownOutlined } from "@ant-design/icons";
-import { useAction as checkBoxUseAction } from "@/components/check-box/hook";
-import { ICameraAiMonitorType } from "@/dtos/default";
-import { clone } from "ramda";
+import { WarningSelect } from "@/components/warning-select";
+import { isEmpty } from "ramda";
 
 export const MultiScreen = () => {
-  const { typeList, animalList } = checkBoxUseAction();
   const {
     numberDto,
     returnErrorIndexs,
     errorFlvIndexs,
     videoItemHeight,
     videoBodyRef,
-    endSelectValues,
     ScreenCountEnum,
-    getEquipmentList,
-    onTypeClick,
+    warningSelectRef,
+    lastSelectValues,
+    lastCheckIndex,
     setNumberDto,
     navigateToFullScreem,
+    setLastSelectValues,
+    setLastCheckIndex,
   } = useAction();
 
   return (
     <div className="w-full h-full flex flex-col space-y-1">
       <div className="flex items-center mr-4">
         <Popconfirm
+          title=""
+          icon={<></>}
+          placement="bottom"
+          description={<WarningSelect ref={warningSelectRef} />}
+          okText="保存"
+          cancelText="取消"
+          onConfirm={() => {
+            setLastSelectValues(warningSelectRef.current.selectValues);
+            setLastCheckIndex(warningSelectRef.current.checkIndex);
+          }}
+          onOpenChange={(open) => {
+            if (open) {
+              warningSelectRef.current.setSelectValues(lastSelectValues);
+              warningSelectRef.current.setCheckIndex(lastCheckIndex);
+            }
+          }}
+        >
+          <div className="flex items-center w-[10rem]">
+            <div className="font-medium text-sm text-[#566172]">預警篩選：</div>
+            <div className="text-[#2866F1] text-[1rem] cursor-pointer">
+              {isEmpty(lastSelectValues) ? "請選擇" : "已選擇"}
+            </div>
+            <DownOutlined className="text-xs" />
+          </div>
+        </Popconfirm>
+        {/* <Popconfirm
           title="預警篩選"
           description={
             <div>
@@ -189,7 +215,7 @@ export const MultiScreen = () => {
             </div>
             <DownOutlined className="text-xs" />
           </div>
-        </Popconfirm>
+        </Popconfirm> */}
 
         <div className="font-medium text-sm text-[#566172] select-none ml-10">
           分屏模式：

@@ -111,42 +111,35 @@ export const useAction = () => {
         if (!childId.length) {
           newData = newData.filter((value) => value !== id);
         }
-        if (childId) {
-          newData = newData.filter((value) => !animalData.includes(value));
 
-          newData = newData.concat(childId);
+        newData = newData.filter(
+          (value, index, self) => self.indexOf(value) === index
+        );
+      } else {
+        if (id === ICameraAiMonitorType.Animal) {
+          newData = newData.concat(animalData);
+        }
 
-          newData.push(ICameraAiMonitorType.Animal);
+        if (id === ICameraAiMonitorType.Costume) {
+          newData = newData.concat(costumeData);
+        }
 
-          newData = newData.filter(
-            (value, index, self) => self.indexOf(value) === index
-          );
-        } else {
+        const isExist = newData.findIndex((item) => item === id) !== -1;
+
+        if (isExist) {
+          newData = newData.filter((item) => item !== id);
+
           if (id === ICameraAiMonitorType.Animal) {
-            newData = newData.concat(animalData);
+            newData = newData.filter((value) => !animalData.includes(value));
           }
 
           if (id === ICameraAiMonitorType.Costume) {
-            newData = newData.concat(costumeData);
+            newData = newData.filter((value) => !costumeData.includes(value));
           }
+        } else newData.push(id);
+      }
 
-          const isExist = newData.findIndex((item) => item === id) !== -1;
-
-          if (isExist) {
-            newData = newData.filter((item) => item !== id);
-
-            if (id === ICameraAiMonitorType.Animal) {
-              newData = newData.filter((value) => !animalData.includes(value));
-            }
-
-            if (id === ICameraAiMonitorType.Costume) {
-              newData = newData.filter((value) => !costumeData.includes(value));
-            }
-          } else newData.push(id);
-        }
-
-        console.log(newData);
-      } else newData.push(id);
+      console.log(newData);
 
       return newData;
     });

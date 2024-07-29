@@ -57,8 +57,6 @@ export const CheckBoxComponent = (props: ICheckBoxComponentProps) => {
                     item.value === ICameraAiMonitorType.Animal ||
                     item.value === ICameraAiMonitorType.Costume
                   ) && onClick(item.value);
-                  item.value !== ICameraAiMonitorType.Animal &&
-                    onClick(item.value);
                 }}
               >
                 <Checkbox
