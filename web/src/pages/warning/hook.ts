@@ -139,8 +139,6 @@ export const useAction = () => {
         } else newData.push(id);
       }
 
-      console.log(newData);
-
       return newData;
     });
   };

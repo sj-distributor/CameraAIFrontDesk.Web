@@ -232,7 +232,6 @@ export const useAction = () => {
       // 调用生成回放
       PostRealtimeGenerate(data)
         .then(() => {
-          console.log("生成回放成功");
           setIsGenerate(true);
           setIsSuccess(false);
           setErrorFlv(false);
