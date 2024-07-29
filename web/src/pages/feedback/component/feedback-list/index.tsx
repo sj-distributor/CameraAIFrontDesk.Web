@@ -10,18 +10,6 @@ export const FeedbackList = () => {
   const { t, dto, pagePermission, handleScroll, navigate, onChangePage } =
     useAction();
 
-  const warningContentTips = (record: IRecordItem) => {
-    if (record.monitorType === ICameraAiMonitorType.Costume) {
-      return (
-        <div>
-          {record.name}無配戴{record.costumesDetected}
-        </div>
-      );
-    } else {
-      return <div>{record.name}</div>;
-    }
-  };
-
   const columns = [
     {
       title: t(KEYS.DEVICE, { ns: "feedbackList" }),
@@ -91,7 +79,11 @@ export const FeedbackList = () => {
         return (
           <div className="w-full text-wrap select-none">
             {record.equipmentName},{record.monitorTypeName}（
-            {warningContentTips(record)}
+            {`${record.name}${
+              record.monitorType === ICameraAiMonitorType.Costume
+                ? `未配戴${record.costumesDetected}`
+                : ""
+            }`}
             ）出現超過 {record.settingDuration} 秒
           </div>
         );
