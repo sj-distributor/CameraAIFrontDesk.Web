@@ -47,6 +47,8 @@ export const useAction = () => {
 
   const [isGenerate, setIsGenerate] = useState<boolean>(false);
 
+  const generateError = useRef<boolean>(false);
+
   const [isFind, setIsFind] = useState<boolean>(false);
 
   const [nowStream, setNowStream] = useState<string>("");
@@ -128,7 +130,7 @@ export const useAction = () => {
     // setNowStream("http://47.254.86.185:8080/live/1.flv");
     if (!isGenerate) {
       // 停止推流
-      if (nowStream) {
+      if (nowStream && !generateError.current) {
         PostStopRealtime({
           stopList: [
             {
@@ -174,8 +176,10 @@ export const useAction = () => {
           setNowStream("");
           setIsFind(false);
           setErrorFlv(false);
+          generateError.current = false;
         })
         .catch(() => {
+          generateError.current = true;
           message.error("生成視頻流失敗");
           setClickCamera({
             locationId: "",
@@ -382,12 +386,16 @@ export const useAction = () => {
 
     GetCameraList()
       .then((res) => {
+        generateError.current = false;
+
         setCameraList({
           count: res?.count ?? 0,
           regionCameras: res?.regionCameras ?? [],
         });
       })
       .catch(() => {
+        generateError.current = true;
+
         setCameraList({
           count: 0,
           regionCameras: [],
@@ -407,6 +415,7 @@ export const useAction = () => {
       clickCameraCameraRef.current.equipmentId &&
         clickCameraCameraRef.current.locationId &&
         clickCameraCameraRef.current.equipmentCode &&
+        !generateError.current &&
         PostStopRealtime({
           stopList: [
             {
@@ -456,6 +465,7 @@ export const useAction = () => {
               setNowStream(item.liveStreaming);
               setIsFind(true);
               setIsGenerate(false);
+              generateError.current = false;
             } else if (
               item.id === clickCamera.cameraId &&
               item.status === IPlayBackStatus.Failed &&
@@ -465,6 +475,7 @@ export const useAction = () => {
               setIsFind(true);
               setIsGenerate(false);
               setErrorFlv(true);
+              generateError.current = true;
               message.warning("生成的視頻流有問題，請重新生成");
               setClickCamera((prev) => ({
                 ...prev,
@@ -473,6 +484,7 @@ export const useAction = () => {
             }
           });
         } else {
+          generateError.current = true;
           setNowStream("");
           setIsFind(true);
           setIsGenerate(false);
@@ -484,6 +496,7 @@ export const useAction = () => {
           message.error("获取當前攝像頭失败，请重新選擇攝像頭");
         }
       } else {
+        generateError.current = true;
         setNowStream("");
         setIsFind(true);
         setIsGenerate(false);

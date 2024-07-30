@@ -54,6 +54,8 @@ export const useAction = () => {
 
   const [isGenerate, setIsGenerate] = useState<boolean>(false);
 
+  const generateError = useRef<boolean>(false);
+
   const continueExecution = useRef<boolean>(true);
 
   const [returnErrorIndexs, setReturnErrorIndexs] = useState<number[]>([]);
@@ -129,10 +131,13 @@ export const useAction = () => {
         .then((res) => {
           setIsGenerate(false);
 
+          generateError.current = false;
+
           setEquipments(res?.equipments ?? []);
         })
         .catch(() => {
           setEquipments([]);
+          generateError.current = true;
           message.error("獲取設備詳情失敗");
         });
     }
@@ -158,8 +163,10 @@ export const useAction = () => {
         .then(() => {
           setIsGenerate(true);
           continueExecution.current = true;
+          generateError.current = false;
         })
         .catch(() => {
+          generateError.current = true;
           message.error("生成直播流失敗，請重試");
         });
     }
@@ -281,6 +288,12 @@ export const useAction = () => {
             }
           });
 
+          if (flvList.every((item) => item.status === IPlayBackStatus.Failed)) {
+            generateError.current = true;
+          } else {
+            generateError.current = false;
+          }
+
           setIsGenerate(false);
 
           continueExecution.current = false;
@@ -294,6 +307,8 @@ export const useAction = () => {
         setIsGenerate(false);
 
         continueExecution.current = false;
+
+        generateError.current = true;
 
         setReturnErrorIndexs([]);
 
@@ -320,7 +335,7 @@ export const useAction = () => {
         equipmentCode: item?.equipmentCode ?? [],
       }));
 
-      if (data?.length) {
+      if (data?.length && !generateError.current) {
         PostStopRealtime({
           stopList: data,
         });
