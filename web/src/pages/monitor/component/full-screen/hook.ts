@@ -22,6 +22,8 @@ export const useAction = () => {
 
   const [isGenerate, setIsGenerate] = useState<boolean>(false);
 
+  const generateError = useRef<boolean>(false);
+
   const [errorFlv, setErrorFlv] = useState<boolean>(false);
 
   const [isStopLoadingDto, setIsStopLoadingDto] = useState<{
@@ -88,8 +90,10 @@ export const useAction = () => {
             setIsSuccess(false);
             setErrorFlv(false);
             continueExecution.current = true;
+            generateError.current = false;
           })
           .catch(() => {
+            generateError.current = true;
             message.error("生成回放失败,请重试");
           });
       } else {
@@ -113,6 +117,7 @@ export const useAction = () => {
           setIsGetMonitorDetail(true);
         })
         .catch(() => {
+          generateError.current = true;
           setMonitorDetail(null);
         });
     }
@@ -147,9 +152,12 @@ export const useAction = () => {
         .then(() => {
           setIsGenerate(true);
           setErrorFlv(false);
+          generateError.current = false;
           console.log("生成实时成功");
         })
         .catch(() => {
+          generateError.current = true;
+
           message.error("生成實時失败");
 
           setIsStopLoadingDto(() => ({
@@ -185,9 +193,12 @@ export const useAction = () => {
             setIsGenerate(false);
             setSuccessUrl(res.liveStreaming);
             continueExecution.current = false;
+            generateError.current = false;
 
             return;
           } else if (res.status === IPlayBackStatus.Failed) {
+            generateError.current = true;
+
             message.error("获取视频流失败");
 
             setIsStopLoadingDto(() => ({
@@ -215,6 +226,7 @@ export const useAction = () => {
         setIsGenerate(false);
         setSuccessUrl("");
         continueExecution.current = false;
+        generateError.current = true;
 
         return;
       })
@@ -241,6 +253,7 @@ export const useAction = () => {
       monitorDetailRef.current?.locationId &&
         monitorDetailRef.current?.equipmentCode &&
         equipmentId &&
+        !generateError.current &&
         PostStopRealtime({
           stopList: [
             {
