@@ -18,7 +18,7 @@ import {
   PostGeneratePlayBack,
   PostPlaybackGenerateApi,
 } from "@/services/warning";
-import { useDebounceFn } from "ahooks";
+import { useDebounceFn, useUpdateEffect } from "ahooks";
 
 export const useAction = () => {
   const { t } = useAuth();
@@ -356,10 +356,13 @@ export const useAction = () => {
       ICameraAiMonitorType.AbnormalVehicles
     );
 
+    const animalWarningLists = getTimeList(data, ICameraAiMonitorType.Animal);
+
     return {
       [ICameraAiMonitorType.AbnormalVehicles]: abnormalVehiclesWarningLists,
       [ICameraAiMonitorType.People]: peopleWarningLists,
       [ICameraAiMonitorType.Vehicles]: vehiclesWarningLists,
+      [ICameraAiMonitorType.Animal]: animalWarningLists,
     };
   };
 
@@ -392,6 +395,7 @@ export const useAction = () => {
           [ICameraAiMonitorType.AbnormalVehicles]: [],
           [ICameraAiMonitorType.People]: [],
           [ICameraAiMonitorType.Vehicles]: [],
+          [ICameraAiMonitorType.Animal]: [],
         },
       };
     }

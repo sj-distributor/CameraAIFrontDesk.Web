@@ -76,6 +76,7 @@ export const FullScreen = () => {
                     [ICameraAiMonitorType.AbnormalVehicles]: [],
                     [ICameraAiMonitorType.People]: [],
                     [ICameraAiMonitorType.Vehicles]: [],
+                    [ICameraAiMonitorType.Animal]: [],
                   },
                 }}
                 videoUrl={successUrl}
