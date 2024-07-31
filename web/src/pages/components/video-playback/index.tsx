@@ -28,6 +28,7 @@ export type Speed = 0.5 | 1 | 1.25 | 1.5 | 2;
 export enum WarningTypes {
   Car,
   Man,
+  Element,
 }
 
 export const VideoPlayback = (props: {
@@ -127,6 +128,22 @@ export const VideoPlayback = (props: {
   }) => {
     const { warnData, type } = props;
 
+    let visualizer = "";
+
+    switch (type) {
+      case WarningTypes.Car:
+        visualizer = "bg-[#2853E3]";
+        break;
+
+      case WarningTypes.Man:
+        visualizer = "bg-[#34A46E]";
+        break;
+
+      case WarningTypes.Element:
+        visualizer = "bg-[#F48445]";
+        break;
+    }
+
     return (
       <>
         {warnData.map((item, index) => {
@@ -148,10 +165,12 @@ export const VideoPlayback = (props: {
           return (
             <div
               key={index}
-              style={{ left: `${left}rem`, width: `${width}rem` }}
-              className={`rounded-[2.875rem] ${
-                type === WarningTypes.Car ? "bg-[#2853E3]" : "bg-[#34A46E]"
-              } absolute h-4`}
+              style={{
+                left: `${left}rem`,
+                width: `${width}rem`,
+                backgroundColor: visualizer,
+              }}
+              className="rounded-[2.875rem] absolute h-4"
             />
           );
         })}
@@ -421,6 +440,11 @@ export const VideoPlayback = (props: {
                         warnData={currentManData}
                         index={index}
                         type={WarningTypes.Man}
+                      />
+                      <WarnDataVisualizer
+                        warnData={currentManData}
+                        index={index}
+                        type={WarningTypes.Element}
                       />
                     </div>
                   </div>
