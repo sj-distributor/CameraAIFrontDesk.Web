@@ -18,7 +18,7 @@ import {
   PostGeneratePlayBack,
   PostPlaybackGenerateApi,
 } from "@/services/warning";
-import { useDebounceFn, useUpdateEffect } from "ahooks";
+import { useDebounceFn } from "ahooks";
 
 export const useAction = () => {
   const { t } = useAuth();
