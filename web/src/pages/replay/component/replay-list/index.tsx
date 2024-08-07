@@ -55,6 +55,12 @@ export const ReplayList = () => {
                         <div className="space-x-1 flex w-9">
                           {showCircle(item.records, [
                             ICameraAiMonitorType.People,
+                            ICameraAiMonitorType.Smoke,
+                            ICameraAiMonitorType.Fight,
+                            ICameraAiMonitorType.Costume,
+                            ICameraAiMonitorType.FluorescentClothing,
+                            ICameraAiMonitorType.Gloves,
+                            ICameraAiMonitorType.SafetyShoes,
                           ]) && (
                             <div className="w-4 h-4 rounded-full bg-[#2866F1]" />
                           )}
@@ -63,6 +69,14 @@ export const ReplayList = () => {
                             ICameraAiMonitorType.AbnormalVehicles,
                           ]) && (
                             <div className="w-4 h-4 rounded-full bg-[#04B6B5]" />
+                          )}
+                          {showCircle(item.records, [
+                            ICameraAiMonitorType.Animal,
+                            ICameraAiMonitorType.Cat,
+                            ICameraAiMonitorType.Dog,
+                            ICameraAiMonitorType.Bird,
+                          ]) && (
+                            <div className="w-4 h-4 rounded-full bg-[#F48445]" />
                           )}
                         </div>
                         <div className="flex-1 truncate text-base">

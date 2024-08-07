@@ -1,69 +1,56 @@
-import { Button, Checkbox, Popconfirm, Spin } from "antd";
+import { Popconfirm, Spin } from "antd";
 
-import { useAction as checkBoxUseAction } from "@/components/check-box/hook";
 import { ICameraAiMonitorType } from "@/dtos/default";
 import { VideoPlayback } from "@/pages/components/video-playback";
 
 import { useAction } from "./hook";
+import { WarningSelect } from "@/components/warning-select";
+import { DownOutlined } from "@ant-design/icons";
+import { isEmpty } from "ramda";
 
 export const FullScreen = () => {
-  const { typeList } = checkBoxUseAction();
-
   const {
-    // new
-    onTypeClick,
-    onSave,
-    endSelectValues,
     isShow,
     successUrl,
     errorFlv,
-    setErrorFlv,
     pagePermission,
     isStopLoadingDto,
+    warningSelectRef,
+    lastSelectValues,
+    lastCheckIndex,
+    setErrorFlv,
+    setLastSelectValues,
+    setLastCheckIndex,
   } = useAction();
 
   return (
     <div className="w-full h-full flex flex-col">
       <div>
         <Popconfirm
-          title="預警篩選"
-          description={
-            <div>
-              {typeList.map((item, index) => (
-                <div
-                  key={index}
-                  className={`py-2 hover:bg-[#EBF1FF] space-x-2 cursor-pointer text-sm px-4 rounded-lg ${
-                    endSelectValues.findIndex(
-                      (option) => item.value === option
-                    ) !== -1
-                      ? "bg-[#EBF1FF] text-[#2866F1]"
-                      : "bg-white text-black"
-                  }`}
-                  onClick={() => onTypeClick(item.value)}
-                >
-                  <Checkbox
-                    checked={
-                      endSelectValues.findIndex(
-                        (option) => option === item.value
-                      ) !== -1
-                    }
-                  />
-                  <span className="select-none">{item.label}</span>
-                </div>
-              ))}
-            </div>
-          }
+          title=""
+          icon={<></>}
           placement="bottom"
-          onConfirm={() => {
-            onSave(true);
-          }}
-          onCancel={() => {
-            onSave(false);
-          }}
+          description={<WarningSelect ref={warningSelectRef} />}
           okText="保存"
           cancelText="取消"
+          onConfirm={() => {
+            setLastSelectValues(warningSelectRef.current.selectValues);
+            setLastCheckIndex(warningSelectRef.current.checkIndex);
+          }}
+          onOpenChange={(open) => {
+            if (open) {
+              warningSelectRef.current.setSelectValues(lastSelectValues);
+              warningSelectRef.current.setCheckIndex(lastCheckIndex);
+            }
+          }}
         >
-          <Button>預警篩選</Button>
+          <div className="flex items-center w-[10rem]">
+            <div className="font-medium text-sm text-[#566172]">預警篩選：</div>
+            <div className="text-[#2866F1] text-[1rem] cursor-pointer">
+              {isEmpty(lastSelectValues) ? "請選擇" : "已選擇"}
+            </div>
+            <DownOutlined className="text-xs" />
+          </div>
         </Popconfirm>
       </div>
       <div className="flex-1 w-full h-[calc(100%-22px)] flex flex-col">
@@ -89,6 +76,7 @@ export const FullScreen = () => {
                     [ICameraAiMonitorType.AbnormalVehicles]: [],
                     [ICameraAiMonitorType.People]: [],
                     [ICameraAiMonitorType.Vehicles]: [],
+                    [ICameraAiMonitorType.Animal]: [],
                   },
                 }}
                 videoUrl={successUrl}

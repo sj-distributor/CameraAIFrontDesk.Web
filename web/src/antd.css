@@ -118,3 +118,7 @@
   background: none !important;
   color: #2866f1 !important;
 }
+
+.ant-checkbox-wrapper-disabled span {
+  color: black;
+}

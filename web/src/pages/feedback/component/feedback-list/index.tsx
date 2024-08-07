@@ -1,7 +1,7 @@
 import { Pagination, Table, Tooltip } from "antd/es";
 import dayjs from "dayjs";
 
-import { IRecordItem, IStatusType } from "@/dtos/default";
+import { ICameraAiMonitorType, IRecordItem, IStatusType } from "@/dtos/default";
 import KEYS from "@/i18n/keys/feedback-list";
 
 import { useAction } from "./hook";
@@ -78,7 +78,12 @@ export const FeedbackList = () => {
       render: (_: string, record: IRecordItem) => {
         return (
           <div className="w-full text-wrap select-none">
-            {record.equipmentName},{record.monitorTypeName}（{record.name}
+            {record.equipmentName},{record.monitorTypeName}（
+            {`${record.name}${
+              record.monitorType === ICameraAiMonitorType.Costume
+                ? `未配戴${record.costumesDetected}`
+                : ""
+            }`}
             ）出現超過 {record.settingDuration} 秒
           </div>
         );

@@ -1,7 +1,9 @@
-import { Checkbox, Popconfirm, Select } from "antd";
+import { Popconfirm, Select } from "antd";
 
 import { useAction } from "./hook";
 import { DownOutlined } from "@ant-design/icons";
+import { WarningSelect } from "@/components/warning-select";
+import { isEmpty } from "ramda";
 
 export const MultiScreen = () => {
   const {
@@ -10,59 +12,43 @@ export const MultiScreen = () => {
     errorFlvIndexs,
     videoItemHeight,
     videoBodyRef,
-    typeList,
-    endSelectValues,
     ScreenCountEnum,
-    getEquipmentList,
-    onTypeClick,
+    warningSelectRef,
+    lastSelectValues,
+    lastCheckIndex,
     setNumberDto,
     navigateToFullScreem,
+    setLastSelectValues,
+    setLastCheckIndex,
   } = useAction();
 
   return (
     <div className="w-full h-full flex flex-col space-y-1">
       <div className="flex items-center mr-4">
-        <div className="font-medium text-sm text-[#566172] select-none">
-          預警篩選：
-        </div>
         <Popconfirm
-          title="預警篩選"
-          description={
-            <div>
-              {typeList.map((item, index) => (
-                <div
-                  key={index}
-                  className={`py-2 hover:bg-[#EBF1FF] space-x-2 cursor-pointer text-sm px-4 rounded-lg ${
-                    endSelectValues.findIndex(
-                      (option) => item.value === option
-                    ) !== -1
-                      ? "bg-[#EBF1FF] text-[#2866F1]"
-                      : "bg-white text-black"
-                  }`}
-                  onClick={() => onTypeClick(item.value)}
-                >
-                  <Checkbox
-                    checked={
-                      endSelectValues.findIndex(
-                        (option) => option === item.value
-                      ) !== -1
-                    }
-                  />
-                  <span className="select-none">{item.label}</span>
-                </div>
-              ))}
-            </div>
-          }
+          title=""
+          icon={<></>}
           placement="bottom"
-          onConfirm={() => {
-            getEquipmentList();
-          }}
+          description={<WarningSelect ref={warningSelectRef} />}
           okText="保存"
           cancelText="取消"
+          onConfirm={() => {
+            setLastSelectValues(warningSelectRef.current.selectValues);
+            setLastCheckIndex(warningSelectRef.current.checkIndex);
+          }}
+          onOpenChange={(open) => {
+            if (open) {
+              warningSelectRef.current.setSelectValues(lastSelectValues);
+              warningSelectRef.current.setCheckIndex(lastCheckIndex);
+            }
+          }}
         >
-          <div className="select-none w-auto px-1 truncate text-center text-[#2866F1] cursor-pointer">
-            {endSelectValues.length ? "已選擇" : "請選擇"}
-            <DownOutlined className="text-xs ml-2" />
+          <div className="flex items-center w-[10rem]">
+            <div className="font-medium text-sm text-[#566172]">預警篩選：</div>
+            <div className="text-[#2866F1] text-[1rem] cursor-pointer">
+              {isEmpty(lastSelectValues) ? "請選擇" : "已選擇"}
+            </div>
+            <DownOutlined className="text-xs" />
           </div>
         </Popconfirm>
 

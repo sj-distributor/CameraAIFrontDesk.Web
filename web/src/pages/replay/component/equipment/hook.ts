@@ -198,10 +198,13 @@ export const useAction = () => {
       ICameraAiMonitorType.AbnormalVehicles
     );
 
+    const animalWarningLists = getTimeList(data, ICameraAiMonitorType.Animal);
+
     return {
       [ICameraAiMonitorType.AbnormalVehicles]: abnormalVehiclesWarningLists,
       [ICameraAiMonitorType.People]: peopleWarningLists,
       [ICameraAiMonitorType.Vehicles]: vehiclesWarningLists,
+      [ICameraAiMonitorType.Animal]: animalWarningLists,
     };
   };
 
@@ -275,6 +278,7 @@ export const useAction = () => {
           [ICameraAiMonitorType.AbnormalVehicles]: [],
           [ICameraAiMonitorType.People]: [],
           [ICameraAiMonitorType.Vehicles]: [],
+          [ICameraAiMonitorType.Animal]: [],
         },
       };
     }

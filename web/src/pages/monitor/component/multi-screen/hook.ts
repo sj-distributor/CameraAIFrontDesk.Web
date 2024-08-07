@@ -1,5 +1,4 @@
 import Mpegts from "mpegts.js";
-import { clone } from "ramda";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -16,6 +15,7 @@ import {
 } from "@/services/monitor";
 import { useUpdateEffect } from "ahooks";
 import { PostStopRealtime } from "@/services/stop-media";
+import { IWarningType } from "@/components/warning-select/props";
 
 enum ScreenCountEnum {
   FOUR = 4,
@@ -70,34 +70,24 @@ export const useAction = () => {
 
   const [videoBodyWidth, setVideoBodyWidth] = useState<number | null>(null);
 
-  const [endSelectValues, setEndSelectValues] = useState<number[]>([]);
-
   const equipmentsRef = useRef<IRegionEquipmentItem[] | null>(null);
 
   const [currentEquipmentsIds, setCurrentEquipmentsIds] = useState<number[]>(
     []
   );
 
-  const typeList = [
-    {
-      label: "識別人員",
-      value: ICameraAiMonitorType.People,
-    },
-    {
-      label: "識別車輛",
-      value: ICameraAiMonitorType.Vehicles,
-    },
-    {
-      label: "識別異常車輛",
-      value: ICameraAiMonitorType.AbnormalVehicles,
-    },
-  ];
+  const warningSelectRef = useRef({
+    selectValues: [],
+    checkIndex: [],
+    setSelectValues: (_: ICameraAiMonitorType[]) => {},
+    setCheckIndex: (_: IWarningType[]) => {},
+  });
 
-  const [selectValues, setSelectValues] = useState<ICameraAiMonitorType[]>([
-    ICameraAiMonitorType.People,
-    ICameraAiMonitorType.Vehicles,
-    ICameraAiMonitorType.AbnormalVehicles,
-  ]);
+  const [lastSelectValues, setLastSelectValues] = useState<
+    ICameraAiMonitorType[]
+  >([]);
+
+  const [lastCheckIndex, setLastCheckIndex] = useState<IWarningType[]>([]);
 
   // 获取设备详情
   const getEquipmentList = () => {
@@ -148,14 +138,14 @@ export const useAction = () => {
   }, [numberDto.number]);
 
   // 通过设备详情，调用生成接口
-  useEffect(() => {
+  useUpdateEffect(() => {
     if (!isGenerate) {
       const data = equipments.map((item) => {
         return {
           locationId: item?.locationId ?? "",
           equipmentCode: item?.equipmentCode ?? "",
           equipmentId: item?.id ?? "",
-          monitorTypes: endSelectValues,
+          monitorTypes: lastSelectValues,
         };
       });
 
@@ -170,26 +160,13 @@ export const useAction = () => {
           message.error("生成直播流失敗，請重試");
         });
     }
-  }, [equipments]);
+  }, [equipments, lastSelectValues]);
 
   useEffect(() => {
     if (isGenerate) {
       loadEquipmentList();
     }
   }, [isGenerate]);
-
-  const onTypeClick = (id: number) => {
-    setEndSelectValues((prev) => {
-      let newData = clone(prev);
-
-      const isExist = newData.findIndex((item) => item === id) !== -1;
-
-      if (isExist) newData = newData.filter((item) => item !== id);
-      else newData.push(id);
-
-      return newData;
-    });
-  };
 
   const navigateToFullScreem = (index: number) => {
     const equipmentId = currentEquipmentsIds[index];
@@ -203,10 +180,6 @@ export const useAction = () => {
       }
     );
   };
-
-  useUpdateEffect(() => {
-    setEndSelectValues(selectValues ?? []);
-  }, [selectValues]);
 
   const loadEquipmentList = () => {
     if (!continueExecution.current) return;
@@ -432,13 +405,13 @@ export const useAction = () => {
     errorFlvIndexs,
     videoItemHeight,
     videoBodyRef,
-    typeList,
-    endSelectValues,
     ScreenCountEnum,
-    getEquipmentList,
-    onTypeClick,
+    warningSelectRef,
+    lastSelectValues,
+    lastCheckIndex,
     setNumberDto,
     navigateToFullScreem,
-    setSelectValues,
+    setLastSelectValues,
+    setLastCheckIndex,
   };
 };

@@ -1,4 +1,4 @@
-import { Popover, Spin } from "antd";
+import { Popconfirm, Popover, Spin } from "antd";
 import dayjs from "dayjs";
 import Mpegts from "mpegts.js";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
@@ -22,12 +22,14 @@ import {
   PalyIcon,
   SuspendIcon,
 } from "./icon";
+import { ElementIcon, PeopleIcon, VehiclesIcon } from "@/icon/monitor";
 
 export type Speed = 0.5 | 1 | 1.25 | 1.5 | 2;
 
 export enum WarningTypes {
   Car,
   Man,
+  Element,
 }
 
 export const VideoPlayback = (props: {
@@ -49,6 +51,10 @@ export const VideoPlayback = (props: {
         endTime: string;
       }[];
       [ICameraAiMonitorType.Vehicles]: {
+        startTime: string;
+        endTime: string;
+      }[];
+      [ICameraAiMonitorType.Animal]: {
         startTime: string;
         endTime: string;
       }[];
@@ -116,6 +122,7 @@ export const VideoPlayback = (props: {
     setIsOpenSpeedList(newOpen);
   };
 
+  // 进度条
   const WarnDataVisualizer = (props: {
     warnData: {
       startTime: string;
@@ -125,6 +132,22 @@ export const VideoPlayback = (props: {
     index: number;
   }) => {
     const { warnData, type } = props;
+
+    let visualizer = "";
+
+    switch (type) {
+      case WarningTypes.Car:
+        visualizer = "#34A46E";
+        break;
+
+      case WarningTypes.Man:
+        visualizer = "#2853E3";
+        break;
+
+      case WarningTypes.Element:
+        visualizer = "#F48445";
+        break;
+    }
 
     return (
       <>
@@ -144,14 +167,58 @@ export const VideoPlayback = (props: {
               perMinuteWidth) /
             16;
 
+          const ProgressTips = () => {
+            const iconProps = {
+              className:
+                "w-[2rem] h-[2rem] flex justify-center items-center rounded-[.5rem]",
+              icon: <PeopleIcon />,
+              bgColor: "",
+            };
+
+            switch (type) {
+              case WarningTypes.Man:
+                iconProps.icon = <PeopleIcon />;
+                iconProps.bgColor = "bg-[#2853E3]";
+                break;
+
+              case WarningTypes.Car:
+                iconProps.icon = <VehiclesIcon />;
+                iconProps.bgColor = "bg-[#34A46E]";
+                break;
+
+              case WarningTypes.Element:
+                iconProps.icon = <ElementIcon />;
+                iconProps.bgColor = "bg-[#F48445]";
+                break;
+            }
+
+            return (
+              <div className={`${iconProps.className} ${iconProps.bgColor}`}>
+                {iconProps.icon}
+              </div>
+            );
+          };
+
           return (
-            <div
+            <Popconfirm
               key={index}
-              style={{ left: `${left}rem`, width: `${width}rem` }}
-              className={`rounded-[2.875rem] ${
-                type === WarningTypes.Car ? "bg-[#2853E3]" : "bg-[#34A46E]"
-              } absolute h-4`}
-            />
+              title=""
+              arrow={false}
+              trigger="hover"
+              description={<ProgressTips />}
+              icon={""}
+              okButtonProps={{ style: { display: "none" } }}
+              cancelButtonProps={{ style: { display: "none" } }}
+            >
+              <div
+                style={{
+                  left: `${left}rem`,
+                  width: `${width}rem`,
+                  backgroundColor: visualizer,
+                }}
+                className="rounded-[2.875rem] absolute h-4"
+              />
+            </Popconfirm>
           );
         })}
       </>
@@ -407,6 +474,10 @@ export const VideoPlayback = (props: {
             ICameraAiMonitorType.People
           ].filter((item) => dayjs(item.startTime) < currentStartTime);
 
+          const currentElementData = warningDetails.warningDataList[
+            ICameraAiMonitorType.Animal
+          ].filter((item) => dayjs(item.startTime) < currentStartTime);
+
           return (
             <SwiperSlide key={index} className="w-full h-24">
               <div key={index} className="w-full h-full min-w-full">
@@ -422,6 +493,11 @@ export const VideoPlayback = (props: {
                         warnData={currentManData}
                         index={index}
                         type={WarningTypes.Man}
+                      />
+                      <WarnDataVisualizer
+                        warnData={currentElementData}
+                        index={index}
+                        type={WarningTypes.Element}
                       />
                     </div>
                   </div>
