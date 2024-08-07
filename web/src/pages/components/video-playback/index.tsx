@@ -314,7 +314,7 @@ export const VideoPlayback = (props: {
           )}
           <div className="flex font-semibold text-white items-center">
             <span style={{ userSelect: "none" }}>
-              {dayjs(warningDetails.startTime).format("dddd HH:MM:ss A")}
+              {dayjs(warningDetails.startTime).format("dddd HH:mm:ss A")}
             </span>
             <div
               className={`cursor-pointer flex rounded ml-[1.5rem] items-center px-2 text-white border border-white border-solid ${
@@ -342,36 +342,34 @@ export const VideoPlayback = (props: {
               >
                 {t(KEYS.EXPORT_VIDEO, { ns: "videoPlayback" })}
               </div>
-
-              <Popover
-                content={[0.5, 1, 1.25, 1.5, 2].map((item) => {
-                  return (
-                    <div
-                      key={item}
-                      className="hover:bg-[#ccc] cursor-pointer py-1 px-4 rounded text-center"
-                      onClick={() => {
-                        videoRef?.current &&
-                          (videoRef.current.playbackRate = item);
-                        // setVideoSpeed(item as Speed);
-
-                        setIsOpenSpeedList(false);
-                      }}
-                    >
-                      {item}x
-                    </div>
-                  );
-                })}
-                trigger="click"
-                open={isOpenSpeedList}
-                arrow={false}
-                onOpenChange={handleOpenChange}
-              >
-                <div className="cursor-pointer">
-                  {t(KEYS.DOUBLE_SPEED, { ns: "videoPlayback" })}
-                </div>
-              </Popover>
             </div>
           )}
+          <Popover
+            content={[0.5, 1, 1.25, 1.5, 2].map((item) => {
+              return (
+                <div
+                  key={item}
+                  className="hover:bg-[#ccc] cursor-pointer py-1 px-4 rounded text-center"
+                  onClick={() => {
+                    videoRef?.current && (videoRef.current.playbackRate = item);
+                    // setVideoSpeed(item as Speed);
+
+                    setIsOpenSpeedList(false);
+                  }}
+                >
+                  {item}x
+                </div>
+              );
+            })}
+            trigger="click"
+            open={isOpenSpeedList}
+            arrow={false}
+            onOpenChange={handleOpenChange}
+          >
+            <div className="cursor-pointer text-white">
+              {t(KEYS.DOUBLE_SPEED, { ns: "videoPlayback" })}
+            </div>
+          </Popover>
         </div>
       </div>
 
