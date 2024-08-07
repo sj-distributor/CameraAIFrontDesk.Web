@@ -331,45 +331,49 @@ export const VideoPlayback = (props: {
               </span>
             </div>
           </div>
-          {!isLive && canExportVideo && (
+          {!isLive && (
             <div className="flex text-white font-semibold">
-              <div
-                className="mr-[1.5rem] cursor-pointer"
-                onClick={() => {
-                  setIsOpenExportPlaybackModal &&
-                    setIsOpenExportPlaybackModal(true);
-                }}
-              >
-                {t(KEYS.EXPORT_VIDEO, { ns: "videoPlayback" })}
-              </div>
-            </div>
-          )}
-          <Popover
-            content={[0.5, 1, 1.25, 1.5, 2].map((item) => {
-              return (
+              {canExportVideo && (
                 <div
-                  key={item}
-                  className="hover:bg-[#ccc] cursor-pointer py-1 px-4 rounded text-center"
+                  className="mr-[1.5rem] cursor-pointer"
                   onClick={() => {
-                    videoRef?.current && (videoRef.current.playbackRate = item);
-                    // setVideoSpeed(item as Speed);
-
-                    setIsOpenSpeedList(false);
+                    setIsOpenExportPlaybackModal &&
+                      setIsOpenExportPlaybackModal(true);
                   }}
                 >
-                  {item}x
+                  {t(KEYS.EXPORT_VIDEO, { ns: "videoPlayback" })}
                 </div>
-              );
-            })}
-            trigger="click"
-            open={isOpenSpeedList}
-            arrow={false}
-            onOpenChange={handleOpenChange}
-          >
-            <div className="cursor-pointer text-white">
-              {t(KEYS.DOUBLE_SPEED, { ns: "videoPlayback" })}
+              )}
+
+              <Popover
+                content={[0.5, 1, 1.25, 1.5, 2].map((item) => {
+                  return (
+                    <div
+                      key={item}
+                      className="hover:bg-[#ccc] cursor-pointer py-1 px-4 rounded text-center"
+                      onClick={() => {
+                        videoRef?.current &&
+                          (videoRef.current.playbackRate = item);
+                        // setVideoSpeed(item as Speed);
+
+                        setIsOpenSpeedList(false);
+                      }}
+                    >
+                      {item}x
+                    </div>
+                  );
+                })}
+                trigger="click"
+                open={isOpenSpeedList}
+                arrow={false}
+                onOpenChange={handleOpenChange}
+              >
+                <div className="cursor-pointer text-white">
+                  {t(KEYS.DOUBLE_SPEED, { ns: "videoPlayback" })}
+                </div>
+              </Popover>
             </div>
-          </Popover>
+          )}
         </div>
       </div>
 
