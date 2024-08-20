@@ -174,8 +174,11 @@ export const useAction = () => {
     {
       label: `${t(KEYS.ALERT_CONTENT, { ns: "alertList" })}：`,
       value:
-        `${record?.equipmentName},${record?.monitorTypeName}(${record?.name})出現超過${record?.settingDuration}秒` ??
-        "----",
+        `${record?.equipmentName},${record?.monitorTypeName}(${record?.name}${
+          record.monitorType === ICameraAiMonitorType.Costume
+            ? `未配戴${record?.costumesDetected}`
+            : ""
+        })出現超過${record?.settingDuration}秒` ?? "----",
     },
     {
       label: `${t(KEYS.AREA_ADRESS, { ns: "alertList" })}：`,
@@ -353,10 +356,13 @@ export const useAction = () => {
       ICameraAiMonitorType.AbnormalVehicles
     );
 
+    const animalWarningLists = getTimeList(data, ICameraAiMonitorType.Animal);
+
     return {
       [ICameraAiMonitorType.AbnormalVehicles]: abnormalVehiclesWarningLists,
       [ICameraAiMonitorType.People]: peopleWarningLists,
       [ICameraAiMonitorType.Vehicles]: vehiclesWarningLists,
+      [ICameraAiMonitorType.Animal]: animalWarningLists,
     };
   };
 
@@ -389,6 +395,7 @@ export const useAction = () => {
           [ICameraAiMonitorType.AbnormalVehicles]: [],
           [ICameraAiMonitorType.People]: [],
           [ICameraAiMonitorType.Vehicles]: [],
+          [ICameraAiMonitorType.Animal]: [],
         },
       };
     }

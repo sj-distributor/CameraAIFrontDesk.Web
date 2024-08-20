@@ -1,8 +1,12 @@
 import { Pagination, Table, Tooltip } from "antd/es";
 import dayjs from "dayjs";
 
-import { IRecordItem, IStatusType } from "@/dtos/default";
+import { ICameraAiMonitorType, IRecordItem, IStatusType } from "@/dtos/default";
 import KEYS from "@/i18n/keys/feedback-list";
+
+import carImg from "../../../../assets/car.png";
+import error_carImg from "../../../../assets/error-car.png";
+import peopleImg from "../../../../assets/people.png";
 
 import { useAction } from "./hook";
 
@@ -39,26 +43,11 @@ export const FeedbackList = () => {
       render: (text: string) => {
         const img = () => {
           if (text.includes("人員") || text.includes("人员"))
-            return (
-              <img
-                src="../../../src/assets/people.png"
-                className="w-4 h-4 img-no-darg"
-              />
-            );
+            return <img src={peopleImg} className="w-4 h-4 img-no-darg" />;
           else if (text.includes("異常車輛") || text.includes("异常车辆")) {
-            return (
-              <img
-                src="../../../src/assets/error-car.png"
-                className="w-4 h-4 img-no-darg"
-              />
-            );
+            return <img src={error_carImg} className="w-4 h-4 img-no-darg" />;
           } else if (text.includes("車輛") || text.includes("车辆")) {
-            return (
-              <img
-                src="../../../src/assets/car.png"
-                className="w-4 h-4 img-no-darg"
-              />
-            );
+            return <img src={carImg} className="w-4 h-4 img-no-darg" />;
           }
         };
 
@@ -78,7 +67,12 @@ export const FeedbackList = () => {
       render: (_: string, record: IRecordItem) => {
         return (
           <div className="w-full text-wrap select-none">
-            {record.equipmentName},{record.monitorTypeName}（{record.name}
+            {record.equipmentName},{record.monitorTypeName}（
+            {`${record.name}${
+              record.monitorType === ICameraAiMonitorType.Costume
+                ? `未配戴${record.costumesDetected}`
+                : ""
+            }`}
             ）出現超過 {record.settingDuration} 秒
           </div>
         );

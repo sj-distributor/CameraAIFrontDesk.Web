@@ -1,14 +1,22 @@
 import { useDebounceEffect } from "ahooks";
 import { Dayjs } from "dayjs";
-import { clone } from "ramda";
 import { useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/hooks/use-auth";
+import { ICameraAiMonitorType } from "@/dtos/default";
+import { IWarningType } from "@/components/warning-select/props";
 
 export const useAction = () => {
   const { t } = useAuth();
 
   const replayHeaderRef = useRef<HTMLDivElement>(null);
+
+  const warningSelectRef = useRef({
+    selectValues: [],
+    checkIndex: [],
+    setSelectValues: (_: ICameraAiMonitorType[]) => {},
+    setCheckIndex: (_: IWarningType[]) => {},
+  });
 
   const { location } = useAuth();
 
@@ -20,26 +28,17 @@ export const useAction = () => {
     endTime: null,
   });
 
-  const [selectValues, setSelectValues] = useState<number[]>([]);
+  const [lastSelectValues, setLastSelectValues] = useState<
+    ICameraAiMonitorType[]
+  >([]);
+
+  const [lastCheckIndex, setLastCheckIndex] = useState<IWarningType[]>([]);
 
   const [keyWord, setKeyWord] = useState<string>("");
 
   const [searchKeyWord, setSearchKeyWord] = useState<string>("");
 
   const [height, setHeight] = useState<number | null>(null);
-
-  const onTypeClick = (id: number) => {
-    setSelectValues((prev) => {
-      let newData = clone(prev);
-
-      const isExist = newData.findIndex((item) => item === id) !== -1;
-
-      if (isExist) newData = newData.filter((item) => item !== id);
-      else newData.push(id);
-
-      return newData;
-    });
-  };
 
   const getHeight = () => {
     if (replayHeaderRef.current) {
@@ -88,11 +87,14 @@ export const useAction = () => {
     timeDto,
     location,
     replayHeaderRef,
-    selectValues,
+    lastSelectValues,
     searchKeyWord,
     t,
+    warningSelectRef,
+    lastCheckIndex,
+    setLastSelectValues,
     setKeyWord,
-    onTypeClick,
     setTimeDto,
+    setLastCheckIndex,
   };
 };
