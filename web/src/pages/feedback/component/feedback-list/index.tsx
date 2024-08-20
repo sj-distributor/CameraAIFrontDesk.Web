@@ -4,6 +4,10 @@ import dayjs from "dayjs";
 import { ICameraAiMonitorType, IRecordItem, IStatusType } from "@/dtos/default";
 import KEYS from "@/i18n/keys/feedback-list";
 
+import carImg from "../../../../assets/car.png";
+import error_carImg from "../../../../assets/error-car.png";
+import peopleImg from "../../../../assets/people.png";
+
 import { useAction } from "./hook";
 
 export const FeedbackList = () => {
@@ -39,26 +43,11 @@ export const FeedbackList = () => {
       render: (text: string) => {
         const img = () => {
           if (text.includes("人員") || text.includes("人员"))
-            return (
-              <img
-                src="../../../src/assets/people.png"
-                className="w-4 h-4 img-no-darg"
-              />
-            );
+            return <img src={peopleImg} className="w-4 h-4 img-no-darg" />;
           else if (text.includes("異常車輛") || text.includes("异常车辆")) {
-            return (
-              <img
-                src="../../../src/assets/error-car.png"
-                className="w-4 h-4 img-no-darg"
-              />
-            );
+            return <img src={error_carImg} className="w-4 h-4 img-no-darg" />;
           } else if (text.includes("車輛") || text.includes("车辆")) {
-            return (
-              <img
-                src="../../../src/assets/car.png"
-                className="w-4 h-4 img-no-darg"
-              />
-            );
+            return <img src={carImg} className="w-4 h-4 img-no-darg" />;
           }
         };
 
