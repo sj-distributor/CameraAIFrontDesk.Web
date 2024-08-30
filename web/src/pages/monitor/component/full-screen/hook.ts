@@ -11,6 +11,7 @@ import { PostStopRealtime } from "@/services/stop-media";
 import { GetMonitorDetail, PostRealtimeGenerate } from "@/services/monitor";
 import { IWarningType } from "@/components/warning-select/props";
 import { useUpdateEffect } from "ahooks";
+import { getErrorMessage } from "@/utils/error-message";
 
 export const useAction = () => {
   const { location, message, pagePermission } = useAuth();
@@ -69,9 +70,16 @@ export const useAction = () => {
           setMonitorDetail(res ?? null);
           setIsGetMonitorDetail(true);
         })
-        .catch(() => {
+        .catch((error) => {
           generateError.current = true;
           setMonitorDetail(null);
+
+          message.error(getErrorMessage(error ?? "获取数据失败"));
+
+          setIsStopLoadingDto(() => ({
+            isStopLoading: true,
+            message: getErrorMessage(error ?? "获取数据失败"),
+          }));
         });
     }
   }, [paramsDto?.equipmentId]);
@@ -104,14 +112,14 @@ export const useAction = () => {
           generateError.current = false;
           console.log("生成实时成功");
         })
-        .catch(() => {
+        .catch((error) => {
           generateError.current = true;
 
-          message.error("生成實時失败");
+          message.error(getErrorMessage(error ?? "生成實時失败"));
 
           setIsStopLoadingDto(() => ({
             isStopLoading: true,
-            message: "生成實時失败",
+            message: getErrorMessage(error ?? "生成實時失败"),
           }));
         });
     } else if (isGetMonitorDetail && !monitorDetail) {
@@ -147,12 +155,13 @@ export const useAction = () => {
             return;
           } else if (res.status === IPlayBackStatus.Failed) {
             generateError.current = true;
-
-            message.error("获取视频流失败");
+            message.error(
+              getErrorMessage(res?.errorMessage ?? "获取视频流失败")
+            );
 
             setIsStopLoadingDto(() => ({
               isStopLoading: true,
-              message: "获取视频流失败",
+              message: getErrorMessage(res?.errorMessage ?? "获取视频流失败"),
             }));
 
             setIsSuccess(false);
@@ -164,12 +173,12 @@ export const useAction = () => {
           }
         }
       })
-      .catch(() => {
-        message.error("獲取視頻流錯誤，請稍候重試");
+      .catch((error) => {
+        message.error(getErrorMessage(error ?? "獲取視頻流錯誤，請稍候重試"));
 
         setIsStopLoadingDto(() => ({
           isStopLoading: true,
-          message: "獲取視頻流錯誤，請稍候重試",
+          message: getErrorMessage(error ?? "獲取視頻流錯誤，請稍候重試"),
         }));
         setIsSuccess(false);
         setIsGenerate(false);
@@ -249,9 +258,14 @@ export const useAction = () => {
           continueExecution.current = true;
           generateError.current = false;
         })
-        .catch(() => {
+        .catch((error) => {
           generateError.current = true;
-          message.error("生成回放失败,请重试");
+          message.error(getErrorMessage(error ?? "生成回放失败,请重试"));
+
+          setIsStopLoadingDto(() => ({
+            isStopLoading: true,
+            message: getErrorMessage(error ?? "生成回放失败,请重试"),
+          }));
         });
     } else {
       message.info("在生成視頻，請視頻生成完再更換預警篩選條件");

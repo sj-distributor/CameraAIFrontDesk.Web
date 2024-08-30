@@ -93,6 +93,7 @@ export interface IRegionEquipmentItem {
   isDeleted: true;
   status: IPlayBackStatus;
   createdTime: string;
+  errorMessage: string;
 }
 
 export interface IMonitorDetailResponse {
@@ -119,6 +120,7 @@ export interface IMonitorDetailResponse {
   isDeleted: boolean;
   status: IPlayBackStatus;
   createdTime: string;
+  errorMessage: string;
 }
 
 export interface IRealtimeGenerateRequest {

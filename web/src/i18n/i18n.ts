@@ -6,6 +6,7 @@ import main from "./pages/main";
 import alertList from "./pages/alert-list";
 import feedbackList from "./pages/feedback-list";
 import videoPlayback from "./pages/video-playback";
+import errorMessage from "./pages/error-message";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -25,6 +26,9 @@ i18n.use(initReactI18next).init({
       videoPlayback: {
         ...videoPlayback.en,
       },
+      errorMessage: {
+        ...errorMessage.en,
+      },
     },
     ch: {
       home: {
@@ -41,6 +45,9 @@ i18n.use(initReactI18next).init({
       },
       videoPlayback: {
         ...videoPlayback.ch,
+      },
+      errorMessage: {
+        ...errorMessage.ch,
       },
     },
   },

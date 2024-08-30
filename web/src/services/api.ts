@@ -27,7 +27,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => {
     if (response.status !== 200 || response.data.code !== 200) {
-      return Promise.reject(response);
+      return Promise.reject(response?.data?.msg ?? "Unknown error");
     }
 
     return response.data;
@@ -62,7 +62,7 @@ api.interceptors.response.use(
       // }
     }
 
-    return Promise.reject(error?.response?.data);
+    return Promise.reject(error?.response?.data?.msg ?? "Unknown error");
   }
 );
 

@@ -18,6 +18,7 @@ import {
   PostHomeStream,
 } from "@/services/home";
 import { IRealtimeGenerateRequest } from "@/dtos/monitor";
+import { getErrorMessage } from "@/utils/error-message";
 
 type EChartsOption = echarts.EChartsOption;
 
@@ -178,9 +179,9 @@ export const useAction = () => {
           setErrorFlv(false);
           generateError.current = false;
         })
-        .catch(() => {
+        .catch((error) => {
           generateError.current = true;
-          message.error("生成視頻流失敗");
+          message.error(getErrorMessage(error ?? "生成視頻流失敗"));
           setClickCamera({
             locationId: "",
             equipmentCode: "",
@@ -476,7 +477,12 @@ export const useAction = () => {
               setIsGenerate(false);
               setErrorFlv(true);
               generateError.current = true;
-              message.warning("生成的視頻流有問題，請重新生成");
+
+              message.warning(
+                getErrorMessage(
+                  item?.errorMessage ?? "生成的視頻流有問題，請重新生成"
+                )
+              );
               setClickCamera((prev) => ({
                 ...prev,
                 equipmentName: "",
