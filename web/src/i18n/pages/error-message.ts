@@ -2,21 +2,23 @@ import KEYS from "../keys/error-message";
 
 export default {
   en: {
-    [KEYS.INSUFFICIENT_RESOURCES]: "No node free",
-    [KEYS.CAMERA_INFO_ERROR]: "Device information error or Device offline",
-    [KEYS.CAMERA_CONNECTION_FAILED]: "Camera Connection Failed",
-    [KEYS.VIDEO_STREAM_ERROR]: "Video Stream Error",
-    [KEYS.TASK_PARAMETER_ERROR]: "Task Parameter Error",
-    [KEYS.REPLAY_STREAM_ERROR]: "Replay Stream Error",
-    [KEYS.PROGRAM_ERROR]: "Program Error",
+    [KEYS.INSUFFICIENT_RESOURCES]: "No node free,please try again later",
+    [KEYS.CAMERA_INFO_ERROR]:
+      "Device information error or Device offline,please try again later",
+    [KEYS.CAMERA_CONNECTION_FAILED]:
+      "Camera Connection Failed,please try again later",
+    [KEYS.VIDEO_STREAM_ERROR]: "Video Stream Error,please try again later",
+    [KEYS.TASK_PARAMETER_ERROR]: "Task Parameter Error,please try again later",
+    [KEYS.REPLAY_STREAM_ERROR]: "Replay Stream Error,please try again later",
+    [KEYS.PROGRAM_ERROR]: "Program Error,please try again later",
   },
   ch: {
-    [KEYS.INSUFFICIENT_RESOURCES]: "资源不够",
-    [KEYS.CAMERA_INFO_ERROR]: "摄像头信息错误或离线",
-    [KEYS.CAMERA_CONNECTION_FAILED]: "摄像头连接失败",
-    [KEYS.VIDEO_STREAM_ERROR]: "视频流获取失败",
-    [KEYS.TASK_PARAMETER_ERROR]: "任务参数错误",
-    [KEYS.REPLAY_STREAM_ERROR]: "回放流获取失败",
-    [KEYS.PROGRAM_ERROR]: "程序异常",
+    [KEYS.INSUFFICIENT_RESOURCES]: "當前资源不够，請稍候重試",
+    [KEYS.CAMERA_INFO_ERROR]: "當前摄像头信息错误或离线，請稍候重試",
+    [KEYS.CAMERA_CONNECTION_FAILED]: "摄像头连接失败，請稍候重試",
+    [KEYS.VIDEO_STREAM_ERROR]: "视频流获取失败，請稍候重試",
+    [KEYS.TASK_PARAMETER_ERROR]: "任务参数错误，請稍候重試",
+    [KEYS.REPLAY_STREAM_ERROR]: "回放流获取失败，請稍候重試",
+    [KEYS.PROGRAM_ERROR]: "程序异常，請稍候重試",
   },
 };
