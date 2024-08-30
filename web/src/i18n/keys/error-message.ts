@@ -1,6 +1,4 @@
 export default {
-  DUPLICATE_CAMERA: "DuplicateCamera",
-  DATABASE_ERROR: "DatabaseError",
   INSUFFICIENT_RESOURCES: "InsufficientResources",
   CAMERA_INFO_ERROR: "CameraInfoError",
   CAMERA_CONNECTION_FAILED: "CameraConnectionFailed",

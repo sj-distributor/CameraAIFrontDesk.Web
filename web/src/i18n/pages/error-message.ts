@@ -2,8 +2,6 @@ import KEYS from "../keys/error-message";
 
 export default {
   en: {
-    [KEYS.DUPLICATE_CAMERA]: "Reduplicative camera",
-    [KEYS.DATABASE_ERROR]: "gateway database error",
     [KEYS.INSUFFICIENT_RESOURCES]: "No node free",
     [KEYS.CAMERA_INFO_ERROR]: "Device information error or Device offline",
     [KEYS.CAMERA_CONNECTION_FAILED]: "Camera Connection Failed",
@@ -13,8 +11,6 @@ export default {
     [KEYS.PROGRAM_ERROR]: "Program Error",
   },
   ch: {
-    [KEYS.DUPLICATE_CAMERA]: "重复camera",
-    [KEYS.DATABASE_ERROR]: "数据库异常",
     [KEYS.INSUFFICIENT_RESOURCES]: "资源不够",
     [KEYS.CAMERA_INFO_ERROR]: "摄像头信息错误或离线",
     [KEYS.CAMERA_CONNECTION_FAILED]: "摄像头连接失败",

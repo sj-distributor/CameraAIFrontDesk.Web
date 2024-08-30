@@ -2,8 +2,6 @@ import i18n from "i18next";
 import KEYS from "@/i18n/keys/error-message";
 
 const ERROR_KEYWORDS = {
-  DUPLICATE_CAMERA: "Reduplicative camera",
-  DATABASE_ERROR: "gateway database error",
   INSUFFICIENT_RESOURCES: "No node free",
   CAMERA_INFO_ERROR: "Device information error or Device offline",
   CAMERA_CONNECTION_FAILED: "摄像头连接失败",
@@ -17,8 +15,6 @@ export const getErrorMessage = (error: string) => {
   const { t } = i18n;
 
   const ERROR_MESSAGES = {
-    DUPLICATE_CAMERA: t(KEYS.DUPLICATE_CAMERA, { ns: "errorMessage" }),
-    DATABASE_ERROR: t(KEYS.DATABASE_ERROR, { ns: "errorMessage" }),
     INSUFFICIENT_RESOURCES: t(KEYS.INSUFFICIENT_RESOURCES, {
       ns: "errorMessage",
     }),
