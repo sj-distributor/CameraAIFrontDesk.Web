@@ -2,7 +2,10 @@ import KEYS from "../keys/error-message";
 
 export default {
   en: {
-    [KEYS.INSUFFICIENT_RESOURCES]: "No node free,please try again later",
+    [KEYS.REALTIME_INSUFFICIENT_RESOURCES]:
+      "No node free,please try again later",
+    [KEYS.PLAYBACK_INSUFFICIENT_RESOURCES]:
+      "No node free,please try again later",
     [KEYS.CAMERA_INFO_ERROR]:
       "Device information error or Device offline,please try again later",
     [KEYS.CAMERA_CONNECTION_FAILED]:
@@ -13,7 +16,8 @@ export default {
     [KEYS.PROGRAM_ERROR]: "Program Error,please try again later",
   },
   ch: {
-    [KEYS.INSUFFICIENT_RESOURCES]: "當前资源不够，請稍候重試",
+    [KEYS.REALTIME_INSUFFICIENT_RESOURCES]: "請求直播资源不够，請稍候重試",
+    [KEYS.PLAYBACK_INSUFFICIENT_RESOURCES]: "請求回放资源不够，請稍候重試",
     [KEYS.CAMERA_INFO_ERROR]: "當前摄像头信息错误或离线，請稍候重試",
     [KEYS.CAMERA_CONNECTION_FAILED]: "摄像头连接失败，請稍候重試",
     [KEYS.VIDEO_STREAM_ERROR]: "视频流获取失败，請稍候重試",

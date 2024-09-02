@@ -2,8 +2,9 @@ import i18n from "i18next";
 import KEYS from "@/i18n/keys/error-message";
 
 const ERROR_KEYWORDS = {
-  INSUFFICIENT_RESOURCES: "No node free",
-  CAMERA_INFO_ERROR: "Device information error or Device offline",
+  REALTIME_INSUFFICIENT_RESOURCES: "realtime insufficient resource", // 请求直播 资源不够
+  PLAYBACK_INSUFFICIENT_RESOURCES: "playback insufficient resource", // 请求回放 资源不够
+  CAMERA_INFO_ERROR: "Device information error or Device offline", // 请求直播 请求回放 摄像头信息错误或离线
   CAMERA_CONNECTION_FAILED: "摄像头连接失败",
   VIDEO_STREAM_ERROR: "视频流获取失败",
   TASK_PARAMETER_ERROR: "任务参数错误",
@@ -15,7 +16,10 @@ export const getErrorMessage = (error: string) => {
   const { t } = i18n;
 
   const ERROR_MESSAGES = {
-    INSUFFICIENT_RESOURCES: t(KEYS.INSUFFICIENT_RESOURCES, {
+    REALTIME_INSUFFICIENT_RESOURCES: t(KEYS.REALTIME_INSUFFICIENT_RESOURCES, {
+      ns: "errorMessage",
+    }),
+    PLAYBACK_INSUFFICIENT_RESOURCES: t(KEYS.PLAYBACK_INSUFFICIENT_RESOURCES, {
       ns: "errorMessage",
     }),
     CAMERA_INFO_ERROR: t(KEYS.CAMERA_INFO_ERROR, { ns: "errorMessage" }),
@@ -33,5 +37,6 @@ export const getErrorMessage = (error: string) => {
       return ERROR_MESSAGES[key as keyof typeof ERROR_MESSAGES];
     }
   }
+
   return error;
 };

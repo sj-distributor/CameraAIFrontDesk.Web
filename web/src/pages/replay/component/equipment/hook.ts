@@ -243,6 +243,11 @@ export const useAction = () => {
         })
         .catch((error) => {
           message.error(getErrorMessage(error ?? "生成回放失败"));
+
+          setIsStopLoadingDto(() => ({
+            isStopLoading: true,
+            message: getErrorMessage(error ?? "生成回放失败,请重试"),
+          }));
         });
     }
   }, [replayDetailDto]);

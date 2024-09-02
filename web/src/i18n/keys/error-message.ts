@@ -1,5 +1,6 @@
 export default {
-  INSUFFICIENT_RESOURCES: "InsufficientResources",
+  REALTIME_INSUFFICIENT_RESOURCES: "RealTimeInsufficientResources",
+  PLAYBACK_INSUFFICIENT_RESOURCES: "PlaybackInsufficientResources",
   CAMERA_INFO_ERROR: "CameraInfoError",
   CAMERA_CONNECTION_FAILED: "CameraConnectionFailed",
   VIDEO_STREAM_ERROR: "VideoStreamError",
