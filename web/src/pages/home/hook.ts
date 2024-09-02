@@ -183,6 +183,9 @@ export const useAction = () => {
         })
         .catch((error) => {
           generateError.current = true;
+          setIsGenerate(false);
+          setErrorFlv(true);
+          setIsFind(true);
           message.error(getErrorMessage(error ?? "生成視頻流失敗"));
           setErrorMessage(getErrorMessage(error ?? "生成視頻流失敗"));
           setClickCamera({
@@ -487,7 +490,9 @@ export const useAction = () => {
                 )
               );
               setErrorMessage(
-                item?.errorMessage ?? "生成的視頻流有問題，請重新生成"
+                getErrorMessage(
+                  item?.errorMessage ?? "生成的視頻流有問題，請重新生成"
+                )
               );
               setClickCamera((prev) => ({
                 ...prev,
