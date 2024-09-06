@@ -32,6 +32,7 @@ export const Home = () => {
     setSelectStatus,
     videoFullScreen,
     setVolumeSliderStatus,
+    errorMessage,
   } = useAction();
 
   return (
@@ -99,7 +100,7 @@ export const Home = () => {
             style={{ height: `${height}px` }}
           >
             {errorFlv ? (
-              <div className="">当前视频出现问题，无法播放</div>
+              <div className="">{errorMessage}</div>
             ) : (
               <video
                 id="homeVideo"

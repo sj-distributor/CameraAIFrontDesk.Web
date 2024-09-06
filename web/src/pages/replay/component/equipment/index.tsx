@@ -28,53 +28,6 @@ export const Equipment = () => {
   return (
     <div className="w-full h-full flex-col flex">
       <div>
-        {/* <Popconfirm
-          title="預警篩選"
-          description={
-            <div>
-              {options.map((item, index) => (
-                <div
-                  key={index}
-                  className={`py-2 hover:bg-[#EBF1FF] space-x-2 cursor-pointer text-sm px-4 rounded-lg ${
-                    endSelectValues.findIndex(
-                      (option) => item.value === option
-                    ) !== -1
-                      ? "bg-[#EBF1FF] text-[#2866F1]"
-                      : "bg-white text-black"
-                  }`}
-                  onClick={() => onTypeClick(item.value)}
-                >
-                  <Checkbox
-                    checked={
-                      endSelectValues.findIndex(
-                        (option) => option === item.value
-                      ) !== -1
-                    }
-                  />
-                  <span className="select-none">{item.label}</span>
-                </div>
-              ))}
-            </div>
-          }
-          placement="bottom"
-          onConfirm={() => {
-            onSave(true);
-          }}
-          onCancel={() => {
-            onSave(false);
-          }}
-          okText="保存"
-          cancelText="取消"
-        >
-          <Button>預警篩選</Button>
-        </Popconfirm> */}
-        {/* <CheckBoxComponent
-          title="預警篩選："
-          selectValues={selectValues ?? []}
-          onClick={onTypeClick}
-          options={options}
-        /> */}
-
         <Popconfirm
           title="預警篩選"
           description={

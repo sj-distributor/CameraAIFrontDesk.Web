@@ -18,6 +18,7 @@ import {
   PostGeneratePlayBack,
   PostPlayBackGenerate,
 } from "@/services/replay";
+import { getErrorMessage } from "@/utils/error-message";
 
 export const useAction = () => {
   const { location, message, pagePermission } = useAuth();
@@ -86,12 +87,12 @@ export const useAction = () => {
             setSuccessUrl("");
             continueExecution.current = true;
           })
-          .catch(() => {
-            message.error("生成回放失败,请重试");
+          .catch((error) => {
+            message.error(getErrorMessage(error ?? "生成回放失败,请重试"));
 
             setIsStopLoadingDto(() => ({
               isStopLoading: true,
-              message: "生成回放失败,请重试",
+              message: getErrorMessage(error ?? "生成回放失败,请重试"),
             }));
           });
       } else {
@@ -123,12 +124,12 @@ export const useAction = () => {
             records: res?.records ?? [],
           });
         })
-        .catch(() => {
-          message.error("获回放詳情數據失敗");
+        .catch((error) => {
+          message.error(getErrorMessage(error ?? "获回放詳情數據失敗"));
 
           setIsStopLoadingDto(() => ({
             isStopLoading: true,
-            message: "获回放詳情數據失敗",
+            message: getErrorMessage(error ?? "获回放詳情數據失敗"),
           }));
 
           setReplayDto({
@@ -240,8 +241,13 @@ export const useAction = () => {
         .then(() => {
           setIsFirstGenerate(true);
         })
-        .catch(() => {
-          message.error("生成回放失败");
+        .catch((error) => {
+          message.error(getErrorMessage(error ?? "生成回放失败"));
+
+          setIsStopLoadingDto(() => ({
+            isStopLoading: true,
+            message: getErrorMessage(error ?? "生成回放失败,请重试"),
+          }));
         });
     }
   }, [replayDetailDto]);
@@ -323,11 +329,13 @@ export const useAction = () => {
           totalRecord &&
           totalRecord.playbackStatus === IPlayBackStatus.Failed
         ) {
-          message.error("获取视频流失败");
+          getErrorMessage(totalRecord?.errorMessage ?? "获取视频流失败");
 
           setIsStopLoadingDto(() => ({
             isStopLoading: true,
-            message: "获取视频流失败",
+            message: getErrorMessage(
+              totalRecord?.errorMessage ?? "获取视频流失败"
+            ),
           }));
 
           setIsError(true);
@@ -338,11 +346,11 @@ export const useAction = () => {
           return;
         }
       })
-      .catch(() => {
-        message.error("獲取視頻錯誤，請稍候重試");
+      .catch((error) => {
+        message.error(getErrorMessage(error ?? "獲取視頻錯誤，請稍候重試"));
         setIsStopLoadingDto(() => ({
           isStopLoading: true,
-          message: "獲取視頻錯誤，請稍候重試",
+          message: getErrorMessage(error ?? "獲取視頻錯誤，請稍候重試"),
         }));
         setIsError(true);
         setSuccessUrl("");

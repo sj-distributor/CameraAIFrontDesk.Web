@@ -40,6 +40,7 @@ export interface ICameraItem {
   isDeleted: boolean;
   status: IPlayBackStatus;
   createdTime: string;
+  errorMessage: string;
 }
 
 export interface IEquipmentOnlineCountItem {

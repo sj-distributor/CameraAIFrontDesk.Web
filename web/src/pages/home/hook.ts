@@ -18,6 +18,7 @@ import {
   PostHomeStream,
 } from "@/services/home";
 import { IRealtimeGenerateRequest } from "@/dtos/monitor";
+import { getErrorMessage } from "@/utils/error-message";
 
 type EChartsOption = echarts.EChartsOption;
 
@@ -54,6 +55,8 @@ export const useAction = () => {
   const [nowStream, setNowStream] = useState<string>("");
 
   const [errorFlv, setErrorFlv] = useState<boolean>(false);
+
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const [clickCamera, setClickCamera] = useState<{
     locationId: string;
@@ -178,9 +181,13 @@ export const useAction = () => {
           setErrorFlv(false);
           generateError.current = false;
         })
-        .catch(() => {
+        .catch((error) => {
           generateError.current = true;
-          message.error("生成視頻流失敗");
+          setIsGenerate(false);
+          setErrorFlv(true);
+          setIsFind(true);
+          message.error(getErrorMessage(error ?? "生成視頻流失敗"));
+          setErrorMessage(getErrorMessage(error ?? "生成視頻流失敗"));
           setClickCamera({
             locationId: "",
             equipmentCode: "",
@@ -476,7 +483,17 @@ export const useAction = () => {
               setIsGenerate(false);
               setErrorFlv(true);
               generateError.current = true;
-              message.warning("生成的視頻流有問題，請重新生成");
+
+              message.warning(
+                getErrorMessage(
+                  item?.errorMessage ?? "生成的視頻流有問題，請重新生成"
+                )
+              );
+              setErrorMessage(
+                getErrorMessage(
+                  item?.errorMessage ?? "生成的視頻流有問題，請重新生成"
+                )
+              );
               setClickCamera((prev) => ({
                 ...prev,
                 equipmentName: "",
@@ -545,6 +562,7 @@ export const useAction = () => {
 
           player.on(Mpegts.Events.ERROR, () => {
             setErrorFlv(true);
+            setErrorMessage("当前视频出现问题，无法播放");
           });
 
           const handleTimeUpdate = () => {
@@ -595,5 +613,6 @@ export const useAction = () => {
     setSelectStatus,
     videoFullScreen,
     setVolumeSliderStatus,
+    errorMessage,
   };
 };
