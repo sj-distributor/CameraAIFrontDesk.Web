@@ -67,12 +67,8 @@ export const useAction = () => {
           equipmentCode: playDetailData.equipmentCode,
           monitorTypes: palybackData.monitorTypes,
           locationId: playDetailData.locationId,
-          startTime: dayjs
-            .utc(palybackData.startTime)
-            .format("YYYY_MM_DD_HH_mm_ss"),
-          endTime: dayjs
-            .utc(palybackData.endTime)
-            .format("YYYY_MM_DD_HH_mm_ss"),
+          startTime: palybackData.startTime,
+          endTime: palybackData.endTime,
         };
 
         PostGeneratePlayBack(data)
@@ -208,7 +204,7 @@ export const useAction = () => {
               areaAdress: res.regionAndArea.regionAddress,
               locationId: res.regionAndArea.locationId,
               equipmentCode: res.record.equipmentCode,
-              startTime: res.record.occurrenceTime,
+              startTime: res.record.locationTime.replace(/\+.*/, ""),
               duration: res.record.duration,
               taskId: res.record.replayTaskId,
             };
@@ -264,13 +260,11 @@ export const useAction = () => {
     const data: IPostPlayBackGenerateRequest = {
       locationId: replayDetailDto.locationId ?? "",
       equipmentCode: replayDetailDto.equipmentCode ?? "",
-      startTime: dayjs
-        .utc(replayDetailDto.startTime)
-        .format("YYYY_MM_DD_HH_mm_ss"),
-      endTime: dayjs
-        .utc(replayDetailDto.startTime)
-        .add(replayDetailDto.duration ?? 0, "second")
-        .format("YYYY_MM_DD_HH_mm_ss"),
+      startTime: replayDetailDto.startTime ?? "",
+      endTime:
+        dayjs(replayDetailDto.startTime, "YYYY/MM/DD HH:mm:ss")
+          .add(replayDetailDto.duration ?? 0, "second")
+          .format("YYYY/MM/DD HH:mm:ss") ?? "",
       taskId: replayDetailDto.taskId ?? "",
     };
 

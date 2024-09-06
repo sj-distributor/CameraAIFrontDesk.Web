@@ -166,14 +166,12 @@ export const WarningList = () => {
     },
     {
       title: t(KEYS.START_TIME, { ns: "alertList" }),
-      dataIndex: "occurrenceTime",
-      key: "occurrenceTime",
+      dataIndex: "locationTime",
+      key: "locationTime",
       width: 180,
       render: (text: string) => {
         return text ? (
-          <span className="select-none">
-            {dayjs(text).format("YYYY-MM-DD HH:mm:ss")}
-          </span>
+          <span className="select-none">{text.replace(/\+.*/, "")}</span>
         ) : (
           ""
         );

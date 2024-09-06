@@ -80,10 +80,7 @@ export const ReplayList = () => {
                           )}
                         </div>
                         <div className="flex-1 truncate text-base">
-                          {dayjs
-                            .utc(item.occurenceTime)
-                            .local()
-                            .format("YYYY-MM-DD HH:mm:ss")}
+                          {item.records[0].locationTime.replace(/\+.*/, "")}
                         </div>
                       </div>
                     </div>
