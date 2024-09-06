@@ -7,7 +7,6 @@ import {
 } from "@ant-design/icons";
 import { Pagination, Tooltip } from "antd";
 import Table from "antd/es/table";
-import dayjs from "dayjs";
 import { ReactElement } from "react";
 
 import { ICameraAiMonitorType, IRecordItem, IStatusType } from "@/dtos/default";
