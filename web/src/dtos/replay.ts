@@ -56,7 +56,6 @@ export interface IReplayRecordItem {
   licensePlateImageUrl: string;
   occurrenceTime: string;
   createdTime: string;
-  locationTime: string;
 }
 
 export interface IReplayDetailResponse {
