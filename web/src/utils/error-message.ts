@@ -31,6 +31,7 @@ export const getErrorMessage = (error: string) => {
     TASK_PARAMETER_ERROR: t(KEYS.TASK_PARAMETER_ERROR, { ns: "errorMessage" }),
     REPLAY_STREAM_ERROR: t(KEYS.REPLAY_STREAM_ERROR, { ns: "errorMessage" }),
     PROGRAM_ERROR: t(KEYS.PROGRAM_ERROR, { ns: "errorMessage" }),
+    DATA_TIMEOUR: t(KEYS.DATA_TIMEOUT, { ns: "errorMessage" }),
   };
 
   for (const [key, keyword] of Object.entries(ERROR_KEYWORDS)) {
