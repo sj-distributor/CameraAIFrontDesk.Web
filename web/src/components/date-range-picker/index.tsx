@@ -42,8 +42,8 @@ export const RangePickerComponent = (props: IRangePickerProps) => {
       onChange={(e) => {
         if (e && e[0] && e[1]) {
           setTimeDto({
-            startTime: e[0].format("YYYY/MM/DD HH:mm:ss"),
-            endTime: e[1].format("YYYY/MM/DD HH:mm:ss"),
+            startTime: e[0].toISOString(),
+            endTime: e[1].toISOString(),
           });
         } else {
           setTimeDto({

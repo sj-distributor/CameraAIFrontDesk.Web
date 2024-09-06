@@ -7,6 +7,7 @@ import {
 } from "@ant-design/icons";
 import { Pagination, Tooltip } from "antd";
 import Table from "antd/es/table";
+import dayjs from "dayjs";
 import { ReactElement } from "react";
 
 import { ICameraAiMonitorType, IRecordItem, IStatusType } from "@/dtos/default";
@@ -165,12 +166,14 @@ export const WarningList = () => {
     },
     {
       title: t(KEYS.START_TIME, { ns: "alertList" }),
-      dataIndex: "locationTime",
-      key: "locationTime",
+      dataIndex: "occurrenceTime",
+      key: "occurrenceTime",
       width: 180,
       render: (text: string) => {
         return text ? (
-          <span className="select-none">{text.replace(/\+.*/, "")}</span>
+          <span className="select-none">
+            {dayjs(text).format("YYYY-MM-DD HH:mm:ss")}
+          </span>
         ) : (
           ""
         );

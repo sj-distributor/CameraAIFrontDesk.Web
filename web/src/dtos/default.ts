@@ -62,7 +62,6 @@ export interface IRecordItem {
   costumesDetected: string;
   occurrenceTime: string;
   createdTime: string;
-  locationTime: string;
 }
 
 export interface IStopRealtimeResquest {
