@@ -10,6 +10,7 @@ const ERROR_KEYWORDS = {
   TASK_PARAMETER_ERROR: "任务参数错误",
   REPLAY_STREAM_ERROR: "回放流获取失败",
   PROGRAM_ERROR: "程序异常",
+  DATA_TIMEOUR: "获取数据超时，请稍后再试",
 };
 
 export const getErrorMessage = (error: string) => {

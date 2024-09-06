@@ -7,4 +7,5 @@ export default {
   TASK_PARAMETER_ERROR: "TaskParameterError",
   REPLAY_STREAM_ERROR: "ReplayStreamError",
   PROGRAM_ERROR: "ProgramError",
+  DATA_TIMEOUT: "DataTimeout",
 };
