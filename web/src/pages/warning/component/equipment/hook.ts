@@ -18,7 +18,7 @@ import {
   PostGeneratePlayBack,
   PostPlaybackGenerateApi,
 } from "@/services/warning";
-import { useDebounceFn, useUpdateEffect } from "ahooks";
+import { useDebounceFn } from "ahooks";
 import { getErrorMessage } from "@/utils/error-message";
 
 export const useAction = () => {

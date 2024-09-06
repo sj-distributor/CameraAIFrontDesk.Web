@@ -1,5 +1,4 @@
 import { Pagination, Table, Tooltip } from "antd/es";
-import dayjs from "dayjs";
 
 import { ICameraAiMonitorType, IRecordItem, IStatusType } from "@/dtos/default";
 import KEYS from "@/i18n/keys/feedback-list";
