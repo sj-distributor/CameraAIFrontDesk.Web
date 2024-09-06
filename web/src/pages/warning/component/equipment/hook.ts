@@ -19,6 +19,7 @@ import {
   PostPlaybackGenerateApi,
 } from "@/services/warning";
 import { useDebounceFn } from "ahooks";
+import { getErrorMessage } from "@/utils/error-message";
 
 export const useAction = () => {
   const { t } = useAuth();
@@ -226,22 +227,22 @@ export const useAction = () => {
                 setIsFirstGenerate(true);
                 continueExecution.current = true;
               })
-              .catch(() => {
-                message.error("生成回放失敗");
+              .catch((error) => {
+                message.error(getErrorMessage(error ?? "生成回放失敗"));
 
                 setStopLoadingDto(() => ({
                   isStopLoading: true,
-                  message: "生成回放失败",
+                  message: getErrorMessage(error ?? "生成回放失敗"),
                 }));
               });
           }
         })
-        .catch(() => {
-          message.error("獲取當前數據失敗");
+        .catch((error) => {
+          message.error(getErrorMessage(error ?? "獲取當前數據失敗"));
 
           setStopLoadingDto(() => ({
             isStopLoading: true,
-            message: "獲取當前數據失敗",
+            message: getErrorMessage(error ?? "獲取當前數據失敗"),
           }));
         });
     } else {
@@ -293,11 +294,15 @@ export const useAction = () => {
             record &&
             record.playbackStatus === IPlayBackStatus.Failed
           ) {
-            message.error("获取视频流失败");
+            message.error(
+              getErrorMessage(record?.errorMessage ?? "获取视频流失败")
+            );
 
             setStopLoadingDto(() => ({
               isStopLoading: true,
-              message: "获取视频流失败",
+              message: getErrorMessage(
+                record?.errorMessage ?? "获取视频流失败"
+              ),
             }));
 
             setIsError(true);
@@ -307,12 +312,14 @@ export const useAction = () => {
             return;
           }
         })
-        .catch(() => {
-          message.error("獲取視頻流失敗，請刷新頁面重試");
+        .catch((error) => {
+          message.error(
+            getErrorMessage(error ?? "獲取視頻流失敗，請刷新頁面重試")
+          );
 
           setStopLoadingDto(() => ({
             isStopLoading: true,
-            message: "獲取視頻流失敗，請刷新頁面重試",
+            message: getErrorMessage(error ?? "獲取視頻流失敗，請刷新頁面重試"),
           }));
         });
     }

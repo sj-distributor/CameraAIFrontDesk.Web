@@ -82,7 +82,9 @@ export const MultiScreen = () => {
         >
           {Array.from({ length: numberDto.number }, (_, index) => index).map(
             (index) => {
-              const isReturnErrorIndex = returnErrorIndexs.includes(index);
+              const errorItem = returnErrorIndexs.find(
+                (item) => item.index === index
+              );
 
               const isErrorFlvIndex = errorFlvIndexs.includes(index);
 
@@ -92,9 +94,9 @@ export const MultiScreen = () => {
                   className={`${"bg-black"} rounded-md flex justify-center items-center`}
                   style={{ height: videoItemHeight + "px" }}
                 >
-                  {isReturnErrorIndex ? (
+                  {errorItem ? (
                     <div key={index} className="text-white">
-                      获取视频流失败
+                      {errorItem.errorMessage}
                     </div>
                   ) : isErrorFlvIndex ? (
                     <div key={index} className="text-white">

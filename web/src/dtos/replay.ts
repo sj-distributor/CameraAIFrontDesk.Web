@@ -74,6 +74,7 @@ export interface IReplayTotalRecordItem {
   replayUrl: string;
   createdTime: string;
   playbackStatus: IPlayBackStatus;
+  errorMessage: string;
 }
 
 export interface IPlayBackGenerateRequest {

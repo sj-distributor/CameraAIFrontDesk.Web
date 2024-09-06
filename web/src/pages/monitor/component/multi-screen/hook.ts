@@ -16,6 +16,7 @@ import {
 import { useUpdateEffect } from "ahooks";
 import { PostStopRealtime } from "@/services/stop-media";
 import { IWarningType } from "@/components/warning-select/props";
+import { getErrorMessage } from "@/utils/error-message";
 
 enum ScreenCountEnum {
   FOUR = 4,
@@ -58,7 +59,9 @@ export const useAction = () => {
 
   const continueExecution = useRef<boolean>(true);
 
-  const [returnErrorIndexs, setReturnErrorIndexs] = useState<number[]>([]);
+  const [returnErrorIndexs, setReturnErrorIndexs] = useState<
+    { index: number; errorMessage: string }[]
+  >([]);
 
   const [errorFlvIndexs, setErrorFlvIndexs] = useState<number[]>([]);
 
@@ -155,9 +158,9 @@ export const useAction = () => {
           continueExecution.current = true;
           generateError.current = false;
         })
-        .catch(() => {
+        .catch((error) => {
           generateError.current = true;
-          message.error("生成直播流失敗，請重試");
+          message.error(getErrorMessage(error ?? "生成直播流失敗，請重試"));
         });
     }
   }, [equipments, lastSelectValues]);
@@ -222,6 +225,7 @@ export const useAction = () => {
           index: number;
           status: IPlayBackStatus;
           liveStreaming: string;
+          errorMessage: string;
         }[] = [];
 
         equipments.forEach((item) => {
@@ -235,6 +239,7 @@ export const useAction = () => {
               index: item.index,
               status: item.status,
               liveStreaming: item.liveStreaming,
+              errorMessage: item?.errorMessage ?? "获取视频流失败",
             });
           }
         });
@@ -257,7 +262,10 @@ export const useAction = () => {
             if (item.status === IPlayBackStatus.Success) {
               change(item.liveStreaming, index);
             } else if (item.status === IPlayBackStatus.Failed) {
-              setReturnErrorIndexs((prev) => [...prev, index]);
+              setReturnErrorIndexs((prev) => [
+                ...prev,
+                { index, errorMessage: item.errorMessage },
+              ]);
             }
           });
 
@@ -274,8 +282,8 @@ export const useAction = () => {
           return;
         }
       })
-      .catch(() => {
-        message.error("獲取視頻流錯誤，請稍候重試");
+      .catch((error) => {
+        message.error(getErrorMessage(error ?? "獲取視頻流錯誤，請稍候重試"));
 
         setIsGenerate(false);
 
