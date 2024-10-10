@@ -191,8 +191,7 @@ export const useAction = () => {
     },
     {
       label: `${t(KEYS.START_TIME, { ns: "alertList" })}：`,
-      value:
-        dayjs(record?.occurrenceTime).format("YYYY-MM-DD HH:mm:ss") ?? "----",
+      value: record?.locationTime.replace(/[+-].*/, "") ?? "----",
     },
   ];
 
@@ -205,7 +204,7 @@ export const useAction = () => {
               areaAdress: res.regionAndArea.regionAddress,
               locationId: res.regionAndArea.locationId,
               equipmentCode: res.record.equipmentCode,
-              startTime: res.record.locationTime.replace(/\+.*/, ""),
+              startTime: res.record.locationTime.replace(/[+-].*/, ""),
               duration: res.record.duration,
               taskId: res.record.replayTaskId,
             };

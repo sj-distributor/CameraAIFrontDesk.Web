@@ -111,7 +111,7 @@ export const FeedbackList = () => {
       width: 180,
       render: (text: string) => {
         return text ? (
-          <span className="select-none">{text.replace(/\+.*/, "")}</span>
+          <span className="select-none">{text.replace(/[+-].*/, "")}</span>
         ) : (
           ""
         );
