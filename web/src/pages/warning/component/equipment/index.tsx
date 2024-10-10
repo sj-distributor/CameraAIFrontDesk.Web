@@ -84,13 +84,13 @@ export const Equipment = () => {
                 startTime:
                   dates && dates?.length >= 1
                     ? dates[0]
-                      ? dates[0].toISOString()
+                      ? dates[0].format("YYYY/MM/DD HH:mm:ss")
                       : undefined
                     : undefined,
                 endTime:
                   dates && dates?.length >= 2
                     ? dates[1]
-                      ? dates[1].toISOString()
+                      ? dates[1].format("YYYY/MM/DD HH:mm:ss")
                       : undefined
                     : undefined,
               }));

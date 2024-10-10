@@ -1,5 +1,4 @@
 import { Pagination, Table, Tooltip } from "antd/es";
-import dayjs from "dayjs";
 
 import { ICameraAiMonitorType, IRecordItem, IStatusType } from "@/dtos/default";
 import KEYS from "@/i18n/keys/feedback-list";
@@ -107,14 +106,12 @@ export const FeedbackList = () => {
     },
     {
       title: t(KEYS.START_TIME, { ns: "feedbackList" }),
-      dataIndex: "occurrenceTime",
-      key: "occurrenceTime",
+      dataIndex: "locationTime",
+      key: "locationTime",
       width: 180,
       render: (text: string) => {
         return text ? (
-          <span className="select-none">
-            {dayjs(text).format("YYYY-MM-DD HH:mm:ss")}
-          </span>
+          <span className="select-none">{text.replace(/\+.*/, "")}</span>
         ) : (
           ""
         );
