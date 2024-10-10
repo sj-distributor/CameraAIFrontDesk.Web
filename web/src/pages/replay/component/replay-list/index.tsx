@@ -81,7 +81,7 @@ export const ReplayList = () => {
                           )}
                         </div>
                         <div className="flex-1 truncate text-base">
-                          {item.records[0].locationTime.replace(/\+.*/, "")}
+                          {item.records[0].locationTime.replace(/[+-].*/, "")}
                         </div>
                       </div>
                     </div>

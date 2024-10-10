@@ -149,9 +149,9 @@ export const useAction = () => {
       locationId: replayDetailDto?.equipment?.locationId ?? "",
       equipmentCode: replayDetailDto?.equipment?.equipmentCode ?? "",
       startTime:
-        replayDetailDto?.records[0].locationTime.replace(/\+.*/, "") ?? "",
+        replayDetailDto?.records[0].locationTime.replace(/[+-].*/, "") ?? "",
       endTime: dayjs(
-        replayDetailDto?.records[0].locationTime.replace(/\+.*/, ""),
+        replayDetailDto?.records[0].locationTime.replace(/[+-].*/, ""),
         "YYYY/MM/DD HH:mm:ss"
       )
         .add(replayDetailDto?.totalRecord?.duration ?? 0, "second")
