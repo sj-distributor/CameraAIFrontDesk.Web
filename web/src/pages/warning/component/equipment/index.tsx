@@ -84,13 +84,13 @@ export const Equipment = () => {
                 startTime:
                   dates && dates?.length >= 1
                     ? dates[0]
-                      ? dates[0].format("YYYY/MM/DD HH:mm:ss")
+                      ? dates[0].format("YYYY_MM_DD_HH_mm_ss")
                       : undefined
                     : undefined,
                 endTime:
                   dates && dates?.length >= 2
                     ? dates[1]
-                      ? dates[1].format("YYYY/MM/DD HH:mm:ss")
+                      ? dates[1].format("YYYY_MM_DD_HH_mm_ss")
                       : undefined
                     : undefined,
               }));
