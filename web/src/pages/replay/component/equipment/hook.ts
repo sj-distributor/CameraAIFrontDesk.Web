@@ -149,13 +149,15 @@ export const useAction = () => {
       locationId: replayDetailDto?.equipment?.locationId ?? "",
       equipmentCode: replayDetailDto?.equipment?.equipmentCode ?? "",
       startTime:
-        replayDetailDto?.records[0].locationTime.replace(/[+-].*/, "") ?? "",
+        dayjs(
+          replayDetailDto?.records[0].locationTime.replace(/[+-].*/, "")
+        ).format("YYYY_MM_DD_HH_mm_ss") ?? "",
       endTime: dayjs(
         replayDetailDto?.records[0].locationTime.replace(/[+-].*/, ""),
-        "YYYY/MM/DD HH:mm:ss"
+        "YYYY_MM_DD_HH_mm_ss"
       )
         .add(replayDetailDto?.totalRecord?.duration ?? 0, "second")
-        .format("YYYY/MM/DD HH:mm:ss"),
+        .format("YYYY_MM_DD_HH_mm_ss"),
       monitorTypes: selectValues
         ? endSelectValues
         : Array.from(

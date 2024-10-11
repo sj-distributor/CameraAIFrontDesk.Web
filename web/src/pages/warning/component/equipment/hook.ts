@@ -260,11 +260,12 @@ export const useAction = () => {
     const data: IPostPlayBackGenerateRequest = {
       locationId: replayDetailDto.locationId ?? "",
       equipmentCode: replayDetailDto.equipmentCode ?? "",
-      startTime: replayDetailDto.startTime ?? "",
+      startTime:
+        dayjs(replayDetailDto.startTime).format("YYYY_MM_DD_HH_mm_ss") ?? "",
       endTime:
-        dayjs(replayDetailDto.startTime, "YYYY/MM/DD HH:mm:ss")
+        dayjs(replayDetailDto.startTime, "YYYY_MM_DD_HH_mm_ss")
           .add(replayDetailDto.duration ?? 0, "second")
-          .format("YYYY/MM/DD HH:mm:ss") ?? "",
+          .format("YYYY_MM_DD_HH_mm_ss") ?? "",
       taskId: replayDetailDto.taskId ?? "",
     };
 
