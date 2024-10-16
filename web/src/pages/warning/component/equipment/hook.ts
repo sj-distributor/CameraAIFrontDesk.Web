@@ -204,7 +204,7 @@ export const useAction = () => {
               areaAdress: res.regionAndArea.regionAddress,
               locationId: res.regionAndArea.locationId,
               equipmentCode: res.record.equipmentCode,
-              startTime: res.record.locationTime.replace(/[+-].*/, ""),
+              startTime: res.record.occurrenceTime,
               duration: res.record.duration,
               taskId: res.record.replayTaskId,
             };
@@ -261,9 +261,11 @@ export const useAction = () => {
       locationId: replayDetailDto.locationId ?? "",
       equipmentCode: replayDetailDto.equipmentCode ?? "",
       startTime:
-        dayjs(replayDetailDto.startTime).format("YYYY_MM_DD_HH_mm_ss") ?? "",
+        dayjs.utc(replayDetailDto.startTime).format("YYYY_MM_DD_HH_mm_ss") ??
+        "",
       endTime:
-        dayjs(replayDetailDto.startTime, "YYYY_MM_DD_HH_mm_ss")
+        dayjs
+          .utc(replayDetailDto.startTime, "YYYY_MM_DD_HH_mm_ss")
           .add(replayDetailDto.duration ?? 0, "second")
           .format("YYYY_MM_DD_HH_mm_ss") ?? "",
       taskId: replayDetailDto.taskId ?? "",

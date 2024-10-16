@@ -148,14 +148,11 @@ export const useAction = () => {
     const data: IPlayBackGenerateRequest = {
       locationId: replayDetailDto?.equipment?.locationId ?? "",
       equipmentCode: replayDetailDto?.equipment?.equipmentCode ?? "",
-      startTime:
-        dayjs(
-          replayDetailDto?.records[0].locationTime.replace(/[+-].*/, "")
-        ).format("YYYY_MM_DD_HH_mm_ss") ?? "",
-      endTime: dayjs(
-        replayDetailDto?.records[0].locationTime.replace(/[+-].*/, ""),
-        "YYYY_MM_DD_HH_mm_ss"
-      )
+      startTime: dayjs
+        .utc(replayDetailDto?.totalRecord?.occurrenceTime)
+        .format("YYYY_MM_DD_HH_mm_ss"),
+      endTime: dayjs
+        .utc(replayDetailDto?.totalRecord?.occurrenceTime)
         .add(replayDetailDto?.totalRecord?.duration ?? 0, "second")
         .format("YYYY_MM_DD_HH_mm_ss"),
       monitorTypes: selectValues
