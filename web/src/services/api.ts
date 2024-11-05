@@ -34,7 +34,9 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response.status === 401) {
-      message.error("沒權限", 1, () => {
+      localStorage.removeItem((window as any).appsettings?.tokenKey);
+
+      message.error("登录已过期，请重新登录", 1, () => {
         window.location.reload();
       });
     } else {
