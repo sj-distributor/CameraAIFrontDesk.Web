@@ -4,6 +4,8 @@ import { useState } from "react";
 import { IUserInfo } from "@/dtos";
 import { useAuth } from "@/hooks/use-auth";
 import { Login } from "@/services/home";
+import { GetMineRoleList } from "@/services/default";
+import { FrontRolePermissionEnum } from "@/dtos/mine";
 
 export const useAction = () => {
   const { signIn, message } = useAuth();
@@ -22,6 +24,16 @@ export const useAction = () => {
     }));
   };
 
+  const hanldeNoPermission = () => {
+    message.error("您没有访问权限");
+
+    localStorage.removeItem(
+      (window as any).appsettings?.tokenKey ?? "tokenKey"
+    );
+
+    localStorage.removeItem((window as any).appsettings?.userNameKey);
+  };
+
   const onLogin = () => {
     setLoginLoading(true);
     if (
@@ -31,14 +43,38 @@ export const useAction = () => {
       Login(userInfo)
         .then((res) => {
           if (res) {
-            message.success("登录成功");
             localStorage.setItem((window as any).appsettings?.tokenKey, res);
             localStorage.setItem(
               (window as any).appsettings?.userNameKey,
               userInfo.userName
             );
 
-            signIn(res, userInfo.userName);
+            GetMineRoleList()
+              .then((response) => {
+                if (
+                  response.rolePermissionData.some((item) =>
+                    item.permissions.some(
+                      (permission) =>
+                        permission.name ===
+                        FrontRolePermissionEnum.CanEnterCameraAi
+                    )
+                  )
+                ) {
+                  message.success("登录成功");
+
+                  signIn(
+                    localStorage.getItem(
+                      (window as any).appsettings?.tokenKey ?? "tokenKey"
+                    ) ?? "",
+                    userInfo.userName
+                  );
+                } else {
+                  hanldeNoPermission();
+                }
+              })
+              .catch(() => {
+                hanldeNoPermission();
+              });
           }
         })
         .catch(() => {
