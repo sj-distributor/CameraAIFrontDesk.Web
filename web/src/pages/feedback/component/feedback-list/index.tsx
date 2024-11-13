@@ -82,24 +82,10 @@ export const FeedbackList = () => {
       dataIndex: "exceptionReason",
       key: "exceptionReason",
       width: 308,
-      render: (text: string, record: IRecordItem) => {
+      render: (text: string) => {
         return (
           <Tooltip title={text}>
-            <div
-              className="cursor-pointer line-clamp-2"
-              onClick={() => {
-                if (pagePermission.canViewDetailFeedback) {
-                  navigate(`/warning/${record.id}`, {
-                    state: {
-                      status: IStatusType.Verifed,
-                      record: record,
-                    },
-                  });
-                }
-              }}
-            >
-              {text}
-            </div>
+            <div className="cursor-pointer line-clamp-2">{text}</div>
           </Tooltip>
         );
       },
@@ -154,6 +140,20 @@ export const FeedbackList = () => {
           columns={columns}
           scroll={{ x: "100%" }}
           pagination={false}
+          onRow={(record) => {
+            return {
+              onClick: () => {
+                if (pagePermission.canViewDetailFeedback) {
+                  navigate(`/warning/${record.id}`, {
+                    state: {
+                      status: IStatusType.Verifed,
+                      record: record,
+                    },
+                  });
+                }
+              },
+            };
+          }}
         />
       </div>
       <Pagination
