@@ -1,4 +1,9 @@
-import { KeyOutlined, LogoutOutlined, SwapOutlined } from "@ant-design/icons";
+import {
+  CodeSandboxCircleFilled,
+  LogoutOutlined,
+  SwapOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import {
   Avatar,
   Button,
@@ -7,8 +12,9 @@ import {
   Menu,
   MenuProps,
   Modal,
+  Popover,
 } from "antd";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 
 import { useAuth } from "@/hooks/use-auth";
@@ -26,6 +32,12 @@ import replayImg from "../../assets/replay.png";
 import replay_clickImg from "../../assets/replay_click.png";
 import sliceImg from "../../assets/slice.png";
 import { useAction } from "./hook";
+import {
+  AddTeamIcon,
+  PreviewAndAcceptIcon,
+  SelectedIcon,
+  UserArrowRightIcon,
+} from "@/icon/main";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -207,6 +219,27 @@ export const Main = () => {
     return filteredItems;
   }, [pagePermission, location.pathname, selectedKeys, t]);
 
+  const list = [
+    {
+      url: <CodeSandboxCircleFilled className="text-[#5092b9] text-xl" />,
+      name: "SJ-CN TEAM",
+    },
+    {
+      url: <CodeSandboxCircleFilled className="text-[#5092b9] text-xl" />,
+      name: "SJ-CN TEAM",
+    },
+    {
+      url: <CodeSandboxCircleFilled className="text-[#5092b9] text-xl" />,
+      name: "雲廚房",
+    },
+    {
+      url: <CodeSandboxCircleFilled className="text-[#5092b9] text-xl" />,
+      name: "XXX農場",
+    },
+  ];
+
+  const [clickIndex, setClickIndex] = useState<number | null>(null);
+
   return (
     <div className="h-screen w-screen bg-white flex flex-col ">
       <div
@@ -300,45 +333,74 @@ export const Main = () => {
                 />
               </div>
               {status && (
-                <div className="absolute w-32 -left-[25%] z-[1051] mt-3 rounded-lg p-2 space-y-2 bg-white">
-                  {[
-                    {
-                      name: "切換後台",
-                      component: <SwapOutlined className="text-sm" />,
-                      function: () => {
-                        handleJumpToBackstage();
-                      },
-                    },
-                    {
-                      name: "修改密碼",
-                      component: <KeyOutlined className="text-sm" />,
-                      function: () => {
-                        !delModalStatus && setDelModalStatus(true);
-                        setStatus(false);
-                      },
-                    },
-                    {
-                      name: "退出登陸",
-                      component: <LogoutOutlined className="text-sm" />,
-                      function: () => {
-                        handleOnSignOut(() => navigate("/login"));
-                      },
-                    },
-                  ].map((item, index) => (
-                    <div
-                      key={index}
-                      className="h-9 flex items-center justify-center space-x-2 bg-white hover:bg-[#EBF1FF] hover:text-[#2866F1] rounded-lg cursor-pointer select-none"
-                      onClick={item.function}
+                <div className="absolute w-[14.8rem] -right-5 z-[1051] mt-3 rounded-lg p-4 space-y-2 bg-white">
+                  <div className="flex border-b pb-4">
+                    <Avatar
+                      style={{
+                        backgroundColor: "#2853E4",
+                        verticalAlign: "middle",
+                      }}
+                      size="large"
                     >
-                      {item.component}
-                      <span className="text-sm">{item.name}</span>
+                      {userName.charAt(0)}
+                    </Avatar>
+
+                    <div className="flex flex-col w-36 ml-2">
+                      <div className="text-lg font-semibold relative select-none w-16 text-center">
+                        {userName}
+                      </div>
+                      <div className="flex flex-wrap text-[#8B98AD] text-[0.88rem] mt-1">
+                        PERATION INC./IS Office/WT
+                        OSC/品牌數字化賦能中心/集團產品組/UI/UX組
+                      </div>
                     </div>
-                  ))}
-                  <iframe
-                    id="myIframe"
-                    src={(window as any).appsettings?.cameraAIBackstageDomain}
-                    style={{ display: "none" }}
-                  />
+                  </div>
+
+                  <div>
+                    {[
+                      {
+                        name: "切換後台",
+                        component: <SwapOutlined className="text-sm" />,
+                        function: () => {
+                          handleJumpToBackstage();
+                        },
+                      },
+                      // {
+                      //   name: "修改密碼",
+                      //   component: <KeyOutlined className="text-sm" />,
+                      //   function: () => {
+                      //     !delModalStatus && setDelModalStatus(true);
+                      //     setStatus(false);
+                      //   },
+                      // },
+                      {
+                        name: "預覽接收",
+                        component: <PreviewAndAcceptIcon />,
+                        function: () => {},
+                      },
+                      {
+                        name: "退出登陸",
+                        component: <LogoutOutlined className="text-sm" />,
+                        function: () => {
+                          handleOnSignOut(() => navigate("/login"));
+                        },
+                      },
+                    ].map((item, index) => (
+                      <div
+                        key={index}
+                        className="h-9 flex items-center space-x-2 bg-white hover:bg-[#EBF1FF] hover:text-[#2866F1] rounded-lg cursor-pointer select-none pl-2 dropdown"
+                        onClick={item.function}
+                      >
+                        {item.component}
+                        <span className="text-sm">{item.name}</span>
+                      </div>
+                    ))}
+                    <iframe
+                      id="myIframe"
+                      src={(window as any).appsettings?.cameraAIBackstageDomain}
+                      style={{ display: "none" }}
+                    />
+                  </div>
                 </div>
               )}
             </div>
@@ -349,7 +411,7 @@ export const Main = () => {
       <main className="grow flex overflow-hidden">
         {location.pathname !== "/none" && (
           <div
-            className={`overflow-y-auto no-scrollbar box-border py-12 ${
+            className={`h-full overflow-y-auto no-scrollbar box-border pt-12 flex flex-col justify-between ${
               !collapsed && "!min-w-60 w-60"
             }`}
           >
@@ -368,6 +430,66 @@ export const Main = () => {
               }}
               inlineCollapsed={collapsed}
             />
+            <div>
+              <Popover
+                className="cursor-pointer"
+                placement="right"
+                arrow={false}
+                trigger="click"
+                content={
+                  <div className="flex flex-col w-[10rem]">
+                    {list.map((item, index) => {
+                      return (
+                        <div
+                          className={`hover:text-[#2866F1] text-[0.88rem] flex flex-row justify-between items-center cursor-pointer p-2 rounded-lg mb-1 ${
+                            index === clickIndex &&
+                            "text-[#2866F1] bg-[#EBF1FF]"
+                          }`}
+                          onClick={() => {
+                            setClickIndex(index);
+                          }}
+                          key={index}
+                        >
+                          <div className="flex">
+                            <div className="mr-3 h-5 w-5">{item.url}</div>
+                            {item.name}
+                          </div>
+                          {index === clickIndex && <SelectedIcon />}
+                        </div>
+                      );
+                    })}
+
+                    <div
+                      className="text-[#5F6279] text-[0.88rem] flex items-center cursor-pointer border-t p-2 mt-6"
+                      onClick={() => {}}
+                    >
+                      <AddTeamIcon />
+                      <span className="ml-1">創建新團隊</span>
+                    </div>
+                  </div>
+                }
+              >
+                <div className="flex items-center justify-between mx-4 border-t py-6 mb-2">
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-3">
+                      <Avatar
+                        style={{
+                          backgroundColor: "#2853E4",
+                          verticalAlign: "middle",
+                        }}
+                        size="default"
+                      >
+                        {userName.charAt(0)}
+                      </Avatar>
+                    </div>
+                    <div className="text-base font-semibold text-[#18283C]">
+                      SJ-CN TEAM
+                    </div>
+                  </div>
+                  <UserArrowRightIcon />
+                </div>
+              </Popover>
+            </div>
           </div>
         )}
 

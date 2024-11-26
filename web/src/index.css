@@ -65,3 +65,14 @@ p {
 .rangePickerComponent .ant-picker-input input {
   min-width: min-content !important;
 }
+
+.dropdown:hover svg g g path {
+  fill: #2866f1 !important;
+}
+
+.popover,
+.ant-popover-inner {
+  padding: 0.5rem !important;
+  margin-bottom: 1.5rem;
+  margin-left: 2rem;
+}
