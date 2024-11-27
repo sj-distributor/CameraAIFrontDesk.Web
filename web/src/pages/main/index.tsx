@@ -1,8 +1,8 @@
 import {
   CodeSandboxCircleFilled,
+  LoadingOutlined,
   LogoutOutlined,
   SwapOutlined,
-  UserOutlined,
 } from "@ant-design/icons";
 import {
   Avatar,
@@ -13,8 +13,9 @@ import {
   MenuProps,
   Modal,
   Popover,
+  Image,
 } from "antd";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link, Outlet } from "react-router-dom";
 
 import { useAuth } from "@/hooks/use-auth";
@@ -34,10 +35,14 @@ import sliceImg from "../../assets/slice.png";
 import { useAction } from "./hook";
 import {
   AddTeamIcon,
+  CloseNewTeamIcon,
   PreviewAndAcceptIcon,
   SelectedIcon,
+  UpoadLogoIcon,
   UserArrowRightIcon,
 } from "@/icon/main";
+
+import Dropzone from "react-dropzone";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -60,6 +65,14 @@ export const Main = () => {
     handleOnSignOut,
     pagePermission,
     handleJumpToBackstage,
+    openNewTeam,
+    clickIndex,
+    isUploading,
+    addTeamData,
+    addTeamLoading,
+    updateAddTeamData,
+    setClickIndex,
+    setOpenNewTeam,
     navigate,
     setStatus,
     setOpenKeys,
@@ -70,6 +83,8 @@ export const Main = () => {
     setLanguageStatus,
     setDelModalStatus,
     submitModifyPassword,
+    onUpload,
+    onAddTeamDebounceFn,
   } = useAction();
 
   const items: MenuItem[] = useMemo(() => {
@@ -237,8 +252,6 @@ export const Main = () => {
       name: "XXX農場",
     },
   ];
-
-  const [clickIndex, setClickIndex] = useState<number | null>(null);
 
   return (
     <div className="h-screen w-screen bg-white flex flex-col ">
@@ -435,7 +448,6 @@ export const Main = () => {
                 className="cursor-pointer"
                 placement="right"
                 arrow={false}
-                trigger="click"
                 content={
                   <div className="flex flex-col w-[10rem]">
                     {list.map((item, index) => {
@@ -461,7 +473,7 @@ export const Main = () => {
 
                     <div
                       className="text-[#5F6279] text-[0.88rem] flex items-center cursor-pointer border-t p-2 mt-6"
-                      onClick={() => {}}
+                      onClick={() => setOpenNewTeam(true)}
                     >
                       <AddTeamIcon />
                       <span className="ml-1">創建新團隊</span>
@@ -584,6 +596,100 @@ export const Main = () => {
                 placeholder="請輸入"
                 value={passwordDto.confirmPW}
                 onChange={(e) => updatePWDto("confirmPW", e.target.value)}
+              />
+            </div>
+          </div>
+        </ConfigProvider>
+      </Modal>
+
+      <Modal
+        className="newTeamModel"
+        title={<div className="select-none">創建新團隊</div>}
+        open={openNewTeam}
+        closeIcon={<CloseNewTeamIcon />}
+        footer={
+          <div className="flex flex-row justify-end box-border border-t py-4 pr-8">
+            <Button
+              className={`rounded-[3.5rem] bg-[#2866F1]  text-white text-xs ${
+                addTeamData.logoUrl &&
+                addTeamData.teamName &&
+                "hover:!bg-[#2866F1] hover:!text-white"
+              }`}
+              onClick={onAddTeamDebounceFn}
+              loading={addTeamLoading}
+              disabled={!addTeamData.logoUrl || !addTeamData.teamName}
+            >
+              創建團隊
+            </Button>
+          </div>
+        }
+        centered
+        width={680}
+        onCancel={() => setOpenNewTeam(false)}
+      >
+        <ConfigProvider
+          theme={{
+            components: {
+              Input: {
+                activeBorderColor: "#d9d9d9",
+                hoverBorderColor: "#d9d9d9",
+              },
+            },
+          }}
+        >
+          <div className="mx-32 my-8">
+            <div className="flex items-center">
+              <div className="min-w-16 flex justify-end mr-4">Logo</div>
+
+              {addTeamData?.logoUrl ? (
+                <Image
+                  src={addTeamData?.logoUrl}
+                  className="bg-center bg-no-repeat bg-cover w-[5.5rem] h-[5.5rem]"
+                  preview={false}
+                  width={100}
+                />
+              ) : (
+                <Dropzone
+                  onDrop={onUpload}
+                  accept={{
+                    "image/png": [],
+                    "image/jpeg": [],
+                    "image/jpg": [],
+                  }}
+                >
+                  {({ getRootProps, getInputProps }) => (
+                    <div
+                      {...getRootProps({
+                        className: "dropzone",
+                      })}
+                      className="w-[5rem]"
+                    >
+                      <input {...getInputProps()} />
+                      <div className="w-[5.5rem] h-[5.5rem] flex flex-col justify-center items-center border border-dashed rounded-lg cursor-pointer">
+                        <>
+                          {isUploading ? (
+                            <LoadingOutlined />
+                          ) : (
+                            <>
+                              <UpoadLogoIcon />
+                              <span className="text-[#8B98AD] text-[0.75rem]">
+                                上傳圖片
+                              </span>
+                            </>
+                          )}
+                        </>
+                      </div>
+                    </div>
+                  )}
+                </Dropzone>
+              )}
+            </div>
+            <div className="flex items-center mt-6">
+              <div className="min-w-16 flex justify-end mr-4"> 團隊名稱</div>
+              <Input
+                placeholder="請輸入團隊名稱"
+                className="w-[21.56rem] py-2"
+                onChange={(e) => updateAddTeamData("teamName", e.target.value)}
               />
             </div>
           </div>

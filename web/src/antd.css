@@ -122,3 +122,11 @@
 .ant-checkbox-wrapper-disabled span {
   color: black;
 }
+
+.newTeamModel .ant-modal-content {
+  padding: 0;
+}
+
+.newTeamModel .ant-modal-title {
+  padding: 1.5rem 2rem;
+}

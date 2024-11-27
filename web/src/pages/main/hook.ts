@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import { useAuth } from "@/hooks/use-auth";
 import { message } from "antd";
+import { IAddTeamDataProps } from "@/dtos/main";
 
 interface IPasswordDto {
   currentPW: string;
@@ -39,6 +40,14 @@ export const useAction = () => {
     newPW: "",
     confirmPW: "",
   });
+
+  const [openNewTeam, setOpenNewTeam] = useState<boolean>(false);
+
+  const [clickIndex, setClickIndex] = useState<number | null>(null);
+
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+
+  const [addTeamLoading, setAddTeamLoading] = useState<boolean>(false);
 
   const updatePWDto = (k: keyof IPasswordDto, v: string) => {
     setPasswordDto((prev) => ({
@@ -100,6 +109,59 @@ export const useAction = () => {
     setCollapsed(window.innerWidth > 800 ? false : true);
   };
 
+  const [addTeamData, setAddTeamData] = useState<IAddTeamDataProps>({
+    logoUrl: "",
+    teamName: "",
+  });
+
+  const updateAddTeamData = (k: keyof IAddTeamDataProps, v: string) => {
+    setAddTeamData((prev) => ({
+      ...prev,
+      [k]: v,
+    }));
+  };
+
+  const onUpload = (files: File[]) => {
+    setIsUploading(true);
+
+    files.forEach((files) => {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+
+        setTimeout(() => {
+          updateAddTeamData("logoUrl", base64String);
+
+          setIsUploading(false);
+        }, 3000);
+      };
+
+      reader.readAsDataURL(files);
+    });
+  };
+
+  const { run: onAddTeamDebounceFn } = useDebounceFn(
+    () => {
+      if (!addTeamData.logoUrl || !addTeamData.teamName) {
+        message.error("請輸入以下完整信息！");
+
+        return;
+      }
+
+      setAddTeamLoading(true);
+
+      setTimeout(() => {
+        message.success("創建團隊成功");
+
+        setAddTeamLoading(false);
+
+        setOpenNewTeam(false);
+      }, 3000);
+    },
+    { wait: 500 }
+  );
+
   useEffect(() => {
     handleResize();
 
@@ -150,6 +212,15 @@ export const useAction = () => {
     handleOnSignOut,
     pagePermission,
     handleJumpToBackstage,
+    openNewTeam,
+    clickIndex,
+    isUploading,
+    addTeamData,
+    onAddTeamDebounceFn,
+    addTeamLoading,
+    updateAddTeamData,
+    setClickIndex,
+    setOpenNewTeam,
     navigate,
     setStatus,
     setOpenKeys,
@@ -160,5 +231,6 @@ export const useAction = () => {
     setLanguageStatus,
     setDelModalStatus,
     submitModifyPassword,
+    onUpload,
   };
 };
