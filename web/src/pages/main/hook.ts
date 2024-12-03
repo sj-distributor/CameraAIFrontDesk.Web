@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import { useAuth } from "@/hooks/use-auth";
 import { message } from "antd";
-import { IAddTeamDataProps } from "@/dtos/main";
+import { IAcceptWarnDataProps, IAddTeamDataProps } from "@/dtos/main";
 
 interface IPasswordDto {
   currentPW: string;
@@ -48,6 +48,21 @@ export const useAction = () => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
 
   const [addTeamLoading, setAddTeamLoading] = useState<boolean>(false);
+
+  const [openAcceptWran, setOpenAcceptWran] = useState<boolean>(false);
+
+  const [acceptWarnData, setAcceptWarnData] = useState<IAcceptWarnDataProps>({
+    telephone: "",
+    weCom: "",
+    mailbox: "",
+  });
+
+  const updateAcceptWarnData = (k: keyof IAcceptWarnDataProps, v: string) => {
+    setAcceptWarnData((prev) => ({
+      ...prev,
+      [k]: v,
+    }));
+  };
 
   const updatePWDto = (k: keyof IPasswordDto, v: string) => {
     setPasswordDto((prev) => ({
@@ -218,6 +233,10 @@ export const useAction = () => {
     addTeamData,
     onAddTeamDebounceFn,
     addTeamLoading,
+    openAcceptWran,
+    acceptWarnData,
+    updateAcceptWarnData,
+    setOpenAcceptWran,
     updateAddTeamData,
     setClickIndex,
     setOpenNewTeam,

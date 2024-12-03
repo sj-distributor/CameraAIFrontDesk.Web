@@ -35,8 +35,10 @@ import sliceImg from "../../assets/slice.png";
 import { useAction } from "./hook";
 import {
   AddTeamIcon,
+  ArrowRightIcon,
   CloseNewTeamIcon,
   PreviewAndAcceptIcon,
+  RefreshIcon,
   SelectedIcon,
   UpoadLogoIcon,
   UserArrowRightIcon,
@@ -70,6 +72,10 @@ export const Main = () => {
     isUploading,
     addTeamData,
     addTeamLoading,
+    openAcceptWran,
+    acceptWarnData,
+    updateAcceptWarnData,
+    setOpenAcceptWran,
     updateAddTeamData,
     setClickIndex,
     setOpenNewTeam,
@@ -389,7 +395,9 @@ export const Main = () => {
                       {
                         name: "預覽接收",
                         component: <PreviewAndAcceptIcon />,
-                        function: () => {},
+                        function: () => {
+                          setOpenAcceptWran(true);
+                        },
                       },
                       {
                         name: "退出登陸",
@@ -444,69 +452,91 @@ export const Main = () => {
               inlineCollapsed={collapsed}
             />
             <div>
-              <Popover
-                className="cursor-pointer"
-                placement="right"
-                arrow={false}
-                content={
-                  <div className="flex flex-col w-[10rem]">
-                    {list.map((item, index) => {
-                      return (
-                        <div
-                          className={`hover:text-[#2866F1] text-[0.88rem] flex flex-row justify-between items-center cursor-pointer p-2 rounded-lg mb-1 ${
-                            index === clickIndex &&
-                            "text-[#2866F1] bg-[#EBF1FF]"
-                          }`}
-                          onClick={() => {
-                            setClickIndex(index);
-                          }}
-                          key={index}
-                        >
-                          <div className="flex">
-                            <div className="mr-3 h-5 w-5">{item.url}</div>
-                            {item.name}
+              {
+                <Popover
+                  className="cursor-pointer"
+                  placement="right"
+                  arrow={false}
+                  content={
+                    <div className="flex flex-col w-[10rem]">
+                      {list.map((item, index) => {
+                        return (
+                          <div
+                            className={`hover:text-[#2866F1] text-[0.88rem] flex flex-row justify-between items-center cursor-pointer p-2 rounded-lg mb-1 ${
+                              index === clickIndex &&
+                              "text-[#2866F1] bg-[#EBF1FF]"
+                            }`}
+                            onClick={() => {
+                              setClickIndex(index);
+                            }}
+                            key={index}
+                          >
+                            <div className="flex">
+                              <div className="mr-3 h-5 w-5">{item.url}</div>
+                              {item.name}
+                            </div>
+                            {index === clickIndex && <SelectedIcon />}
                           </div>
-                          {index === clickIndex && <SelectedIcon />}
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
 
-                    <div
-                      className="text-[#5F6279] text-[0.88rem] flex items-center cursor-pointer border-t p-2 mt-6"
-                      onClick={() => setOpenNewTeam(true)}
-                    >
-                      <AddTeamIcon />
-                      <span className="ml-1">創建新團隊</span>
-                    </div>
-                  </div>
-                }
-              >
-                <div className="flex items-center justify-between mx-4 border-t py-6 mb-2">
-                  <div className="flex items-center">
-                    <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-3">
-                      <Avatar
-                        style={{
-                          backgroundColor: "#2853E4",
-                          verticalAlign: "middle",
-                        }}
-                        size="default"
+                      <div
+                        className="text-[#5F6279] text-[0.88rem] flex items-center cursor-pointer border-t p-2 mt-6"
+                        onClick={() => setOpenNewTeam(true)}
                       >
-                        {userName.charAt(0)}
-                      </Avatar>
+                        <AddTeamIcon />
+                        <span className="ml-1">創建新團隊</span>
+                      </div>
                     </div>
-                    <div className="text-base font-semibold text-[#18283C]">
-                      SJ-CN TEAM
+                  }
+                >
+                  <div className="flex items-center justify-between mx-4 border-t py-6 mb-2">
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-3">
+                        <Avatar
+                          style={{
+                            backgroundColor: `${list ? "#2853E4" : "#F8F8FD"}`,
+                            verticalAlign: "middle",
+                          }}
+                          size="default"
+                        >
+                          {list && userName.charAt(0)}
+                        </Avatar>
+                      </div>
+                      <div className="text-base font-semibold text-[#18283C]">
+                        {list ? "SJ-CN TEAM" : "暫無團隊"}
+                      </div>
                     </div>
+                    <UserArrowRightIcon />
                   </div>
-                  <UserArrowRightIcon />
-                </div>
-              </Popover>
+                </Popover>
+              }
             </div>
           </div>
         )}
 
         <div className="w-[calc(100%-15rem)] flex-1 bg-[#F5F7FB] p-1">
-          {isGetPermission && <Outlet />}
+          {isGetPermission && (
+            <>
+              {list ? (
+                <Outlet />
+              ) : (
+                <div className="h-full flex justify-center items-center">
+                  <div></div>
+                  <div
+                    className="flex items-center text-base"
+                    onClick={() => setOpenNewTeam(true)}
+                  >
+                    暫無團隊,
+                    <span className="text-[#2866F1] pl-2 cursor-pointer">
+                      創建一個
+                    </span>
+                    <ArrowRightIcon />
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </main>
 
@@ -691,6 +721,116 @@ export const Main = () => {
                 className="w-[21.56rem] py-2"
                 onChange={(e) => updateAddTeamData("teamName", e.target.value)}
               />
+            </div>
+          </div>
+        </ConfigProvider>
+      </Modal>
+
+      <Modal
+        className="newTeamModel"
+        title={<div className="select-none">預警接受</div>}
+        open={openAcceptWran}
+        closeIcon={<CloseNewTeamIcon />}
+        footer={
+          <div className="flex flex-row justify-end box-border border-t py-4 pr-8">
+            <Button
+              className={`rounded-[3.5rem] bg-[#2866F1]  text-white text-xs ${
+                addTeamData.logoUrl &&
+                addTeamData.teamName &&
+                "hover:!bg-[#2866F1] hover:!text-white"
+              }`}
+              onClick={onAddTeamDebounceFn}
+              loading={addTeamLoading}
+              disabled={!addTeamData.logoUrl || !addTeamData.teamName}
+            >
+              保存
+            </Button>
+          </div>
+        }
+        centered
+        width={680}
+        onCancel={() => setOpenAcceptWran(false)}
+      >
+        <ConfigProvider
+          theme={{
+            components: {
+              Input: {
+                activeBorderColor: "#d9d9d9",
+                hoverBorderColor: "#d9d9d9",
+              },
+            },
+          }}
+        >
+          <div className="ml-8 my-8">
+            <div>
+              <div className="flex items-center">
+                <div className="min-w-24 flex justify-end">通知電話</div>
+
+                <Input
+                  className="w-[21.56rem] mx-4 py-2"
+                  onChange={(e) =>
+                    updateAddTeamData("teamName", e.target.value)
+                  }
+                />
+
+                <div
+                  className="text-[#2866F1] text-sm flex items-center cursor-pointer"
+                  onClick={() => {
+                    updateAcceptWarnData("telephone", "");
+                  }}
+                >
+                  <RefreshIcon /> 恢復默認
+                </div>
+              </div>
+              <div className="text-[#8B98AD] text-sm mt-1 ml-[7.5rem]">
+                如沒有設置通知電話，默認使用用戶信息的電話
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center mt-6">
+                <div className="min-w-24 flex justify-end">通知企業微信</div>
+                <Input
+                  className="w-[21.56rem] py-2 mx-4"
+                  onChange={(e) =>
+                    updateAddTeamData("teamName", e.target.value)
+                  }
+                />
+                <div
+                  className="text-[#2866F1] text-sm flex items-center cursor-pointer"
+                  onClick={() => {
+                    updateAcceptWarnData("weCom", "");
+                  }}
+                >
+                  <RefreshIcon /> 恢復默認
+                </div>
+              </div>
+              <div className="text-[#8B98AD] text-sm mt-1 ml-[7.5rem]">
+                如沒有設置通知企業微信，默認使用用戶信息的企業微信
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center mt-6">
+                <div className="min-w-24 flex justify-end">通知郵箱</div>
+                <Input
+                  className="w-[21.56rem] py-2 mx-4"
+                  onChange={(e) =>
+                    updateAddTeamData("teamName", e.target.value)
+                  }
+                />
+                <div
+                  className="text-[#2866F1] text-sm flex items-center cursor-pointer"
+                  onClick={() => {
+                    updateAcceptWarnData("mailbox", "");
+                  }}
+                >
+                  <RefreshIcon /> 恢復默認
+                </div>
+              </div>
+              <div className="text-[#8B98AD] text-sm mt-1 ml-[7.5rem]">
+                如沒有設置通知郵箱，默認使用用戶信息的關聯郵箱
+              </div>
             </div>
           </div>
         </ConfigProvider>
