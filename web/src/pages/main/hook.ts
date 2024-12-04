@@ -11,6 +11,27 @@ interface IPasswordDto {
   confirmPW: string;
 }
 
+const initAcceptWarn = {
+  telephone: "",
+  weCom: "",
+  mailbox: "",
+};
+
+const initAddTeam: IAddTeamDataProps[] = [
+  {
+    teamName: "SJ-CN TEAM",
+  },
+  {
+    teamName: "SJ-CN TEAM",
+  },
+  {
+    teamName: "雲廚房",
+  },
+  {
+    teamName: "XXX農場",
+  },
+];
+
 export const useAction = () => {
   const {
     t,
@@ -51,11 +72,29 @@ export const useAction = () => {
 
   const [openAcceptWran, setOpenAcceptWran] = useState<boolean>(false);
 
-  const [acceptWarnData, setAcceptWarnData] = useState<IAcceptWarnDataProps>({
-    telephone: "",
-    weCom: "",
-    mailbox: "",
+  const [acceptWarnData, setAcceptWarnData] =
+    useState<IAcceptWarnDataProps>(initAcceptWarn);
+
+  const [acceptWarnLoading, setAcceptWarnLoading] = useState<boolean>(false);
+
+  const [errorMessages, setErrorMessages] =
+    useState<IAcceptWarnDataProps>(initAcceptWarn);
+
+  const [teamList, setTeamList] = useState<IAddTeamDataProps[]>(initAddTeam);
+
+  const [teamSelect, setTeamSelect] = useState<IAddTeamDataProps>({
+    teamName: teamList[0].teamName,
   });
+
+  const updateErrorMessage = (
+    key: keyof IAcceptWarnDataProps,
+    message: string
+  ) => {
+    setErrorMessages((prev) => ({
+      ...prev,
+      [key]: message,
+    }));
+  };
 
   const updateAcceptWarnData = (k: keyof IAcceptWarnDataProps, v: string) => {
     setAcceptWarnData((prev) => ({
@@ -69,6 +108,33 @@ export const useAction = () => {
       ...prev,
       [k]: v,
     }));
+  };
+
+  const validateTelephone = (value: string) => {
+    const telephonePattern = /^[0-9]{7,15}$/; // 7-15位数字
+
+    updateErrorMessage(
+      "telephone",
+      `${!telephonePattern.test(value) ? "請輸入正確的電話號碼" : ""}`
+    );
+  };
+
+  const validateWeCom = (value: string) => {
+    const weComPattern = /^[a-zA-Z0-9_-]{4,20}$/; // 4-20位字符
+
+    updateErrorMessage(
+      "weCom",
+      `${!weComPattern.test(value) ? "請輸入正確的企業微信號碼" : ""}`
+    );
+  };
+
+  const validateMailbox = (value: string) => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // 通用郵箱格式
+
+    updateErrorMessage(
+      "mailbox",
+      `${!emailPattern.test(value) ? "請輸入正確的郵箱地址" : ""}`
+    );
   };
 
   const jumpToBackstage = () => {
@@ -177,6 +243,21 @@ export const useAction = () => {
     { wait: 500 }
   );
 
+  const { run: onAcceptWarnDebounceFn } = useDebounceFn(
+    () => {
+      setAcceptWarnLoading(true);
+
+      setTimeout(() => {
+        message.success("接收预警成功");
+
+        setAcceptWarnLoading(false);
+
+        setOpenAcceptWran(false);
+      }, 3000);
+    },
+    { wait: 500 }
+  );
+
   useEffect(() => {
     handleResize();
 
@@ -232,9 +313,16 @@ export const useAction = () => {
     isUploading,
     addTeamData,
     onAddTeamDebounceFn,
+    onAcceptWarnDebounceFn,
     addTeamLoading,
     openAcceptWran,
     acceptWarnData,
+    acceptWarnLoading,
+    errorMessages,
+    teamList,
+    teamSelect,
+    setTeamSelect,
+    updateErrorMessage,
     updateAcceptWarnData,
     setOpenAcceptWran,
     updateAddTeamData,
@@ -251,5 +339,8 @@ export const useAction = () => {
     setDelModalStatus,
     submitModifyPassword,
     onUpload,
+    validateTelephone,
+    validateWeCom,
+    validateMailbox,
   };
 };

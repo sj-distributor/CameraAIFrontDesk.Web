@@ -1,5 +1,5 @@
 export interface IAddTeamDataProps {
-  logoUrl: string;
+  logoUrl?: string;
   teamName: string;
 }
 

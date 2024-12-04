@@ -15,7 +15,7 @@ import {
   Popover,
   Image,
 } from "antd";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 
 import { useAuth } from "@/hooks/use-auth";
@@ -45,6 +45,7 @@ import {
 } from "@/icon/main";
 
 import Dropzone from "react-dropzone";
+import { isEmpty } from "ramda";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -74,6 +75,14 @@ export const Main = () => {
     addTeamLoading,
     openAcceptWran,
     acceptWarnData,
+    acceptWarnLoading,
+    errorMessages,
+    onAddTeamDebounceFn,
+    onAcceptWarnDebounceFn,
+    teamList,
+    teamSelect,
+    setTeamSelect,
+    updateErrorMessage,
     updateAcceptWarnData,
     setOpenAcceptWran,
     updateAddTeamData,
@@ -90,7 +99,9 @@ export const Main = () => {
     setDelModalStatus,
     submitModifyPassword,
     onUpload,
-    onAddTeamDebounceFn,
+    validateTelephone,
+    validateWeCom,
+    validateMailbox,
   } = useAction();
 
   const items: MenuItem[] = useMemo(() => {
@@ -239,25 +250,6 @@ export const Main = () => {
 
     return filteredItems;
   }, [pagePermission, location.pathname, selectedKeys, t]);
-
-  const list = [
-    {
-      url: <CodeSandboxCircleFilled className="text-[#5092b9] text-xl" />,
-      name: "SJ-CN TEAM",
-    },
-    {
-      url: <CodeSandboxCircleFilled className="text-[#5092b9] text-xl" />,
-      name: "SJ-CN TEAM",
-    },
-    {
-      url: <CodeSandboxCircleFilled className="text-[#5092b9] text-xl" />,
-      name: "雲廚房",
-    },
-    {
-      url: <CodeSandboxCircleFilled className="text-[#5092b9] text-xl" />,
-      name: "XXX農場",
-    },
-  ];
 
   return (
     <div className="h-screen w-screen bg-white flex flex-col ">
@@ -459,7 +451,7 @@ export const Main = () => {
                   arrow={false}
                   content={
                     <div className="flex flex-col w-[10rem]">
-                      {list.map((item, index) => {
+                      {teamList.map((item, index) => {
                         return (
                           <div
                             className={`hover:text-[#2866F1] text-[0.88rem] flex flex-row justify-between items-center cursor-pointer p-2 rounded-lg mb-1 ${
@@ -468,12 +460,16 @@ export const Main = () => {
                             }`}
                             onClick={() => {
                               setClickIndex(index);
+
+                              setTeamSelect({ teamName: item?.teamName });
                             }}
                             key={index}
                           >
                             <div className="flex">
-                              <div className="mr-3 h-5 w-5">{item.url}</div>
-                              {item.name}
+                              <div className="mr-3 h-5 w-5">
+                                <CodeSandboxCircleFilled className="text-[#5092b9] text-xl" />
+                              </div>
+                              {item.teamName}
                             </div>
                             {index === clickIndex && <SelectedIcon />}
                           </div>
@@ -495,16 +491,18 @@ export const Main = () => {
                       <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-3">
                         <Avatar
                           style={{
-                            backgroundColor: `${list ? "#2853E4" : "#F8F8FD"}`,
+                            backgroundColor: `${
+                              teamList ? "#2853E4" : "#F8F8FD"
+                            }`,
                             verticalAlign: "middle",
                           }}
                           size="default"
                         >
-                          {list && userName.charAt(0)}
+                          {teamList && userName.charAt(0)}
                         </Avatar>
                       </div>
                       <div className="text-base font-semibold text-[#18283C]">
-                        {list ? "SJ-CN TEAM" : "暫無團隊"}
+                        {teamList ? teamSelect?.teamName : "暫無團隊"}
                       </div>
                     </div>
                     <UserArrowRightIcon />
@@ -518,7 +516,7 @@ export const Main = () => {
         <div className="w-[calc(100%-15rem)] flex-1 bg-[#F5F7FB] p-1">
           {isGetPermission && (
             <>
-              {list ? (
+              {teamList ? (
                 <Outlet />
               ) : (
                 <div className="h-full flex justify-center items-center">
@@ -735,13 +733,18 @@ export const Main = () => {
           <div className="flex flex-row justify-end box-border border-t py-4 pr-8">
             <Button
               className={`rounded-[3.5rem] bg-[#2866F1]  text-white text-xs ${
-                addTeamData.logoUrl &&
-                addTeamData.teamName &&
+                isEmpty(errorMessages.weCom) &&
+                isEmpty(errorMessages.telephone) &&
+                isEmpty(errorMessages.mailbox) &&
                 "hover:!bg-[#2866F1] hover:!text-white"
               }`}
-              onClick={onAddTeamDebounceFn}
-              loading={addTeamLoading}
-              disabled={!addTeamData.logoUrl || !addTeamData.teamName}
+              onClick={onAcceptWarnDebounceFn}
+              loading={acceptWarnLoading}
+              disabled={
+                !isEmpty(errorMessages.weCom) &&
+                !isEmpty(errorMessages.telephone) &&
+                !isEmpty(errorMessages.mailbox)
+              }
             >
               保存
             </Button>
@@ -765,71 +768,96 @@ export const Main = () => {
             <div>
               <div className="flex items-center">
                 <div className="min-w-24 flex justify-end">通知電話</div>
-
                 <Input
                   className="w-[21.56rem] mx-4 py-2"
-                  onChange={(e) =>
-                    updateAddTeamData("teamName", e.target.value)
-                  }
+                  value={acceptWarnData.telephone}
+                  onChange={(e) => {
+                    updateAcceptWarnData("telephone", e.target.value);
+                    validateTelephone(e.target.value);
+                  }}
                 />
-
                 <div
                   className="text-[#2866F1] text-sm flex items-center cursor-pointer"
                   onClick={() => {
                     updateAcceptWarnData("telephone", "");
+                    updateErrorMessage("telephone", "");
                   }}
                 >
                   <RefreshIcon /> 恢復默認
                 </div>
               </div>
-              <div className="text-[#8B98AD] text-sm mt-1 ml-[7.5rem]">
-                如沒有設置通知電話，默認使用用戶信息的電話
+
+              <div
+                className={`${
+                  errorMessages.telephone ? "text-[#FF706C]" : "text-[#8B98AD]"
+                } text-sm mt-1 ml-[7.5rem]`}
+              >
+                {errorMessages.telephone ||
+                  "如沒有設置通知電話，默認使用用戶信息的電話"}
               </div>
             </div>
 
-            <div>
-              <div className="flex items-center mt-6">
+            <div className="mt-6">
+              <div className="flex items-center">
                 <div className="min-w-24 flex justify-end">通知企業微信</div>
                 <Input
                   className="w-[21.56rem] py-2 mx-4"
-                  onChange={(e) =>
-                    updateAddTeamData("teamName", e.target.value)
-                  }
+                  value={acceptWarnData.weCom}
+                  onChange={(e) => {
+                    updateAcceptWarnData("weCom", e.target.value);
+                    validateWeCom(e.target.value);
+                  }}
                 />
                 <div
                   className="text-[#2866F1] text-sm flex items-center cursor-pointer"
                   onClick={() => {
                     updateAcceptWarnData("weCom", "");
+                    updateErrorMessage("weCom", "");
                   }}
                 >
                   <RefreshIcon /> 恢復默認
                 </div>
               </div>
-              <div className="text-[#8B98AD] text-sm mt-1 ml-[7.5rem]">
-                如沒有設置通知企業微信，默認使用用戶信息的企業微信
+
+              <div
+                className={`${
+                  errorMessages.weCom ? "text-[#FF706C]" : "text-[#8B98AD]"
+                } text-sm mt-1 ml-[7.5rem]`}
+              >
+                {errorMessages.weCom ||
+                  "如沒有設置通知企業微信，默認使用用戶信息的企業微信"}
               </div>
             </div>
 
-            <div>
-              <div className="flex items-center mt-6">
+            <div className="mt-6">
+              <div className="flex items-center">
                 <div className="min-w-24 flex justify-end">通知郵箱</div>
                 <Input
                   className="w-[21.56rem] py-2 mx-4"
-                  onChange={(e) =>
-                    updateAddTeamData("teamName", e.target.value)
-                  }
+                  value={acceptWarnData.mailbox}
+                  onChange={(e) => {
+                    updateAcceptWarnData("mailbox", e.target.value);
+                    validateMailbox(e.target.value);
+                  }}
                 />
                 <div
                   className="text-[#2866F1] text-sm flex items-center cursor-pointer"
                   onClick={() => {
                     updateAcceptWarnData("mailbox", "");
+                    updateErrorMessage("mailbox", "");
                   }}
                 >
                   <RefreshIcon /> 恢復默認
                 </div>
               </div>
-              <div className="text-[#8B98AD] text-sm mt-1 ml-[7.5rem]">
-                如沒有設置通知郵箱，默認使用用戶信息的關聯郵箱
+
+              <div
+                className={`${
+                  errorMessages.mailbox ? "text-[#FF706C]" : "text-[#8B98AD]"
+                } text-sm mt-1 ml-[7.5rem]`}
+              >
+                {errorMessages.mailbox ||
+                  "如沒有設置通知郵箱，默認使用用戶信息的關聯郵箱"}
               </div>
             </div>
           </div>
