@@ -1,7 +1,6 @@
 import {
   CodeSandboxCircleFilled,
   DeleteOutlined,
-  KeyOutlined,
   LoadingOutlined,
   LogoutOutlined,
   SwapOutlined,
@@ -17,7 +16,7 @@ import {
   Popover,
   Image,
 } from "antd";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link, Outlet } from "react-router-dom";
 
 import { useAuth } from "@/hooks/use-auth";
@@ -68,26 +67,23 @@ export const Main = () => {
     handleOnSignOut,
     pagePermission,
     handleJumpToBackstage,
-    openNewTeam,
     clickIndex,
-    isUploading,
     addTeamData,
-    addTeamLoading,
-    openAcceptWran,
     acceptWarnData,
-    acceptWarnLoading,
     errorMessages,
     onAddTeamDebounceFn,
     onAcceptWarnDebounceFn,
     teamList,
     teamSelect,
+    newTeamDto,
+    acceptWarnDto,
+    updateAcceptWarnDto,
+    updateNewTeamDto,
     setTeamSelect,
     updateErrorMessage,
     updateAcceptWarnData,
-    setOpenAcceptWran,
     updateAddTeamData,
     setClickIndex,
-    setOpenNewTeam,
     navigate,
     setStatus,
     setOpenKeys,
@@ -96,9 +92,7 @@ export const Main = () => {
     filterSelectKey,
     setLanguageStatus,
     onUpload,
-    validateTelephone,
-    validateWeCom,
-    validateMailbox,
+    validateFn,
   } = useAction();
 
   const items: MenuItem[] = useMemo(() => {
@@ -377,7 +371,7 @@ export const Main = () => {
                         name: "預覽接收",
                         component: <PreviewAndAcceptIcon />,
                         function: () => {
-                          setOpenAcceptWran(true);
+                          updateAcceptWarnDto("openAcceptWran", true);
                         },
                       },
                       {
@@ -440,34 +434,36 @@ export const Main = () => {
                   arrow={false}
                   content={
                     <div className="flex flex-col w-[10rem]">
-                      {teamList.map((item, index) => {
-                        return (
-                          <div
-                            className={`hover:text-[#2866F1] text-[0.88rem] flex flex-row justify-between items-center cursor-pointer p-2 rounded-lg mb-1 ${
-                              index === clickIndex &&
-                              "text-[#2866F1] bg-[#EBF1FF]"
-                            }`}
-                            onClick={() => {
-                              setClickIndex(index);
+                      <div className="max-h-72 overflow-y-auto">
+                        {teamList.map((item, index) => {
+                          return (
+                            <div
+                              className={`hover:text-[#2866F1] text-[0.88rem] flex flex-row justify-between items-center cursor-pointer p-2 rounded-lg mb-1 ${
+                                index === clickIndex &&
+                                "text-[#2866F1] bg-[#EBF1FF]"
+                              }`}
+                              onClick={() => {
+                                setClickIndex(index);
 
-                              setTeamSelect({ teamName: item?.teamName });
-                            }}
-                            key={index}
-                          >
-                            <div className="flex">
-                              <div className="mr-3 h-5 w-5">
-                                <CodeSandboxCircleFilled className="text-[#5092b9] text-xl" />
+                                setTeamSelect({ teamName: item?.teamName });
+                              }}
+                              key={index}
+                            >
+                              <div className="flex">
+                                <div className="mr-3 h-5 w-5">
+                                  <CodeSandboxCircleFilled className="text-[#5092b9] text-xl" />
+                                </div>
+                                {item?.teamName}
                               </div>
-                              {item.teamName}
+                              {index === clickIndex && <SelectedIcon />}
                             </div>
-                            {index === clickIndex && <SelectedIcon />}
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
 
                       <div
                         className="text-[#5F6279] text-[0.88rem] flex items-center cursor-pointer border-t p-2 mt-6"
-                        onClick={() => setOpenNewTeam(true)}
+                        onClick={() => updateNewTeamDto("openNewTeam", true)}
                       >
                         <AddTeamIcon />
                         <span className="ml-1">創建新團隊</span>
@@ -491,7 +487,7 @@ export const Main = () => {
                         </Avatar>
                       </div>
                       <div className="text-base font-semibold text-[#18283C]">
-                        {teamList ? teamSelect?.teamName : "暫無團隊"}
+                        {!isEmpty(teamList) ? teamSelect?.teamName : "暫無團隊"}
                       </div>
                     </div>
                     <UserArrowRightIcon />
@@ -512,7 +508,7 @@ export const Main = () => {
                   <div></div>
                   <div
                     className="flex items-center text-base"
-                    onClick={() => setOpenNewTeam(true)}
+                    onClick={() => updateNewTeamDto("openNewTeam", true)}
                   >
                     暫無團隊,
                     <span className="text-[#2866F1] pl-2 cursor-pointer">
@@ -530,19 +526,19 @@ export const Main = () => {
       <Modal
         className="newTeamModel"
         title={<div className="select-none">創建新團隊</div>}
-        open={openNewTeam}
+        open={newTeamDto.openNewTeam}
         closeIcon={<CloseNewTeamIcon />}
         footer={
           <div className="flex flex-row justify-end box-border border-t py-4 pr-8">
             <Button
               className={`rounded-[3.5rem] bg-[#2866F1]  text-white text-xs ${
                 addTeamData.logoUrl &&
-                addTeamData.teamName &&
+                addTeamData?.teamName &&
                 "hover:!bg-[#2866F1] hover:!text-white"
               }`}
               onClick={onAddTeamDebounceFn}
-              loading={addTeamLoading}
-              disabled={!addTeamData.logoUrl || !addTeamData.teamName}
+              loading={newTeamDto.addTeamLoading}
+              disabled={!addTeamData.logoUrl || !addTeamData?.teamName}
             >
               創建團隊
             </Button>
@@ -550,7 +546,7 @@ export const Main = () => {
         }
         centered
         width={680}
-        onCancel={() => setOpenNewTeam(false)}
+        onCancel={() => updateNewTeamDto("openNewTeam", false)}
       >
         <ConfigProvider
           theme={{
@@ -597,7 +593,7 @@ export const Main = () => {
                       <input {...getInputProps()} />
                       <div className="w-[5.5rem] h-[5.5rem] flex flex-col justify-center items-center border border-dashed rounded-lg cursor-pointer">
                         <>
-                          {isUploading ? (
+                          {newTeamDto.isUploading ? (
                             <LoadingOutlined />
                           ) : (
                             <>
@@ -629,7 +625,7 @@ export const Main = () => {
       <Modal
         className="newTeamModel"
         title={<div className="select-none">預警接受</div>}
-        open={openAcceptWran}
+        open={acceptWarnDto.openAcceptWran}
         closeIcon={<CloseNewTeamIcon />}
         footer={
           <div className="flex flex-row justify-end box-border border-t py-4 pr-8">
@@ -641,7 +637,7 @@ export const Main = () => {
                 "hover:!bg-[#2866F1] hover:!text-white"
               }`}
               onClick={onAcceptWarnDebounceFn}
-              loading={acceptWarnLoading}
+              loading={acceptWarnDto.acceptWarnLoading}
               disabled={
                 !isEmpty(errorMessages.weCom) ||
                 !isEmpty(errorMessages.telephone) ||
@@ -654,7 +650,7 @@ export const Main = () => {
         }
         centered
         width={680}
-        onCancel={() => setOpenAcceptWran(false)}
+        onCancel={() => updateAcceptWarnDto("openAcceptWran", false)}
       >
         <ConfigProvider
           theme={{
@@ -675,7 +671,7 @@ export const Main = () => {
                   value={acceptWarnData.telephone}
                   onChange={(e) => {
                     updateAcceptWarnData("telephone", e.target.value);
-                    validateTelephone(e.target.value);
+                    validateFn("telephone", e.target.value);
                   }}
                 />
                 <div
@@ -707,7 +703,8 @@ export const Main = () => {
                   value={acceptWarnData.weCom}
                   onChange={(e) => {
                     updateAcceptWarnData("weCom", e.target.value);
-                    validateWeCom(e.target.value);
+
+                    validateFn("weCom", e.target.value);
                   }}
                 />
                 <div
@@ -739,7 +736,7 @@ export const Main = () => {
                   value={acceptWarnData.mailbox}
                   onChange={(e) => {
                     updateAcceptWarnData("mailbox", e.target.value);
-                    validateMailbox(e.target.value);
+                    validateFn("mailbox", e.target.value);
                   }}
                 />
                 <div

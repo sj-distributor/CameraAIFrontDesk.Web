@@ -3,9 +3,14 @@ import { useEffect, useState } from "react";
 
 import { useAuth } from "@/hooks/use-auth";
 import { message } from "antd";
-import { IAcceptWarnDataProps, IAddTeamDataProps } from "@/dtos/main";
+import {
+  IAcceptWarnDataProps,
+  IAcceptWarnDtoProps,
+  IAddTeamDataProps,
+  INewTeamDtoProps,
+} from "@/dtos/main";
 
-const initAcceptWarn = {
+const initAcceptWarn: IAcceptWarnDataProps = {
   telephone: "",
   weCom: "",
   mailbox: "",
@@ -48,37 +53,61 @@ export const useAction = () => {
 
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
-  const [openNewTeam, setOpenNewTeam] = useState<boolean>(false);
-
-  const [clickIndex, setClickIndex] = useState<number | null>(null);
-
-  const [isUploading, setIsUploading] = useState<boolean>(false);
-
-  const [addTeamLoading, setAddTeamLoading] = useState<boolean>(false);
-
-  const [openAcceptWran, setOpenAcceptWran] = useState<boolean>(false);
-
-  const [acceptWarnData, setAcceptWarnData] =
-    useState<IAcceptWarnDataProps>(initAcceptWarn);
-
-  const [acceptWarnLoading, setAcceptWarnLoading] = useState<boolean>(false);
-
-  const [errorMessages, setErrorMessages] =
-    useState<IAcceptWarnDataProps>(initAcceptWarn);
+  const [clickIndex, setClickIndex] = useState<number>(0);
 
   const [teamList, setTeamList] = useState<IAddTeamDataProps[]>(initAddTeam);
 
   const [teamSelect, setTeamSelect] = useState<IAddTeamDataProps>({
-    teamName: teamList[0].teamName,
+    teamName: teamList[0]?.teamName,
   });
 
-  const updateErrorMessage = (
-    key: keyof IAcceptWarnDataProps,
-    message: string
-  ) => {
+  const [newTeamDto, setNewTeamDto] = useState<INewTeamDtoProps>({
+    openNewTeam: false,
+    isUploading: false,
+    addTeamLoading: false,
+  });
+
+  const [addTeamData, setAddTeamData] = useState<IAddTeamDataProps>({
+    logoUrl: "",
+    teamName: "",
+  });
+
+  const [acceptWarnDto, setAcceptWarnDto] = useState<IAcceptWarnDtoProps>({
+    openAcceptWran: false,
+    acceptWarnLoading: false,
+  });
+
+  const [acceptWarnData, setAcceptWarnData] =
+    useState<IAcceptWarnDataProps>(initAcceptWarn);
+
+  const [errorMessages, setErrorMessages] =
+    useState<IAcceptWarnDataProps>(initAcceptWarn);
+
+  const updateAddTeamData = (k: keyof IAddTeamDataProps, v: string) => {
+    setAddTeamData((prev) => ({
+      ...prev,
+      [k]: v,
+    }));
+  };
+
+  const updateNewTeamDto = (key: keyof INewTeamDtoProps, v: boolean) => {
+    setNewTeamDto((prev) => ({
+      ...prev,
+      [key]: v,
+    }));
+  };
+
+  const updateAcceptWarnDto = (key: keyof IAcceptWarnDtoProps, v: boolean) => {
+    setAcceptWarnDto((prev) => ({
+      ...prev,
+      [key]: v,
+    }));
+  };
+
+  const updateErrorMessage = (k: keyof IAcceptWarnDataProps, v: string) => {
     setErrorMessages((prev) => ({
       ...prev,
-      [key]: message,
+      [k]: v,
     }));
   };
 
@@ -89,31 +118,32 @@ export const useAction = () => {
     }));
   };
 
-  const validateTelephone = (value: string) => {
-    const telephonePattern = /^[0-9]{7,15}$/; // 7-15位数字
-
-    updateErrorMessage(
-      "telephone",
-      `${!telephonePattern.test(value) ? "請輸入正確的電話號碼" : ""}`
-    );
+  const validationRules: Record<
+    keyof IAcceptWarnDataProps,
+    { pattern: RegExp; errorMessage: string }
+  > = {
+    telephone: {
+      pattern: /^[0-9]{7,15}$/, // 7-15位数字
+      errorMessage: "請輸入正確的電話號碼",
+    },
+    weCom: {
+      pattern: /^[a-zA-Z0-9_-]{4,20}$/, // 4-20位字符
+      errorMessage: "請輸入正確的企業微信號碼",
+    },
+    mailbox: {
+      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // 通用邮箱格式
+      errorMessage: "請輸入正確的郵箱地址",
+    },
   };
 
-  const validateWeCom = (value: string) => {
-    const weComPattern = /^[a-zA-Z0-9_-]{4,20}$/; // 4-20位字符
+  const validateFn = (type: keyof IAcceptWarnDataProps, value: string) => {
+    const rule = validationRules[type];
 
-    updateErrorMessage(
-      "weCom",
-      `${!weComPattern.test(value) ? "請輸入正確的企業微信號碼" : ""}`
-    );
-  };
+    if (!rule) return;
 
-  const validateMailbox = (value: string) => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // 通用郵箱格式
+    const { pattern, errorMessage } = rule;
 
-    updateErrorMessage(
-      "mailbox",
-      `${!emailPattern.test(value) ? "請輸入正確的郵箱地址" : ""}`
-    );
+    updateErrorMessage(type, pattern.test(value) ? "" : errorMessage);
   };
 
   const jumpToBackstage = () => {
@@ -167,20 +197,8 @@ export const useAction = () => {
     setCollapsed(window.innerWidth > 800 ? false : true);
   };
 
-  const [addTeamData, setAddTeamData] = useState<IAddTeamDataProps>({
-    logoUrl: "",
-    teamName: "",
-  });
-
-  const updateAddTeamData = (k: keyof IAddTeamDataProps, v: string) => {
-    setAddTeamData((prev) => ({
-      ...prev,
-      [k]: v,
-    }));
-  };
-
   const onUpload = (files: File[]) => {
-    setIsUploading(true);
+    updateNewTeamDto("isUploading", true);
 
     files.forEach((files) => {
       const reader = new FileReader();
@@ -191,7 +209,7 @@ export const useAction = () => {
         setTimeout(() => {
           updateAddTeamData("logoUrl", base64String);
 
-          setIsUploading(false);
+          updateNewTeamDto("isUploading", false);
         }, 3000);
       };
 
@@ -207,14 +225,14 @@ export const useAction = () => {
         return;
       }
 
-      setAddTeamLoading(true);
+      updateNewTeamDto("addTeamLoading", true);
 
       setTimeout(() => {
         message.success("創建團隊成功");
 
-        setAddTeamLoading(false);
+        updateNewTeamDto("addTeamLoading", false);
 
-        setOpenNewTeam(false);
+        updateNewTeamDto("openNewTeam", false);
       }, 3000);
     },
     { wait: 500 }
@@ -222,14 +240,14 @@ export const useAction = () => {
 
   const { run: onAcceptWarnDebounceFn } = useDebounceFn(
     () => {
-      setAcceptWarnLoading(true);
+      updateAcceptWarnDto("acceptWarnLoading", true);
 
       setTimeout(() => {
         message.success("接收预警成功");
 
-        setAcceptWarnLoading(false);
+        updateAcceptWarnDto("acceptWarnLoading", true);
 
-        setOpenAcceptWran(false);
+        updateAcceptWarnDto("openAcceptWran", false);
       }, 3000);
     },
     { wait: 500 }
@@ -283,26 +301,23 @@ export const useAction = () => {
     handleOnSignOut,
     pagePermission,
     handleJumpToBackstage,
-    openNewTeam,
     clickIndex,
-    isUploading,
     addTeamData,
-    addTeamLoading,
-    openAcceptWran,
     acceptWarnData,
-    acceptWarnLoading,
     errorMessages,
     onAddTeamDebounceFn,
     onAcceptWarnDebounceFn,
     teamList,
     teamSelect,
+    newTeamDto,
+    acceptWarnDto,
+    updateAcceptWarnDto,
+    updateNewTeamDto,
     setTeamSelect,
     updateErrorMessage,
     updateAcceptWarnData,
-    setOpenAcceptWran,
     updateAddTeamData,
     setClickIndex,
-    setOpenNewTeam,
     navigate,
     setStatus,
     setOpenKeys,
@@ -311,8 +326,6 @@ export const useAction = () => {
     filterSelectKey,
     setLanguageStatus,
     onUpload,
-    validateTelephone,
-    validateWeCom,
-    validateMailbox,
+    validateFn,
   };
 };

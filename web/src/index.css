@@ -66,13 +66,12 @@ p {
   min-width: min-content !important;
 }
 
-.dropdown:hover svg g g path {
-  fill: #2866f1 !important;
+::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
 }
 
-.popover,
-.ant-popover-inner {
-  padding: 0.5rem !important;
-  margin-bottom: 1.5rem;
-  margin-left: 2rem;
+::-webkit-scrollbar-track {
+  background: #f8f8f8;
+  border-radius: 0.5rem;
 }
