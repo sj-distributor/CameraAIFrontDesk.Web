@@ -90,17 +90,17 @@ export const useAction = () => {
     }));
   };
 
-  const updateNewTeamDto = (key: keyof INewTeamDtoProps, v: boolean) => {
+  const updateNewTeamDto = (k: keyof INewTeamDtoProps, v: boolean) => {
     setNewTeamDto((prev) => ({
       ...prev,
-      [key]: v,
+      [k]: v,
     }));
   };
 
-  const updateAcceptWarnDto = (key: keyof IAcceptWarnDtoProps, v: boolean) => {
+  const updateAcceptWarnDto = (k: keyof IAcceptWarnDtoProps, v: boolean) => {
     setAcceptWarnDto((prev) => ({
       ...prev,
-      [key]: v,
+      [k]: v,
     }));
   };
 

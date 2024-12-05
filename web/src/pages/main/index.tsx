@@ -531,7 +531,7 @@ export const Main = () => {
         footer={
           <div className="flex flex-row justify-end box-border border-t py-4 pr-8">
             <Button
-              className={`rounded-[3.5rem] bg-[#2866F1]  text-white text-xs ${
+              className={`rounded-[3.5rem] bg-[#2866F1] text-white text-xs ${
                 addTeamData.logoUrl &&
                 addTeamData?.teamName &&
                 "hover:!bg-[#2866F1] hover:!text-white"
@@ -630,7 +630,7 @@ export const Main = () => {
         footer={
           <div className="flex flex-row justify-end box-border border-t py-4 pr-8">
             <Button
-              className={`rounded-[3.5rem] bg-[#2866F1]  text-white text-xs ${
+              className={`rounded-[3.5rem] bg-[#2866F1] text-white text-xs ${
                 isEmpty(errorMessages.weCom) &&
                 isEmpty(errorMessages.telephone) &&
                 isEmpty(errorMessages.mailbox) &&
