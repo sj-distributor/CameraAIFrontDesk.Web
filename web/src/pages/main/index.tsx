@@ -1,5 +1,7 @@
 import {
   CodeSandboxCircleFilled,
+  DeleteOutlined,
+  KeyOutlined,
   LoadingOutlined,
   LogoutOutlined,
   SwapOutlined,
@@ -60,11 +62,9 @@ export const Main = () => {
     userName,
     language,
     collapsed,
-    passwordDto,
     selectedKeys,
     handleOnJump,
     languageStatus,
-    delModalStatus,
     handleOnSignOut,
     pagePermission,
     handleJumpToBackstage,
@@ -91,13 +91,10 @@ export const Main = () => {
     navigate,
     setStatus,
     setOpenKeys,
-    updatePWDto,
     changeLanguage,
     setSelectedKeys,
     filterSelectKey,
     setLanguageStatus,
-    setDelModalStatus,
-    submitModifyPassword,
     onUpload,
     validateTelephone,
     validateWeCom,
@@ -376,14 +373,6 @@ export const Main = () => {
                           handleJumpToBackstage();
                         },
                       },
-                      // {
-                      //   name: "修改密碼",
-                      //   component: <KeyOutlined className="text-sm" />,
-                      //   function: () => {
-                      //     !delModalStatus && setDelModalStatus(true);
-                      //     setStatus(false);
-                      //   },
-                      // },
                       {
                         name: "預覽接收",
                         component: <PreviewAndAcceptIcon />,
@@ -539,98 +528,6 @@ export const Main = () => {
       </main>
 
       <Modal
-        className="customModalStyle"
-        title={<div className="pl-8 select-none">修改密碼</div>}
-        open={delModalStatus}
-        footer={
-          <div className="flex flex-row justify-end space-x-2 px-8 box-border">
-            <Button
-              className="rounded-[3.5rem] bg-[#E6EAF4] text-[#8B98AD] hover:!text-[#8B98AD] hover:!border-[#E6EAF4]"
-              onClick={() => setDelModalStatus(false)}
-            >
-              取消
-            </Button>
-            <Button
-              className="rounded-[3.5rem] bg-[#2866F1] text-white hover:!text-white"
-              onClick={() => submitModifyPassword()}
-            >
-              确认
-            </Button>
-          </div>
-        }
-        centered
-        destroyOnClose
-        width={680}
-        maskClosable={false}
-        onCancel={() => setDelModalStatus(false)}
-      >
-        <ConfigProvider
-          theme={{
-            components: {
-              Input: {
-                activeBorderColor: "#d9d9d9",
-                hoverBorderColor: "#d9d9d9",
-              },
-            },
-          }}
-        >
-          <div className="item">
-            <div className="flex-1 flex space-x-4 items-center">
-              <span className="w-16 text-base select-none">當前密碼</span>
-              <div className="flex-1">
-                <Input.Password
-                  className="border-[#d9d9d9] focus:!border-[#d9d9d9] active:!border-[#d9d9d9] hover:!border-[#d9d9d9]"
-                  size="large"
-                  placeholder="請輸入"
-                  value={passwordDto.currentPW}
-                  onChange={(e) => updatePWDto("currentPW", e.target.value)}
-                />
-              </div>
-            </div>
-            {/* error */}
-            {/* <div className="pl-20">123</div> */}
-          </div>
-          <div className="item flex items-center space-x-4">
-            <span className="w-16 text-base select-none">新密碼</span>
-
-            <div className="flex-1">
-              <ConfigProvider
-                theme={{
-                  components: {
-                    Input: {
-                      activeBorderColor: "#d9d9d9",
-                      hoverBorderColor: "#d9d9d9",
-                    },
-                  },
-                }}
-              >
-                <Input.Password
-                  className="border-[#d9d9d9] focus:!border-[#d9d9d9] active:!border-[#d9d9d9] hover:!border-[#d9d9d9]"
-                  size="large"
-                  placeholder="請輸入"
-                  value={passwordDto.newPW}
-                  onChange={(e) => updatePWDto("newPW", e.target.value)}
-                />
-              </ConfigProvider>
-            </div>
-          </div>
-          <div className="item flex items-center space-x-4">
-            <span className="w-16 text-base select-none">確認密碼</span>
-
-            <div className="flex-1">
-              <Input.Password
-                className="border-[#d9d9d9] focus:!border-[#d9d9d9] active:!border-[#d9d9d9] hover:!border-[#d9d9d9]"
-                size="large"
-                placeholder="請輸入"
-                value={passwordDto.confirmPW}
-                onChange={(e) => updatePWDto("confirmPW", e.target.value)}
-              />
-            </div>
-          </div>
-        </ConfigProvider>
-      </Modal>
-
-      <Modal
         className="newTeamModel"
         title={<div className="select-none">創建新團隊</div>}
         open={openNewTeam}
@@ -667,15 +564,20 @@ export const Main = () => {
         >
           <div className="mx-32 my-8">
             <div className="flex items-center">
-              <div className="min-w-16 flex justify-end mr-4">Logo</div>
-
+              <div className="min-w-16 flex justify-end mr-4">LOGO</div>
               {addTeamData?.logoUrl ? (
-                <Image
-                  src={addTeamData?.logoUrl}
-                  className="bg-center bg-no-repeat bg-cover w-[5.5rem] h-[5.5rem]"
-                  preview={false}
-                  width={100}
-                />
+                <>
+                  <Image
+                    src={addTeamData?.logoUrl}
+                    className="bg-center bg-no-repeat bg-cover w-[5.5rem] h-[5.5rem]"
+                    preview={true}
+                    width={100}
+                  />
+                  <DeleteOutlined
+                    className="text-gray-400 ml-3 cursor-pointer"
+                    onClick={() => updateAddTeamData("logoUrl", "")}
+                  />
+                </>
               ) : (
                 <Dropzone
                   onDrop={onUpload}
@@ -741,8 +643,8 @@ export const Main = () => {
               onClick={onAcceptWarnDebounceFn}
               loading={acceptWarnLoading}
               disabled={
-                !isEmpty(errorMessages.weCom) &&
-                !isEmpty(errorMessages.telephone) &&
+                !isEmpty(errorMessages.weCom) ||
+                !isEmpty(errorMessages.telephone) ||
                 !isEmpty(errorMessages.mailbox)
               }
             >

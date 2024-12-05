@@ -130,3 +130,9 @@
 .newTeamModel .ant-modal-title {
   padding: 1.5rem 2rem;
 }
+
+.newTeamModel .ant-btn-variant-outlined:disabled {
+  border-color: transparent !important;
+  color: #8b98ad;
+  background-color: #e6eaf4;
+}

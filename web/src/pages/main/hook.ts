@@ -5,12 +5,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { message } from "antd";
 import { IAcceptWarnDataProps, IAddTeamDataProps } from "@/dtos/main";
 
-interface IPasswordDto {
-  currentPW: string;
-  newPW: string;
-  confirmPW: string;
-}
-
 const initAcceptWarn = {
   telephone: "",
   weCom: "",
@@ -48,19 +42,11 @@ export const useAction = () => {
 
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
-  const [delModalStatus, setDelModalStatus] = useState<boolean>(false);
-
   const [status, setStatus] = useState<boolean>(false);
 
   const [languageStatus, setLanguageStatus] = useState<boolean>(false);
 
   const [collapsed, setCollapsed] = useState<boolean>(false);
-
-  const [passwordDto, setPasswordDto] = useState<IPasswordDto>({
-    currentPW: "",
-    newPW: "",
-    confirmPW: "",
-  });
 
   const [openNewTeam, setOpenNewTeam] = useState<boolean>(false);
 
@@ -98,13 +84,6 @@ export const useAction = () => {
 
   const updateAcceptWarnData = (k: keyof IAcceptWarnDataProps, v: string) => {
     setAcceptWarnData((prev) => ({
-      ...prev,
-      [k]: v,
-    }));
-  };
-
-  const updatePWDto = (k: keyof IPasswordDto, v: string) => {
-    setPasswordDto((prev) => ({
       ...prev,
       [k]: v,
     }));
@@ -183,8 +162,6 @@ export const useAction = () => {
       setOpenKeys([key]);
     }
   };
-
-  const submitModifyPassword = () => {};
 
   const handleResize = () => {
     setCollapsed(window.innerWidth > 800 ? false : true);
@@ -295,15 +272,13 @@ export const useAction = () => {
   return {
     t,
     status,
-    userName,
-    language,
-    handleOnJump,
-    delModalStatus,
-    collapsed,
     location,
     openKeys,
+    userName,
+    language,
+    collapsed,
     selectedKeys,
-    passwordDto,
+    handleOnJump,
     languageStatus,
     handleOnSignOut,
     pagePermission,
@@ -312,13 +287,13 @@ export const useAction = () => {
     clickIndex,
     isUploading,
     addTeamData,
-    onAddTeamDebounceFn,
-    onAcceptWarnDebounceFn,
     addTeamLoading,
     openAcceptWran,
     acceptWarnData,
     acceptWarnLoading,
     errorMessages,
+    onAddTeamDebounceFn,
+    onAcceptWarnDebounceFn,
     teamList,
     teamSelect,
     setTeamSelect,
@@ -331,13 +306,10 @@ export const useAction = () => {
     navigate,
     setStatus,
     setOpenKeys,
-    updatePWDto,
     changeLanguage,
     setSelectedKeys,
     filterSelectKey,
     setLanguageStatus,
-    setDelModalStatus,
-    submitModifyPassword,
     onUpload,
     validateTelephone,
     validateWeCom,
