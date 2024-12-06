@@ -501,11 +501,11 @@ export const Main = () => {
         <div className="w-[calc(100%-15rem)] flex-1 bg-[#F5F7FB] p-1">
           {isGetPermission && (
             <>
-              {teamList ? (
+              {!isEmpty(teamList) ? (
                 <Outlet />
               ) : (
                 <div className="h-full flex justify-center items-center">
-                  <div></div>
+                  {/* 缺个无团队图标 */}
                   <div
                     className="flex items-center text-base"
                     onClick={() => updateNewTeamDto("openNewTeam", true)}
@@ -565,9 +565,10 @@ export const Main = () => {
                 <>
                   <Image
                     src={addTeamData?.logoUrl}
-                    className="bg-center bg-no-repeat bg-cover w-[5.5rem] h-[5.5rem]"
+                    className="bg-center bg-no-repeat bg-cover object-cover w-[5.5rem] h-[5.5rem]"
                     preview={true}
                     width={100}
+                    height={100}
                   />
                   <DeleteOutlined
                     className="text-gray-400 ml-3 cursor-pointer"
