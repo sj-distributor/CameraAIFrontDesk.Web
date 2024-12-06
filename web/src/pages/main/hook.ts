@@ -16,7 +16,7 @@ const initAcceptWarn: IAcceptWarnDataProps = {
   mailbox: "",
 };
 
-const initAddTeam: IAddTeamDataProps[] = [
+const initTeamList: IAddTeamDataProps[] = [
   {
     teamName: "SJ-CN TEAM",
   },
@@ -55,7 +55,7 @@ export const useAction = () => {
 
   const [clickIndex, setClickIndex] = useState<number>(0);
 
-  const [teamList, setTeamList] = useState<IAddTeamDataProps[]>(initAddTeam);
+  const [teamList, setTeamList] = useState<IAddTeamDataProps[]>(initTeamList);
 
   const [teamSelect, setTeamSelect] = useState<IAddTeamDataProps>({
     teamName: teamList[0]?.teamName,
@@ -233,6 +233,10 @@ export const useAction = () => {
         updateNewTeamDto("addTeamLoading", false);
 
         updateNewTeamDto("openNewTeam", false);
+
+        updateAddTeamData("logoUrl", "");
+
+        updateAddTeamData("teamName", "");
       }, 3000);
     },
     { wait: 500 }
@@ -245,9 +249,15 @@ export const useAction = () => {
       setTimeout(() => {
         message.success("接收预警成功");
 
-        updateAcceptWarnDto("acceptWarnLoading", true);
+        updateAcceptWarnDto("acceptWarnLoading", false);
 
         updateAcceptWarnDto("openAcceptWran", false);
+
+        updateAcceptWarnData("mailbox", "");
+
+        updateAcceptWarnData("telephone", "");
+
+        updateAcceptWarnData("weCom", "");
       }, 3000);
     },
     { wait: 500 }

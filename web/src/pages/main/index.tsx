@@ -616,6 +616,7 @@ export const Main = () => {
               <Input
                 placeholder="請輸入團隊名稱"
                 className="w-[21.56rem] py-2"
+                value={addTeamData.teamName}
                 onChange={(e) => updateAddTeamData("teamName", e.target.value)}
               />
             </div>
