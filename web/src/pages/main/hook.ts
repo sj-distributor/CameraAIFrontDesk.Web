@@ -253,11 +253,11 @@ export const useAction = () => {
 
         updateAcceptWarnDto("openAcceptWran", false);
 
-        updateAcceptWarnData("mailbox", "");
+        updateAcceptWarnData("mailbox", initAcceptWarn.mailbox);
 
-        updateAcceptWarnData("telephone", "");
+        updateAcceptWarnData("telephone", initAcceptWarn.telephone);
 
-        updateAcceptWarnData("weCom", "");
+        updateAcceptWarnData("weCom", initAcceptWarn.weCom);
       }, 3000);
     },
     { wait: 500 }
@@ -321,6 +321,7 @@ export const useAction = () => {
     teamSelect,
     newTeamDto,
     acceptWarnDto,
+    initAcceptWarn,
     updateAcceptWarnDto,
     updateNewTeamDto,
     setTeamSelect,

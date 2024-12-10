@@ -66,12 +66,21 @@ p {
   min-width: min-content !important;
 }
 
-::-webkit-scrollbar {
-  width: 0.5rem;
-  height: 0.5rem;
+.teamList ::-webkit-scrollbar {
+  width: 0.2rem;
+  height: 0.2rem;
 }
 
-::-webkit-scrollbar-track {
+.teamList ::-webkit-scrollbar-track {
   background: #f8f8f8;
   border-radius: 0.5rem;
+}
+
+.teamList ::-webkit-scrollbar-thumb {
+  background: #e7e8ee;
+  border-radius: 0.5rem;
+}
+
+.teamList ::-webkit-scrollbar-thumb:hover {
+  background: #cdcdd0;
 }

@@ -2,7 +2,6 @@ import {
   CodeSandboxCircleFilled,
   DeleteOutlined,
   LoadingOutlined,
-  LogoutOutlined,
   SwapOutlined,
 } from "@ant-design/icons";
 import {
@@ -38,6 +37,7 @@ import {
   AddTeamIcon,
   ArrowRightIcon,
   CloseNewTeamIcon,
+  LogoutIcon,
   PreviewAndAcceptIcon,
   RefreshIcon,
   SelectedIcon,
@@ -77,6 +77,7 @@ export const Main = () => {
     teamSelect,
     newTeamDto,
     acceptWarnDto,
+    initAcceptWarn,
     updateAcceptWarnDto,
     updateNewTeamDto,
     setTeamSelect,
@@ -376,7 +377,7 @@ export const Main = () => {
                       },
                       {
                         name: "退出登陸",
-                        component: <LogoutOutlined className="text-sm" />,
+                        component: <LogoutIcon />,
                         function: () => {
                           handleOnSignOut(() => navigate("/login"));
                         },
@@ -433,7 +434,7 @@ export const Main = () => {
                   placement="right"
                   arrow={false}
                   content={
-                    <div className="flex flex-col w-[10rem]">
+                    <div className="flex flex-col w-[10rem] teamList">
                       <div className="max-h-72 overflow-y-auto">
                         {teamList.map((item, index) => {
                           return (
@@ -444,7 +445,6 @@ export const Main = () => {
                               }`}
                               onClick={() => {
                                 setClickIndex(index);
-
                                 setTeamSelect({ teamName: item?.teamName });
                               }}
                               key={index}
@@ -453,14 +453,15 @@ export const Main = () => {
                                 <div className="mr-3 h-5 w-5">
                                   <CodeSandboxCircleFilled className="text-[#5092b9] text-xl" />
                                 </div>
-                                {item?.teamName}
+                                <div className="w-[5.5rem] line-clamp-1">
+                                  {item?.teamName}
+                                </div>
                               </div>
                               {index === clickIndex && <SelectedIcon />}
                             </div>
                           );
                         })}
                       </div>
-
                       <div
                         className="text-[#5F6279] text-[0.88rem] flex items-center cursor-pointer border-t p-2 mt-6"
                         onClick={() => updateNewTeamDto("openNewTeam", true)}
@@ -486,7 +487,7 @@ export const Main = () => {
                           {teamList && userName.charAt(0)}
                         </Avatar>
                       </div>
-                      <div className="text-base font-semibold text-[#18283C]">
+                      <div className="text-base font-semibold text-[#18283C] line-clamp-1 w-[8.5rem]">
                         {!isEmpty(teamList) ? teamSelect?.teamName : "暫無團隊"}
                       </div>
                     </div>
@@ -506,15 +507,16 @@ export const Main = () => {
               ) : (
                 <div className="h-full flex justify-center items-center">
                   {/* 缺个无团队图标 */}
-                  <div
-                    className="flex items-center text-base"
-                    onClick={() => updateNewTeamDto("openNewTeam", true)}
-                  >
+                  <div className="flex items-center text-base">
                     暫無團隊,
-                    <span className="text-[#2866F1] pl-2 cursor-pointer">
-                      創建一個
-                    </span>
-                    <ArrowRightIcon />
+                    <div
+                      className="flex border-b m-1 border-[#2866F1] cursor-pointer"
+                      onClick={() => updateNewTeamDto("openNewTeam", true)}
+                    >
+                      <span className="text-[#2866F1]">創建一個</span>
+
+                      <ArrowRightIcon />
+                    </div>
                   </div>
                 </div>
               )}
@@ -531,7 +533,7 @@ export const Main = () => {
         footer={
           <div className="flex flex-row justify-end box-border border-t py-4 pr-8">
             <Button
-              className={`rounded-[3.5rem] bg-[#2866F1] text-white text-xs ${
+              className={`rounded-[3.5rem] py-2 px-4 bg-[#2866F1] text-white text-xs ${
                 addTeamData.logoUrl &&
                 addTeamData?.teamName &&
                 "hover:!bg-[#2866F1] hover:!text-white"
@@ -560,7 +562,9 @@ export const Main = () => {
         >
           <div className="mx-32 my-8">
             <div className="flex items-center">
-              <div className="min-w-16 flex justify-end mr-4">LOGO</div>
+              <div className="min-w-16 flex justify-end mr-4 text-[#18283C] mb-10">
+                LOGO
+              </div>
               {addTeamData?.logoUrl ? (
                 <>
                   <Image
@@ -599,7 +603,7 @@ export const Main = () => {
                           ) : (
                             <>
                               <UpoadLogoIcon />
-                              <span className="text-[#8B98AD] text-[0.75rem]">
+                              <span className="text-[#8B98AD] text-[0.75rem] mt-2">
                                 上傳圖片
                               </span>
                             </>
@@ -632,7 +636,7 @@ export const Main = () => {
         footer={
           <div className="flex flex-row justify-end box-border border-t py-4 pr-8">
             <Button
-              className={`rounded-[3.5rem] bg-[#2866F1] text-white text-xs ${
+              className={`rounded-[3.5rem] py-2 px-4 bg-[#2866F1] text-white text-xs ${
                 isEmpty(errorMessages.weCom) &&
                 isEmpty(errorMessages.telephone) &&
                 isEmpty(errorMessages.mailbox) &&
@@ -679,7 +683,7 @@ export const Main = () => {
                 <div
                   className="text-[#2866F1] text-sm flex items-center cursor-pointer"
                   onClick={() => {
-                    updateAcceptWarnData("telephone", "");
+                    updateAcceptWarnData("telephone", initAcceptWarn.telephone);
                     updateErrorMessage("telephone", "");
                   }}
                 >
@@ -712,7 +716,7 @@ export const Main = () => {
                 <div
                   className="text-[#2866F1] text-sm flex items-center cursor-pointer"
                   onClick={() => {
-                    updateAcceptWarnData("weCom", "");
+                    updateAcceptWarnData("weCom", initAcceptWarn.weCom);
                     updateErrorMessage("weCom", "");
                   }}
                 >
@@ -744,7 +748,7 @@ export const Main = () => {
                 <div
                   className="text-[#2866F1] text-sm flex items-center cursor-pointer"
                   onClick={() => {
-                    updateAcceptWarnData("mailbox", "");
+                    updateAcceptWarnData("mailbox", initAcceptWarn.mailbox);
                     updateErrorMessage("mailbox", "");
                   }}
                 >
