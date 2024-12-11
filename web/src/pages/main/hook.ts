@@ -3,12 +3,33 @@ import { useEffect, useState } from "react";
 
 import { useAuth } from "@/hooks/use-auth";
 import { message } from "antd";
+import {
+  IAcceptWarnDataProps,
+  IAcceptWarnDtoProps,
+  IAddTeamDataProps,
+  INewTeamDtoProps,
+} from "@/dtos/main";
 
-interface IPasswordDto {
-  currentPW: string;
-  newPW: string;
-  confirmPW: string;
-}
+const initAcceptWarn: IAcceptWarnDataProps = {
+  telephone: "",
+  weCom: "",
+  mailbox: "",
+};
+
+const initTeamList: IAddTeamDataProps[] = [
+  {
+    teamName: "SJ-CN TEAM",
+  },
+  {
+    teamName: "SJ-CN TEAM",
+  },
+  {
+    teamName: "雲廚房",
+  },
+  {
+    teamName: "XXX農場",
+  },
+];
 
 export const useAction = () => {
   const {
@@ -26,25 +47,103 @@ export const useAction = () => {
 
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
-  const [delModalStatus, setDelModalStatus] = useState<boolean>(false);
-
   const [status, setStatus] = useState<boolean>(false);
 
   const [languageStatus, setLanguageStatus] = useState<boolean>(false);
 
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
-  const [passwordDto, setPasswordDto] = useState<IPasswordDto>({
-    currentPW: "",
-    newPW: "",
-    confirmPW: "",
+  const [clickIndex, setClickIndex] = useState<number>(0);
+
+  const [teamList, setTeamList] = useState<IAddTeamDataProps[]>(initTeamList);
+
+  const [teamSelect, setTeamSelect] = useState<IAddTeamDataProps>({
+    teamName: teamList[0]?.teamName,
   });
 
-  const updatePWDto = (k: keyof IPasswordDto, v: string) => {
-    setPasswordDto((prev) => ({
+  const [newTeamDto, setNewTeamDto] = useState<INewTeamDtoProps>({
+    openNewTeam: false,
+    isUploading: false,
+    addTeamLoading: false,
+  });
+
+  const [addTeamData, setAddTeamData] = useState<IAddTeamDataProps>({
+    logoUrl: "",
+    teamName: "",
+  });
+
+  const [acceptWarnDto, setAcceptWarnDto] = useState<IAcceptWarnDtoProps>({
+    openAcceptWran: false,
+    acceptWarnLoading: false,
+  });
+
+  const [acceptWarnData, setAcceptWarnData] =
+    useState<IAcceptWarnDataProps>(initAcceptWarn);
+
+  const [errorMessages, setErrorMessages] =
+    useState<IAcceptWarnDataProps>(initAcceptWarn);
+
+  const updateAddTeamData = (k: keyof IAddTeamDataProps, v: string) => {
+    setAddTeamData((prev) => ({
       ...prev,
       [k]: v,
     }));
+  };
+
+  const updateNewTeamDto = (k: keyof INewTeamDtoProps, v: boolean) => {
+    setNewTeamDto((prev) => ({
+      ...prev,
+      [k]: v,
+    }));
+  };
+
+  const updateAcceptWarnDto = (k: keyof IAcceptWarnDtoProps, v: boolean) => {
+    setAcceptWarnDto((prev) => ({
+      ...prev,
+      [k]: v,
+    }));
+  };
+
+  const updateErrorMessage = (k: keyof IAcceptWarnDataProps, v: string) => {
+    setErrorMessages((prev) => ({
+      ...prev,
+      [k]: v,
+    }));
+  };
+
+  const updateAcceptWarnData = (k: keyof IAcceptWarnDataProps, v: string) => {
+    setAcceptWarnData((prev) => ({
+      ...prev,
+      [k]: v,
+    }));
+  };
+
+  const validationRules: Record<
+    keyof IAcceptWarnDataProps,
+    { pattern: RegExp; errorMessage: string }
+  > = {
+    telephone: {
+      pattern: /^[0-9]{7,15}$/, // 7-15位数字
+      errorMessage: "請輸入正確的電話號碼",
+    },
+    weCom: {
+      pattern: /^[a-zA-Z0-9_-]{4,20}$/, // 4-20位字符
+      errorMessage: "請輸入正確的企業微信號碼",
+    },
+    mailbox: {
+      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // 通用邮箱格式
+      errorMessage: "請輸入正確的郵箱地址",
+    },
+  };
+
+  const validateFn = (type: keyof IAcceptWarnDataProps, value: string) => {
+    const rule = validationRules[type];
+
+    if (!rule) return;
+
+    const { pattern, errorMessage } = rule;
+
+    updateErrorMessage(type, pattern.test(value) ? "" : errorMessage);
   };
 
   const jumpToBackstage = () => {
@@ -94,11 +193,75 @@ export const useAction = () => {
     }
   };
 
-  const submitModifyPassword = () => {};
-
   const handleResize = () => {
     setCollapsed(window.innerWidth > 800 ? false : true);
   };
+
+  const onUpload = (files: File[]) => {
+    updateNewTeamDto("isUploading", true);
+
+    files.forEach((files) => {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+
+        setTimeout(() => {
+          updateAddTeamData("logoUrl", base64String);
+
+          updateNewTeamDto("isUploading", false);
+        }, 3000);
+      };
+
+      reader.readAsDataURL(files);
+    });
+  };
+
+  const { run: onAddTeamDebounceFn } = useDebounceFn(
+    () => {
+      if (!addTeamData.logoUrl || !addTeamData.teamName) {
+        message.error("請輸入以下完整信息！");
+
+        return;
+      }
+
+      updateNewTeamDto("addTeamLoading", true);
+
+      setTimeout(() => {
+        message.success("創建團隊成功");
+
+        updateNewTeamDto("addTeamLoading", false);
+
+        updateNewTeamDto("openNewTeam", false);
+
+        updateAddTeamData("logoUrl", "");
+
+        updateAddTeamData("teamName", "");
+      }, 3000);
+    },
+    { wait: 500 }
+  );
+
+  const { run: onAcceptWarnDebounceFn } = useDebounceFn(
+    () => {
+      updateAcceptWarnDto("acceptWarnLoading", true);
+
+      setTimeout(() => {
+        message.success("接收预警成功");
+
+        updateAcceptWarnDto("acceptWarnLoading", false);
+
+        updateAcceptWarnDto("openAcceptWran", false);
+
+        updateAcceptWarnData("mailbox", initAcceptWarn.mailbox);
+
+        updateAcceptWarnData("telephone", initAcceptWarn.telephone);
+
+        updateAcceptWarnData("weCom", initAcceptWarn.weCom);
+      }, 3000);
+    },
+    { wait: 500 }
+  );
 
   useEffect(() => {
     handleResize();
@@ -137,28 +300,43 @@ export const useAction = () => {
   return {
     t,
     status,
-    userName,
-    language,
-    handleOnJump,
-    delModalStatus,
-    collapsed,
     location,
     openKeys,
+    userName,
+    language,
+    collapsed,
     selectedKeys,
-    passwordDto,
+    handleOnJump,
     languageStatus,
     handleOnSignOut,
     pagePermission,
     handleJumpToBackstage,
+    clickIndex,
+    addTeamData,
+    acceptWarnData,
+    errorMessages,
+    onAddTeamDebounceFn,
+    onAcceptWarnDebounceFn,
+    teamList,
+    teamSelect,
+    newTeamDto,
+    acceptWarnDto,
+    initAcceptWarn,
+    updateAcceptWarnDto,
+    updateNewTeamDto,
+    setTeamSelect,
+    updateErrorMessage,
+    updateAcceptWarnData,
+    updateAddTeamData,
+    setClickIndex,
     navigate,
     setStatus,
     setOpenKeys,
-    updatePWDto,
     changeLanguage,
     setSelectedKeys,
     filterSelectKey,
     setLanguageStatus,
-    setDelModalStatus,
-    submitModifyPassword,
+    onUpload,
+    validateFn,
   };
 };
