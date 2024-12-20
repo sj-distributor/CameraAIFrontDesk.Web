@@ -2,5 +2,5 @@
   "serverUrl": "https://testsmarties.yamimeal.ca",
   "tokenKey": "token",
   "userNameKey": "userName",
-  "cameraAIBackstageDomain": ""
+  "cameraAIBackstageDomain": "http://localhost:5173/"
 }

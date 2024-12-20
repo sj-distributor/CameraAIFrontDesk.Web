@@ -23,6 +23,7 @@ import { ReplayList } from "@/pages/replay/component/replay-list";
 import { Warning } from "@/pages/warning";
 import { Equipment } from "@/pages/warning/component/equipment";
 import { WarningList } from "@/pages/warning/component/warning-list";
+import { CameraBackstage } from "@/pages/camera-backstage";
 
 export interface IRouteItem {
   path: string;
@@ -138,6 +139,7 @@ export const Router = () => {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<Navigate to={"/home"} />} />
+        <Route path="/backstage" element={<CameraBackstage />} />
         <Route
           element={
             <AuthStatus>
