@@ -122,3 +122,28 @@
 .ant-checkbox-wrapper-disabled span {
   color: black;
 }
+
+.accessDatePicker,
+.accessDatePicker:hover {
+  border-width: 0;
+  background-color: transparent;
+  padding: 0;
+}
+
+.customDate .ant-popover-content {
+  margin-left: 1rem;
+  margin-top: 14rem;
+}
+
+.customCalendar .ant-radio-group {
+  display: none;
+}
+
+.tableScroll .ant-table-body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.tableScroll .ant-table-body::-webkit-scrollbar {
+  display: none;
+}

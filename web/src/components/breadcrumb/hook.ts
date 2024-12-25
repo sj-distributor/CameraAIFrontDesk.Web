@@ -60,6 +60,22 @@ export const useAction = () => {
         });
 
         break;
+      case "access":
+        data.push({
+          title: "出入口檢測",
+          path: "/access",
+          className: "text-xl",
+        });
+
+        break;
+      case "inout":
+        data.push({
+          title: "进出登记",
+          path: "/inout",
+          className: "text-xl",
+        });
+
+        break;
     }
 
     return data;

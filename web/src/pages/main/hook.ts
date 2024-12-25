@@ -128,6 +128,10 @@ export const useAction = () => {
         key = "/warning";
       } else if (splitArr.includes("feedback")) {
         key = "/feedback";
+      } else if (splitArr.includes("access")) {
+        key = "/access";
+      } else if (splitArr.includes("inout")) {
+        key = "/inout";
       }
       filterSelectKey(key);
       setSelectedKeys([key]);

@@ -1,8 +1,9 @@
-import { DownOutlined } from "@ant-design/icons";
+import { DownOutlined, SearchOutlined } from "@ant-design/icons";
 
 import { ScreenType } from "@/entity/screen-type";
 
 import { useAction } from "./hook";
+import { Input } from "antd";
 
 interface IProps {
   layoutMode: ScreenType | null;
@@ -16,7 +17,10 @@ export const ScreenTypeSelect = (data: IProps) => {
     useAction();
 
   return (
-    <div className="flex items-center my-[1rem] relative" ref={wrapperRef}>
+    <div
+      className="flex items-center my-[1rem] relative w-full"
+      ref={wrapperRef}
+    >
       <span className="font-medium text-sm text-[#566172] select-none">
         分屏模式：
       </span>
@@ -51,6 +55,12 @@ export const ScreenTypeSelect = (data: IProps) => {
           })}
         </div>
       )}
+
+      <Input
+        placeholder="搜索设备名称"
+        className="rounded-[3rem] text-base w-[12.5rem] h-12 ml-auto"
+        suffix={<SearchOutlined style={{ color: "#566172" }} />}
+      />
     </div>
   );
 };

@@ -23,6 +23,8 @@ import { ReplayList } from "@/pages/replay/component/replay-list";
 import { Warning } from "@/pages/warning";
 import { Equipment } from "@/pages/warning/component/equipment";
 import { WarningList } from "@/pages/warning/component/warning-list";
+import { Access } from "@/pages/access";
+import { InoutRegistration } from "@/pages/inout-registration";
 
 export interface IRouteItem {
   path: string;
@@ -122,6 +124,18 @@ export const routers: IRouteItem[] = [
         element: <FeedbackList />,
       },
     ],
+  },
+  // 出入口检测
+  {
+    path: "/access",
+    element: <Access />,
+    icon: "",
+  },
+  // 进入登记
+  {
+    path: "/inout",
+    element: <InoutRegistration />,
+    icon: "",
   },
   {
     path: "/none",

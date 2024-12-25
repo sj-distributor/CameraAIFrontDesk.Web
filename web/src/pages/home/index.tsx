@@ -1,5 +1,9 @@
-import { DownOutlined, PlayCircleFilled } from "@ant-design/icons";
-import { Slider } from "antd";
+import {
+  DownOutlined,
+  InfoCircleFilled,
+  PlayCircleFilled,
+} from "@ant-design/icons";
+import { Slider, Tooltip } from "antd";
 import EChartsReact from "echarts-for-react";
 import React from "react";
 
@@ -169,9 +173,24 @@ export const Home = () => {
         id="box"
       >
         <div className="flex-grow w-[100%] bg-white flex flex-col xl:max-w-[50%] sm:px-6 py-4 rounded-lg">
-          <strong className="text-xl select-none">
-            {t(KEYS.TODAY_ALERT, { ns: "home" })} TOP 5
-          </strong>
+          <div className="flex items-center">
+            <strong className="text-xl select-none">
+              {t(KEYS.TODAY_ALERT, { ns: "home" })} TOP 5
+            </strong>
+            <Tooltip
+              title="本平臺提供全球服務，統一按照太平洋時間（PST）進行統計和紀錄"
+              color="#6F6F6F"
+            >
+              <InfoCircleFilled
+                style={{
+                  fontSize: "1.25rem",
+                  marginLeft: "1rem",
+                  color: "#6F6F6F",
+                }}
+              />
+            </Tooltip>
+          </div>
+
           <div className="w-full md:flex md:max-h-[15rem]">
             <div id="echart-main" className="w-full md:w-3/4 overflow-hidden">
               <EChartsReact
