@@ -534,13 +534,13 @@ export const Main = () => {
           <div className="flex flex-row justify-end box-border border-t py-4 pr-8">
             <Button
               className={`rounded-[3.5rem] py-2 px-4 bg-[#2866F1] text-white text-xs ${
-                addTeamData.logoUrl &&
-                addTeamData?.teamName &&
+                addTeamData.avatarUrl &&
+                addTeamData?.name &&
                 "hover:!bg-[#2866F1] hover:!text-white"
               }`}
               onClick={onAddTeamDebounceFn}
               loading={newTeamDto.addTeamLoading}
-              disabled={!addTeamData.logoUrl || !addTeamData?.teamName}
+              disabled={!addTeamData.avatarUrl || !addTeamData?.name}
             >
               創建團隊
             </Button>
@@ -565,10 +565,10 @@ export const Main = () => {
               <div className="min-w-16 flex justify-end mr-4 text-[#18283C] mb-10">
                 LOGO
               </div>
-              {addTeamData?.logoUrl ? (
+              {addTeamData?.avatarUrl ? (
                 <>
                   <Image
-                    src={addTeamData?.logoUrl}
+                    src={addTeamData?.avatarUrl}
                     className="bg-center bg-no-repeat bg-cover object-cover w-[5.5rem] h-[5.5rem]"
                     preview={true}
                     width={100}
@@ -576,7 +576,7 @@ export const Main = () => {
                   />
                   <DeleteOutlined
                     className="text-gray-400 ml-3 cursor-pointer"
-                    onClick={() => updateAddTeamData("logoUrl", "")}
+                    onClick={() => updateAddTeamData("avatarUrl", "")}
                   />
                 </>
               ) : (
@@ -616,12 +616,12 @@ export const Main = () => {
               )}
             </div>
             <div className="flex items-center mt-6">
-              <div className="min-w-16 flex justify-end mr-4"> 團隊名稱</div>
+              <div className="min-w-16 flex justify-end mr-4">團隊名稱</div>
               <Input
                 placeholder="請輸入團隊名稱"
                 className="w-[21.56rem] py-2"
-                value={addTeamData.teamName}
-                onChange={(e) => updateAddTeamData("teamName", e.target.value)}
+                value={addTeamData.name}
+                onChange={(e) => updateAddTeamData("name", e.target.value)}
               />
             </div>
           </div>

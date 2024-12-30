@@ -1,14 +1,15 @@
-import { useDebounceFn } from "ahooks";
+import { useDebounceFn, useUpdateEffect } from "ahooks";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/hooks/use-auth";
-import { message } from "antd";
+import { App } from "antd";
 import {
   IAcceptWarnDataProps,
   IAcceptWarnDtoProps,
-  IAddTeamDataProps,
   INewTeamDtoProps,
 } from "@/dtos/main";
+import { PostTeamCreateApi, PostUploadApi } from "@/services/home";
+import { IAddTeamDataProps } from "@/dtos/home";
 
 const initAcceptWarn: IAcceptWarnDataProps = {
   telephone: "",
@@ -16,7 +17,7 @@ const initAcceptWarn: IAcceptWarnDataProps = {
   mailbox: "",
 };
 
-const initTeamList: IAddTeamDataProps[] = [
+const initTeamList = [
   {
     teamName: "SJ-CN TEAM",
   },
@@ -32,6 +33,8 @@ const initTeamList: IAddTeamDataProps[] = [
 ];
 
 export const useAction = () => {
+  const { message } = App.useApp();
+
   const {
     t,
     signOut,
@@ -55,9 +58,9 @@ export const useAction = () => {
 
   const [clickIndex, setClickIndex] = useState<number>(0);
 
-  const [teamList, setTeamList] = useState<IAddTeamDataProps[]>(initTeamList);
+  const [teamList, setTeamList] = useState(initTeamList);
 
-  const [teamSelect, setTeamSelect] = useState<IAddTeamDataProps>({
+  const [teamSelect, setTeamSelect] = useState({
     teamName: teamList[0]?.teamName,
   });
 
@@ -68,8 +71,8 @@ export const useAction = () => {
   });
 
   const [addTeamData, setAddTeamData] = useState<IAddTeamDataProps>({
-    logoUrl: "",
-    teamName: "",
+    avatarUrl: "",
+    name: "",
   });
 
   const [acceptWarnDto, setAcceptWarnDto] = useState<IAcceptWarnDtoProps>({
@@ -201,25 +204,24 @@ export const useAction = () => {
     updateNewTeamDto("isUploading", true);
 
     files.forEach((files) => {
-      const reader = new FileReader();
+      const formData = new FormData();
 
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
+      formData.append("file", files);
 
-        setTimeout(() => {
-          updateAddTeamData("logoUrl", base64String);
-
-          updateNewTeamDto("isUploading", false);
-        }, 3000);
-      };
-
-      reader.readAsDataURL(files);
+      PostUploadApi(formData)
+        .then((res) => {
+          updateAddTeamData("avatarUrl", res.fileUrl);
+        })
+        .catch((err) => {
+          message.error(err.msg);
+        })
+        .finally(() => updateNewTeamDto("isUploading", false));
     });
   };
 
   const { run: onAddTeamDebounceFn } = useDebounceFn(
     () => {
-      if (!addTeamData.logoUrl || !addTeamData.teamName) {
+      if (!addTeamData.avatarUrl || !addTeamData.name) {
         message.error("請輸入以下完整信息！");
 
         return;
@@ -227,17 +229,22 @@ export const useAction = () => {
 
       updateNewTeamDto("addTeamLoading", true);
 
-      setTimeout(() => {
-        message.success("創建團隊成功");
+      PostTeamCreateApi({ team: addTeamData })
+        .then(() => {
+          message.success("創建團隊成功");
+        })
+        .catch((err) => {
+          message.error(`創建團隊失敗：${err}`);
+        })
+        .finally(() => {
+          updateNewTeamDto("addTeamLoading", false);
 
-        updateNewTeamDto("addTeamLoading", false);
+          updateNewTeamDto("openNewTeam", false);
 
-        updateNewTeamDto("openNewTeam", false);
+          updateAddTeamData("avatarUrl", "");
 
-        updateAddTeamData("logoUrl", "");
-
-        updateAddTeamData("teamName", "");
-      }, 3000);
+          updateAddTeamData("name", "");
+        });
     },
     { wait: 500 }
   );

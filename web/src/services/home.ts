@@ -1,6 +1,8 @@
 import {
   ICameraListResponse,
+  ICreateTeamProps,
   IEquipmentOnlineCountItem,
+  IGetAttachUrlProps,
   IRecordTop5CountListResponse,
 } from "@/dtos/home";
 import { IRealtimeGenerateRequest } from "@/dtos/monitor";
@@ -39,6 +41,21 @@ export const GetRecordTop5CountList = async () => {
 
 export const PostHomeStream = async (data: IRealtimeGenerateRequest) => {
   const response = await api.post("/api/CameraAi/realtime/generate", data);
+
+  return response.data;
+};
+
+export const PostUploadApi = async (data: FormData) => {
+  const response = await api.post<IGetAttachUrlProps>(
+    "/api/Attachment/upload",
+    data
+  );
+
+  return response.data;
+};
+
+export const PostTeamCreateApi = async (data: ICreateTeamProps) => {
+  const response = await api.post("/api/CameraAi/team/create", data);
 
   return response.data;
 };
