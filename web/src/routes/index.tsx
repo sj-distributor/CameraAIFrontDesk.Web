@@ -140,13 +140,20 @@ export const Router = () => {
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<Navigate to={"/home"} />} />
         <Route
+          path="/backstage"
+          element={
+            <AuthStatus>
+              <CameraBackstage />
+            </AuthStatus>
+          }
+        />
+        <Route
           element={
             <AuthStatus>
               <Main />
             </AuthStatus>
           }
         >
-          <Route path="/backstage" element={<CameraBackstage />} />
           {routers.map((item, index) => {
             return (
               <Route key={index} path={item.path} element={item.element}>

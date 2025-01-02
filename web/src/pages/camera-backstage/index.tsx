@@ -3,13 +3,14 @@ import { LoadingSvg } from "@/icon/main";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import WujieReact from "wujie-react";
+import { None } from "../none";
 
 export const CameraBackstage = () => {
   const { bus } = WujieReact;
 
   const navigate = useNavigate();
 
-  const { signOut } = useAuth();
+  const { signOut, pagePermission, isGetPermission } = useAuth();
 
   const tokenKey = (window as any).appsettings.tokenKey;
 
@@ -37,27 +38,39 @@ export const CameraBackstage = () => {
 
   return (
     <div>
-      {preloading && (
+      {isGetPermission ? (
+        pagePermission.canSwitchCameraAiBackend ? (
+          <>
+            {preloading && (
+              <div className="absolute inset-0 flex justify-center items-center z-10 bg-white">
+                <LoadingSvg />
+              </div>
+            )}
+
+            <WujieReact
+              width="100%"
+              height="100%"
+              name="CameraBackstage"
+              url={(window as any).appsettings.cameraAIBackstageDomain}
+              sync={true}
+              alive={true}
+              fiber={true}
+              activated={() => setPreLoading(false)}
+              props={{
+                userName: localStorage.getItem(userNameKey),
+                token: localStorage.getItem(tokenKey),
+                signOut: () => signOut(() => navigate("/login")),
+              }}
+            />
+          </>
+        ) : (
+          <None />
+        )
+      ) : (
         <div className="absolute inset-0 flex justify-center items-center z-10 bg-white">
           <LoadingSvg />
         </div>
       )}
-
-      <WujieReact
-        width="100%"
-        height="100%"
-        name="CameraBackstage"
-        url={(window as any).appsettings.cameraAIBackstageDomain}
-        sync={true}
-        alive={true}
-        fiber={true}
-        activated={() => setPreLoading(false)}
-        props={{
-          userName: localStorage.getItem(userNameKey),
-          token: localStorage.getItem(tokenKey),
-          signOut: () => signOut(() => navigate("/login")),
-        }}
-      />
     </div>
   );
 };

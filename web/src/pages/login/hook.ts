@@ -74,13 +74,19 @@ export const useAction = () => {
               })
               .catch(() => {
                 hanldeNoPermission();
+              })
+              .finally(() => {
+                setLoginLoading(false);
               });
+          } else {
+            setLoginLoading(false);
           }
         })
         .catch(() => {
+          setLoginLoading(false);
+
           message.error("登录失败，请重试");
-        })
-        .finally(() => setLoginLoading(false));
+        });
     } else {
       message.warning("请输入正确的用户名和密码");
     }
