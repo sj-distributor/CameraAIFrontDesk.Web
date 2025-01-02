@@ -6,10 +6,16 @@ import { App } from "antd";
 import {
   IAcceptWarnDataProps,
   IAcceptWarnDtoProps,
+  IAddTeamDataProps,
   INewTeamDtoProps,
+  ITeamListProps,
 } from "@/dtos/main";
-import { PostTeamCreateApi, PostUploadApi } from "@/services/home";
-import { IAddTeamDataProps } from "@/dtos/home";
+import {
+  GetTeamsMineApi,
+  PostTeamCreateApi,
+  PostUploadApi,
+} from "@/services/main";
+import { isEmpty } from "ramda";
 
 const initAcceptWarn: IAcceptWarnDataProps = {
   telephone: "",
@@ -17,18 +23,38 @@ const initAcceptWarn: IAcceptWarnDataProps = {
   mailbox: "",
 };
 
-const initTeamList = [
+const initCurrentTeam: ITeamListProps = {
+  id: "",
+  name: "",
+  leaderId: "",
+  tenantId: "",
+  avatarUrl: "",
+};
+
+const mockTeamList: ITeamListProps[] = [
   {
-    teamName: "SJ-CN TEAM",
+    id: "1",
+    name: "Alpha Team",
+    leaderId: "leader-001",
+    tenantId: "tenant-001",
+    avatarUrl:
+      "https://smartiestest.oss-cn-hongkong.aliyuncs.com/20241217/6be331e8-0b6a-4a65-aeb8-e14f70407c33.jpeg?Expires=253402300799&OSSAccessKeyId=LTAI5tEYyDT8YqJBSXaFDtyk&Signature=zhqP7kcVoYACfR7K6rmQkC3sQSk%3D",
   },
   {
-    teamName: "SJ-CN TEAM",
+    id: "2",
+    name: "Beta Team",
+    leaderId: "leader-002",
+    tenantId: "tenant-002",
+    avatarUrl:
+      "https://smartiestest.oss-cn-hongkong.aliyuncs.com/20250101/6feaeab5-920e-4073-81e1-ae305255593d.png?Expires=253402300799&OSSAccessKeyId=LTAI5tEYyDT8YqJBSXaFDtyk&Signature=JMZaXL5KBflFrNUSlowuYKhCNqk%3D",
   },
   {
-    teamName: "雲廚房",
-  },
-  {
-    teamName: "XXX農場",
+    id: "3",
+    name: "Gamma Team",
+    leaderId: "leader-003",
+    tenantId: "tenant-003",
+    avatarUrl:
+      "https://smartiestest.oss-cn-hongkong.aliyuncs.com/20250101/6eac6763-87a2-4958-93cc-e895de06906b.jpeg?Expires=253402300799&OSSAccessKeyId=LTAI5tEYyDT8YqJBSXaFDtyk&Signature=%2BCqlH7S0BI8sF7449SvJpyaErDo%3D",
   },
 ];
 
@@ -44,6 +70,10 @@ export const useAction = () => {
     location,
     language,
     pagePermission,
+    currentTeam,
+    defaultNavigatePage,
+    setCurrentTeam,
+    setPagePermission,
   } = useAuth();
 
   const [openKeys, setOpenKeys] = useState<string[]>([]);
@@ -56,13 +86,7 @@ export const useAction = () => {
 
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
-  const [clickIndex, setClickIndex] = useState<number>(0);
-
-  const [teamList, setTeamList] = useState(initTeamList);
-
-  const [teamSelect, setTeamSelect] = useState({
-    teamName: teamList[0]?.teamName,
-  });
+  const [teamList, setTeamList] = useState<ITeamListProps[]>([]);
 
   const [newTeamDto, setNewTeamDto] = useState<INewTeamDtoProps>({
     openNewTeam: false,
@@ -215,6 +239,8 @@ export const useAction = () => {
 
       PostTeamCreateApi({ team: addTeamData })
         .then(() => {
+          getMineTeam();
+
           message.success("創建團隊成功");
         })
         .catch((err) => {
@@ -254,7 +280,31 @@ export const useAction = () => {
     { wait: 500 }
   );
 
+  const getMineTeam = () => {
+    // 获取当前账号的所有团队
+    GetTeamsMineApi({})
+      .then((res) => {
+        if (!isEmpty(res)) {
+          // 真实
+          // setTeamList(res);
+          // setTeamSelect({
+          //   teamId: res[0].id ?? "",
+          //   teamName: res[0].name ?? "",
+          // });
+        }
+        // mock
+        setTeamList(mockTeamList);
+
+        setCurrentTeam(mockTeamList[0] ?? initCurrentTeam);
+      })
+      .catch((err) => {
+        message.error(`獲取團隊失敗：${err}`);
+      });
+  };
+
   useEffect(() => {
+    getMineTeam();
+
     handleResize();
 
     window.addEventListener("resize", handleResize);
@@ -263,6 +313,10 @@ export const useAction = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  useUpdateEffect(() => {
+    localStorage.setItem("currentTeam", JSON.stringify(currentTeam));
+  }, [currentTeam]);
 
   useEffect(() => {
     if (location.pathname) {
@@ -302,24 +356,20 @@ export const useAction = () => {
     handleOnSignOut,
     pagePermission,
     handleJumpToBackstage,
-    clickIndex,
     addTeamData,
     acceptWarnData,
     errorMessages,
     onAddTeamDebounceFn,
     onAcceptWarnDebounceFn,
     teamList,
-    teamSelect,
     newTeamDto,
     acceptWarnDto,
     initAcceptWarn,
     updateAcceptWarnDto,
     updateNewTeamDto,
-    setTeamSelect,
     updateErrorMessage,
     updateAcceptWarnData,
     updateAddTeamData,
-    setClickIndex,
     navigate,
     setStatus,
     setOpenKeys,
@@ -329,5 +379,9 @@ export const useAction = () => {
     setLanguageStatus,
     onUpload,
     validateFn,
+    currentTeam,
+    defaultNavigatePage,
+    setCurrentTeam,
+    setPagePermission,
   };
 };

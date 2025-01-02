@@ -23,7 +23,7 @@ import { getErrorMessage } from "@/utils/error-message";
 type EChartsOption = echarts.EChartsOption;
 
 export const useAction = () => {
-  const { t, message } = useAuth();
+  const { t, message, currentTeam } = useAuth();
 
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -234,7 +234,12 @@ export const useAction = () => {
 
   // 獲取top5跟設備
   useEffect(() => {
-    GetEquipmentOnlineList()
+    if (!currentTeam.id) {
+      message.error("TeamId not found！");
+      return;
+    }
+
+    GetEquipmentOnlineList({ TeamId: currentTeam.id })
       .then((res) => {
         if (res) setEquipmentCountList(res ?? []);
       })
@@ -242,7 +247,7 @@ export const useAction = () => {
         setEquipmentCountList([]);
       });
 
-    GetRecordTop5CountList()
+    GetRecordTop5CountList({ TeamId: currentTeam.id })
       .then((res) => {
         if (res) {
           setRecordTop5Obj({
@@ -391,7 +396,9 @@ export const useAction = () => {
   const getCameraList = () => {
     if (!continueExecution.current) return;
 
-    GetCameraList()
+    if (!currentTeam.id) return;
+
+    GetCameraList({ TeamId: currentTeam.id })
       .then((res) => {
         generateError.current = false;
 

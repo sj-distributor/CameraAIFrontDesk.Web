@@ -21,6 +21,7 @@ import {
   IRolePermissionItem,
 } from "@/dtos/mine";
 import { GetMineRoleList } from "@/services/default";
+import { ITeamListProps } from "@/dtos/main";
 
 interface IAuthContextType {
   navigate: NavigateFunction;
@@ -41,6 +42,9 @@ interface IAuthContextType {
   changeLanguage: (language: "en" | "ch") => void;
   isGetPermission: boolean;
   defaultNavigatePage: string | null;
+  currentTeam: ITeamListProps;
+  setCurrentTeam: React.Dispatch<React.SetStateAction<ITeamListProps>>;
+  setPagePermission: React.Dispatch<React.SetStateAction<IPermissions>>;
 }
 
 interface IPermissions {
@@ -95,6 +99,18 @@ export const AuthProvider = (props: { children: ReactElement }) => {
     canViewFeedback: false,
   });
 
+  const localCurrentTeam = JSON.parse(
+    localStorage.getItem("currentTeam") ?? "{}"
+  );
+
+  const [currentTeam, setCurrentTeam] = useState<ITeamListProps>({
+    id: localCurrentTeam.id ?? "",
+    name: localCurrentTeam.name ?? "",
+    leaderId: localCurrentTeam.leaderId ?? "",
+    tenantId: localCurrentTeam.tenantId ?? "",
+    avatarUrl: localCurrentTeam.avatarUrl ?? "",
+  });
+
   const signIn = async (token: string, name: string) => {
     setIsLogin(true);
 
@@ -137,11 +153,7 @@ export const AuthProvider = (props: { children: ReactElement }) => {
       rolePermissionData: rolePermissionData ?? [],
     });
 
-    const permissions = checkRole(rolePermissionData);
-
-    setPagePermission(permissions);
-
-    return permissions;
+    return checkRole(rolePermissionData);
   };
 
   const changeLanguage = (language: "en" | "ch") => {
@@ -272,6 +284,13 @@ export const AuthProvider = (props: { children: ReactElement }) => {
   }, [language]);
 
   useEffect(() => {
+    // if (!currentTeam.id) {
+    //   setIsGetPermission(true);
+
+    //   message.error("TeamId not found！");
+    //   return;
+    // }
+
     if (userName && token && !isLogin) {
       getMinePermission()
         .then((res) => {
@@ -287,21 +306,27 @@ export const AuthProvider = (props: { children: ReactElement }) => {
             canViewFeedback: false,
           });
         });
-      // GetMineRoleList()
-      //   .then((res) => {
-      //     setMineRoles({
-      //       count: res?.count ?? 0,
-      //       rolePermissionData: res?.rolePermissionData ?? [],
-      //     });
-      //   })
-      //   .catch(() => {
-      //     setMineRoles({
-      //       count: 0,
-      //       rolePermissionData: [],
-      //     });
-      //   });
     }
-  }, [userName, token, isLogin]);
+  }, [userName, token, isLogin, currentTeam]);
+
+  // useUpdateEffect(() => {
+  //   console.log("重新获取一遍权限");
+
+  //   getMinePermission()
+  //     .then((res) => {
+  //       setIsGetPermission(true);
+  //       setPagePermission(res);
+  //     })
+  //     .catch(() => {
+  //       setPagePermission({
+  //         canViewHome: false,
+  //         canViewMonitor: false,
+  //         canViewReplay: false,
+  //         canViewWarning: false,
+  //         canViewFeedback: false,
+  //       });
+  //     });
+  // }, [currentTeam]);
 
   useUpdateEffect(() => {
     const defaultPage = pagePermission["canViewHome"]
@@ -336,6 +361,9 @@ export const AuthProvider = (props: { children: ReactElement }) => {
     parseQueryParams,
     isGetPermission,
     defaultNavigatePage,
+    currentTeam,
+    setCurrentTeam,
+    setPagePermission,
   };
 
   return (

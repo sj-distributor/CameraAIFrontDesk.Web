@@ -1,5 +1,4 @@
 import {
-  CodeSandboxCircleFilled,
   DeleteOutlined,
   LoadingOutlined,
   SwapOutlined,
@@ -14,9 +13,12 @@ import {
   Modal,
   Popover,
   Image,
+  Tooltip,
+  Spin,
+  message,
 } from "antd";
 import { useMemo } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 
 import { useAuth } from "@/hooks/use-auth";
 import KEYS from "@/i18n/keys/main-page";
@@ -53,6 +55,8 @@ type MenuItem = Required<MenuProps>["items"][number];
 export const Main = () => {
   const { isGetPermission } = useAuth();
 
+  const { pathname } = useLocation();
+
   const {
     t,
     status,
@@ -67,24 +71,20 @@ export const Main = () => {
     handleOnSignOut,
     pagePermission,
     handleJumpToBackstage,
-    clickIndex,
     addTeamData,
     acceptWarnData,
     errorMessages,
     onAddTeamDebounceFn,
     onAcceptWarnDebounceFn,
     teamList,
-    teamSelect,
     newTeamDto,
     acceptWarnDto,
     initAcceptWarn,
     updateAcceptWarnDto,
     updateNewTeamDto,
-    setTeamSelect,
     updateErrorMessage,
     updateAcceptWarnData,
     updateAddTeamData,
-    setClickIndex,
     navigate,
     setStatus,
     setOpenKeys,
@@ -94,6 +94,10 @@ export const Main = () => {
     setLanguageStatus,
     onUpload,
     validateFn,
+    currentTeam,
+    defaultNavigatePage,
+    setCurrentTeam,
+    setPagePermission,
   } = useAction();
 
   const items: MenuItem[] = useMemo(() => {
@@ -435,24 +439,48 @@ export const Main = () => {
                           return (
                             <div
                               className={`hover:text-[#2866F1] text-[0.88rem] flex flex-row justify-between items-center cursor-pointer p-2 rounded-lg mb-1 ${
-                                index === clickIndex &&
+                                item.id === currentTeam.id &&
                                 "text-[#2866F1] bg-[#EBF1FF]"
                               }`}
                               onClick={() => {
-                                setClickIndex(index);
-                                setTeamSelect({ teamName: item?.teamName });
+                                setCurrentTeam(item);
+
+                                if (
+                                  item.id !== currentTeam.id &&
+                                  defaultNavigatePage
+                                ) {
+                                  message.info(
+                                    `即将切换到 ${item.name} ......`,
+                                    3,
+                                    () => {
+                                      navigate(defaultNavigatePage, {
+                                        replace: true,
+                                      });
+                                    }
+                                  );
+                                }
                               }}
                               key={index}
                             >
                               <div className="flex">
-                                <div className="mr-3 h-5 w-5">
-                                  <CodeSandboxCircleFilled className="text-[#5092b9] text-xl" />
-                                </div>
-                                <div className="w-[5.5rem] line-clamp-1">
-                                  {item?.teamName}
-                                </div>
+                                <Avatar size="small" src={item.avatarUrl} />
+                                <Tooltip
+                                  title={item?.name}
+                                  placement="rightTop"
+                                  arrow={false}
+                                  color="#F5F7FB"
+                                  overlayStyle={{
+                                    paddingLeft: "1rem",
+                                    paddingRight: "1rem",
+                                  }}
+                                  overlayInnerStyle={{ color: "#18283C" }}
+                                >
+                                  <div className="w-[5.5rem] ml-[0.75rem] line-clamp-1">
+                                    {item?.name}
+                                  </div>
+                                </Tooltip>
                               </div>
-                              {index === clickIndex && <SelectedIcon />}
+                              {item.id === currentTeam.id && <SelectedIcon />}
                             </div>
                           );
                         })}
@@ -470,20 +498,10 @@ export const Main = () => {
                   <div className="flex items-center justify-between mx-4 border-t py-6 mb-2">
                     <div className="flex items-center">
                       <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-3">
-                        <Avatar
-                          style={{
-                            backgroundColor: `${
-                              teamList ? "#2853E4" : "#F8F8FD"
-                            }`,
-                            verticalAlign: "middle",
-                          }}
-                          size="default"
-                        >
-                          {teamList && userName.charAt(0)}
-                        </Avatar>
+                        <Avatar size="default" src={currentTeam.avatarUrl} />
                       </div>
                       <div className="text-base font-semibold text-[#18283C] line-clamp-1 w-[8.5rem]">
-                        {!isEmpty(teamList) ? teamSelect?.teamName : "暫無團隊"}
+                        {!isEmpty(teamList) ? currentTeam?.name : "暫無團隊"}
                       </div>
                     </div>
                     <UserArrowRightIcon />
@@ -495,7 +513,7 @@ export const Main = () => {
         )}
 
         <div className="w-[calc(100%-15rem)] flex-1 bg-[#F5F7FB] p-1">
-          {isGetPermission && (
+          {isGetPermission ? (
             <>
               {!isEmpty(teamList) ? (
                 <Outlet />
@@ -516,6 +534,11 @@ export const Main = () => {
                 </div>
               )}
             </>
+          ) : (
+            <Spin
+              className="h-screen flex items-center justify-center"
+              size="large"
+            />
           )}
         </div>
       </main>

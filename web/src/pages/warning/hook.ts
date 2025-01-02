@@ -29,7 +29,7 @@ const keyName: IKey = {
 };
 
 export const useAction = () => {
-  const { location, message, t, pagePermission } = useAuth();
+  const { location, message, t, pagePermission, currentTeam } = useAuth();
 
   const state = location.state as {
     status: IStatusType;
@@ -176,9 +176,15 @@ export const useAction = () => {
 
   // 导出最大数字 2147483647
   const exportData = async () => {
+    if (!currentTeam.id) {
+      message.error("TeamId not found！");
+      return;
+    }
+
     const data: IRecordRequest = {
       PageIndex: 1,
       PageSize: 2147483647,
+      TeamId: currentTeam.id,
     };
 
     if (timeDto.startTime && timeDto.endTime) {
