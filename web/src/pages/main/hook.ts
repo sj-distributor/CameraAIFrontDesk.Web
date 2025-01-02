@@ -148,23 +148,7 @@ export const useAction = () => {
 
   const jumpToBackstage = () => {
     if (pagePermission.canSwitchCameraAiBackend) {
-      var myIframe = document.getElementById("myIframe") as HTMLIFrameElement;
-
-      if (myIframe && myIframe.contentWindow) {
-        const token = localStorage.getItem(
-          (window as any).appsettings?.tokenKey
-        );
-
-        (myIframe as any).contentWindow.postMessage(
-          token,
-          (window as any).appsettings?.cameraAIBackstageDomain
-        );
-
-        window.open(
-          (window as any).appsettings?.cameraAIBackstageDomain,
-          "_blank"
-        );
-      }
+      window.open(`/backstage`, "_blank", "noopener,noreferrer");
     } else {
       message.warning("暫無權限切換後台");
     }
