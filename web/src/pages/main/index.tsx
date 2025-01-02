@@ -392,11 +392,6 @@ export const Main = () => {
                         <span className="text-sm">{item.name}</span>
                       </div>
                     ))}
-                    <iframe
-                      id="myIframe"
-                      src={(window as any).appsettings?.cameraAIBackstageDomain}
-                      style={{ display: "none" }}
-                    />
                   </div>
                 </div>
               )}

@@ -1,5 +1,5 @@
 import { useDebounceFn } from "ahooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { IUserInfo } from "@/dtos";
 import { useAuth } from "@/hooks/use-auth";
@@ -74,24 +74,35 @@ export const useAction = () => {
               })
               .catch(() => {
                 hanldeNoPermission();
+              })
+              .finally(() => {
+                setLoginLoading(false);
               });
+          } else {
+            setLoginLoading(false);
           }
         })
         .catch(() => {
+          setLoginLoading(false);
+
           message.error("登录失败，请重试");
         });
     } else {
       message.warning("请输入正确的用户名和密码");
     }
-
-    setTimeout(() => {
-      setLoginLoading(false);
-    }, 1000);
   };
 
   const { run: handleOnLogin } = useDebounceFn(onLogin, {
     wait: 300,
   });
+
+  useEffect(() => {
+    const token = localStorage.getItem((window as any).appsettings?.tokenKey);
+
+    if (token) {
+      signIn(token, userInfo.userName);
+    }
+  }, []);
 
   return { userInfo, loginLoading, updateUserInfo, handleOnLogin };
 };
