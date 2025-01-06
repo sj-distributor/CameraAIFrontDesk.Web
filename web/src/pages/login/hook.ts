@@ -25,14 +25,29 @@ export const useAction = () => {
   };
 
   const hanldeNoPermission = () => {
-    message.error("您没有访问权限");
-
     localStorage.removeItem(
       (window as any).appsettings?.tokenKey ?? "tokenKey"
     );
 
     localStorage.removeItem((window as any).appsettings?.userNameKey);
   };
+
+  // 当前账号是否能进入前台
+  // const getCurrentPermisson = () => {
+  //   return new Promise((resolve, reject) => {
+  //     GetMineRoleList()
+  //       .then((res) => {
+  //         resolve(res);
+  //       })
+  //       .catch((err) => {
+  //         reject(err);
+
+  //         hanldeNoPermission();
+
+  //         message.error(`获取权限失败：${(err as Error).message}`);
+  //       });
+  //   });
+  // };
 
   const onLogin = () => {
     setLoginLoading(true);

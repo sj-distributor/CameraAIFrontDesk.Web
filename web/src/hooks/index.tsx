@@ -21,7 +21,7 @@ import {
   IRolePermissionItem,
 } from "@/dtos/mine";
 import { GetMineRoleList } from "@/services/default";
-import { ITeamListProps } from "@/dtos/main";
+import { ITeamListProps, IUserDataItem } from "@/dtos/main";
 
 interface IAuthContextType {
   navigate: NavigateFunction;
@@ -45,6 +45,8 @@ interface IAuthContextType {
   currentTeam: ITeamListProps;
   setCurrentTeam: React.Dispatch<React.SetStateAction<ITeamListProps>>;
   setPagePermission: React.Dispatch<React.SetStateAction<IPermissions>>;
+  currentAccount: IUserDataItem;
+  setCurrentAccount: React.Dispatch<React.SetStateAction<IUserDataItem>>;
 }
 
 interface IPermissions {
@@ -103,6 +105,10 @@ export const AuthProvider = (props: { children: ReactElement }) => {
     localStorage.getItem("currentTeam") ?? "{}"
   );
 
+  const localCurrentAccount = JSON.parse(
+    localStorage.getItem("currentAccount") ?? "{}"
+  );
+
   const [currentTeam, setCurrentTeam] = useState<ITeamListProps>({
     id: localCurrentTeam.id ?? "",
     name: localCurrentTeam.name ?? "",
@@ -110,6 +116,9 @@ export const AuthProvider = (props: { children: ReactElement }) => {
     tenantId: localCurrentTeam.tenantId ?? "",
     avatarUrl: localCurrentTeam.avatarUrl ?? "",
   });
+
+  const [currentAccount, setCurrentAccount] =
+    useState<IUserDataItem>(localCurrentAccount);
 
   const signIn = async (token: string, name: string) => {
     setIsLogin(true);
@@ -364,6 +373,8 @@ export const AuthProvider = (props: { children: ReactElement }) => {
     currentTeam,
     setCurrentTeam,
     setPagePermission,
+    currentAccount,
+    setCurrentAccount,
   };
 
   return (

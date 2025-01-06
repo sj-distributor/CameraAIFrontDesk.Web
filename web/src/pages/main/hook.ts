@@ -11,6 +11,7 @@ import {
   ITeamListProps,
 } from "@/dtos/main";
 import {
+  GetAccountInfoApi,
   GetTeamsMineApi,
   PostTeamCreateApi,
   PostUploadApi,
@@ -281,29 +282,38 @@ export const useAction = () => {
   );
 
   const getMineTeam = () => {
-    // 获取当前账号的所有团队
     GetTeamsMineApi({})
       .then((res) => {
         if (!isEmpty(res)) {
-          // 真实
-          // setTeamList(res);
-          // setTeamSelect({
-          //   teamId: res[0].id ?? "",
-          //   teamName: res[0].name ?? "",
-          // });
-        }
-        // mock
-        setTeamList(mockTeamList);
+          setTeamList(res);
 
-        setCurrentTeam(mockTeamList[0] ?? initCurrentTeam);
+          setCurrentTeam(res[0] ?? initCurrentTeam);
+        }
       })
       .catch((err) => {
         message.error(`獲取團隊失敗：${err}`);
       });
   };
 
+  const getMineInfo = () => {
+    GetAccountInfoApi({})
+      .then((res) => {
+        if (!isEmpty(res)) {
+          localStorage.setItem(
+            "currentAccount",
+            JSON.stringify(res.userProfile)
+          );
+        }
+      })
+      .catch((err) => {
+        message.error(`获取个人信息失败：${err}`);
+      });
+  };
+
   useEffect(() => {
     getMineTeam();
+
+    getMineInfo();
 
     handleResize();
 
