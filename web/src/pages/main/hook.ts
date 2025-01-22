@@ -7,20 +7,16 @@ import {
   IAcceptWarnDtoProps,
   IAddTeamDataProps,
   INewTeamDtoProps,
-  ITeamListProps,
   IUserProfileNotificationDto,
 } from "@/dtos/main";
 import {
   GetAccountInfoApi,
-  GetTeamsMineApi,
   GetUserNotificationApi,
   PostTeamCreateApi,
   PostUploadApi,
   PostUserNotificationUpdateApi,
 } from "@/services/main";
 import { isEmpty } from "ramda";
-import { GetMineRoleList } from "@/services/default";
-import { FrontRolePermissionEnum } from "@/dtos/mine";
 
 const initAcceptWarn: IUserProfileNotificationDto = {
   id: "",

@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { IUserInfo } from "@/dtos";
 import { useAuth } from "@/hooks/use-auth";
 import { Login } from "@/services/home";
-import { GetMineRoleList } from "@/services/default";
-import { FrontRolePermissionEnum } from "@/dtos/mine";
 
 export const useAction = () => {
   const { message, signIn } = useAuth();

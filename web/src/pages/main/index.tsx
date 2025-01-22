@@ -18,7 +18,7 @@ import {
   message,
 } from "antd";
 import { useMemo } from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
 import { useAuth } from "@/hooks/use-auth";
 import KEYS from "@/i18n/keys/main-page";
@@ -54,8 +54,6 @@ type MenuItem = Required<MenuProps>["items"][number];
 
 export const Main = () => {
   const { isGetPermission } = useAuth();
-
-  const { pathname } = useLocation();
 
   const {
     t,
