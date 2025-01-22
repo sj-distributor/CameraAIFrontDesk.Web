@@ -1,6 +1,4 @@
-FROM node:16-alpine AS node
-
-RUN npm install -g yarn
+FROM node:lts-slim AS node
 
 FROM nginx:stable-alpine
 
@@ -15,7 +13,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
 WORKDIR /usr/share/nginx/html
 
-RUN yarn --force && yarn build
+RUN npm install --force && npm run build
 
 RUN echo "#!/bin/sh" >> /init.sh &&\
     echo "cd /usr/share/nginx/html" >> /init.sh &&\
