@@ -13,7 +13,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
 WORKDIR /usr/share/nginx/html
 
-RUN yarn install --force && yarn build
+RUN npm install --force && npm run build
 
 RUN echo "#!/bin/sh" >> /init.sh &&\
     echo "cd /usr/share/nginx/html" >> /init.sh &&\
