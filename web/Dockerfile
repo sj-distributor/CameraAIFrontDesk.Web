@@ -25,7 +25,7 @@ FROM nginx:stable-alpine
 COPY --from=build /web/dist /usr/share/nginx/html
 
 # 修改 Nginx 配置文件以支持 SPA 路由
-RUN sed -i '12a error_page 404 /index.html;' /etc/nginx/conf.d/default.conf
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
 # 启用 gzip 压缩
 RUN sed -i '/^http {/a \
