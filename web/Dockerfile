@@ -13,9 +13,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
 WORKDIR /usr/share/nginx/html
 
-RUN apt-get update && apt-get install -y git
-
-RUN npm install --force && npm run build
+RUN yarn --force && yarn build
 
 RUN echo "#!/bin/sh" >> /init.sh &&\
     echo "cd /usr/share/nginx/html" >> /init.sh &&\
