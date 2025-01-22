@@ -1,4 +1,4 @@
-FROM node:18-alpine AS node
+FROM node:16-alpine AS node
 
 FROM nginx:stable-alpine
 
@@ -13,7 +13,9 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
 WORKDIR /usr/share/nginx/html
 
-RUN yarn install && yarn build
+RUN apt-get update && apt-get install -y git
+
+RUN npm install --force && npm run build
 
 RUN echo "#!/bin/sh" >> /init.sh &&\
     echo "cd /usr/share/nginx/html" >> /init.sh &&\
