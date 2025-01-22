@@ -1,39 +1,24 @@
-FROM node:16-alpine AS build
+FROM node:16-alpine AS node
 
-# 设置工作目录
-WORKDIR /web
-
-# 安装依赖工具
-RUN apk add --no-cache git
-
-# 复制 package.json 文件
-COPY package.json ./
-
-# 安装项目依赖
-RUN yarn install
-
-# 复制其他文件
-COPY . .
-
-# 构建项目
-RUN yarn build
-
-# 使用 Nginx 作为静态服务器
 FROM nginx:stable-alpine
 
-# 将构建产物复制到 Nginx 的静态文件目录
-COPY --from=build /web/dist /usr/share/nginx/html
+COPY --from=node /usr/lib /usr/lib
+COPY --from=node /usr/local/lib /usr/local/lib
+COPY --from=node /usr/local/include /usr/local/include
+COPY --from=node /usr/local/bin /usr/local/bin
 
-# 修改 Nginx 配置文件以支持 SPA 路由
+COPY ./ /usr/share/nginx/html
+
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
-# 启用 gzip 压缩
-RUN sed -i '/^http {/a \
-    gzip on;\n\
-    gzip_static on;' /etc/nginx/nginx.conf
+WORKDIR /usr/share/nginx/html
 
-# 暴露 80 端口
-EXPOSE 80
+RUN npm install --force && npm run build
 
-# 启动 Nginx
-CMD ["nginx", "-g", "daemon off;"]
+RUN echo "#!/bin/sh" >> /init.sh &&\
+    echo "cd /usr/share/nginx/html" >> /init.sh &&\
+    echo "npx @import-meta-env/cli -x .env -e .env -p dist/index.html" >> /init.sh &&\
+    echo "nginx -g 'daemon off;'" >> /init.sh &&\
+    chmod +x /init.sh
+
+CMD ["/init.sh"]
