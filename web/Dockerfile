@@ -1,5 +1,7 @@
 FROM node:16-alpine AS node
 
+RUN npm install -g yarn
+
 FROM nginx:stable-alpine
 
 COPY --from=node /usr/lib /usr/lib
