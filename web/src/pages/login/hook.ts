@@ -8,14 +8,14 @@ import { GetMineRoleList } from "@/services/default";
 import { FrontRolePermissionEnum } from "@/dtos/mine";
 
 export const useAction = () => {
-  const { signIn, message } = useAuth();
+  const { message, signIn } = useAuth();
+
+  const [loginLoading, setLoginLoading] = useState<boolean>(false);
 
   const [userInfo, setUserInfo] = useState<IUserInfo>({
     userName: "",
     password: "",
   });
-
-  const [loginLoading, setLoginLoading] = useState<boolean>(false);
 
   const updateUserInfo = (k: keyof IUserInfo, v: string) => {
     setUserInfo((prev) => ({
@@ -24,29 +24,12 @@ export const useAction = () => {
     }));
   };
 
-  const hanldeNoPermission = () => {
-    localStorage.removeItem(
-      (window as any).appsettings?.tokenKey ?? "tokenKey"
-    );
+  // const hanldeNoPermission = () => {
+  //   localStorage.removeItem(
+  //     (window as any).appsettings?.tokenKey ?? "tokenKey"
+  //   );
 
-    localStorage.removeItem((window as any).appsettings?.userNameKey);
-  };
-
-  // 当前账号是否能进入前台
-  // const getCurrentPermisson = () => {
-  //   return new Promise((resolve, reject) => {
-  //     GetMineRoleList()
-  //       .then((res) => {
-  //         resolve(res);
-  //       })
-  //       .catch((err) => {
-  //         reject(err);
-
-  //         hanldeNoPermission();
-
-  //         message.error(`获取权限失败：${(err as Error).message}`);
-  //       });
-  //   });
+  //   localStorage.removeItem((window as any).appsettings?.userNameKey);
   // };
 
   const onLogin = () => {
@@ -64,35 +47,37 @@ export const useAction = () => {
               userInfo.userName
             );
 
-            GetMineRoleList()
-              .then((response) => {
-                if (
-                  response.rolePermissionData.some((item) =>
-                    item.permissions.some(
-                      (permission) =>
-                        permission.name ===
-                        FrontRolePermissionEnum.CanEnterCameraAi
-                    )
-                  )
-                ) {
-                  message.success("登录成功");
+            signIn(
+              localStorage.getItem(
+                (window as any).appsettings?.tokenKey ?? "tokenKey"
+              ) ?? "",
+              userInfo.userName
+            );
 
-                  signIn(
-                    localStorage.getItem(
-                      (window as any).appsettings?.tokenKey ?? "tokenKey"
-                    ) ?? "",
-                    userInfo.userName
-                  );
-                } else {
-                  hanldeNoPermission();
-                }
-              })
-              .catch(() => {
-                hanldeNoPermission();
-              })
-              .finally(() => {
-                setLoginLoading(false);
-              });
+            message.success("登录成功");
+
+            // GetMineRoleList()
+            //   .then((response) => {
+            //     if (
+            //       response.rolePermissionData.some((item) =>
+            //         item.permissions.some(
+            //           (permission) =>
+            //             permission.name ===
+            //             FrontRolePermissionEnum.CanEnterCameraAi
+            //         )
+            //       )
+            //     ) {
+            //       message.success("登录成功");
+
+            //     } else {
+            //       hanldeNoPermission();
+            //     }
+            //   })
+            //   .catch(() => {
+            //     setLoginLoading(false);
+
+            //     hanldeNoPermission();
+            //   });
           } else {
             setLoginLoading(false);
           }
@@ -101,7 +86,8 @@ export const useAction = () => {
           setLoginLoading(false);
 
           message.error("登录失败，请重试");
-        });
+        })
+        .finally(() => setLoginLoading(false));
     } else {
       message.warning("请输入正确的用户名和密码");
     }

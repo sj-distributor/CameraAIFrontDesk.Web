@@ -1,6 +1,8 @@
 import {
   ICreateTeamProps,
   IGetAttachUrlProps,
+  IGetUserNotificationRequest,
+  IGetUserNotificationResponse,
   ITeamListProps,
   IUserDataItem,
 } from "@/dtos/main";
@@ -33,6 +35,28 @@ export const GetTeamsMineApi = async (data: object) => {
 export const GetAccountInfoApi = async (data: object) => {
   const response = await api.get<{ userProfile: IUserDataItem }>(
     "/api/CameraAi/user/mine",
+    data
+  );
+
+  return response.data;
+};
+
+export const GetUserNotificationApi = async (
+  data: IGetUserNotificationRequest
+) => {
+  const response = await api.get<IGetUserNotificationResponse>(
+    "/api/CameraAi/team/user/notification",
+    { params: data }
+  );
+
+  return response.data;
+};
+
+export const PostUserNotificationUpdateApi = async (
+  data: IGetUserNotificationResponse
+) => {
+  const response = await api.post(
+    "/api/CameraAi/team/user/notification/update",
     data
   );
 

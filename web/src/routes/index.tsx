@@ -1,7 +1,7 @@
 import "dayjs/locale/zh-cn";
 
 import { ConfigProvider } from "antd";
-import { ReactElement } from "react";
+import { ReactElement, useEffect } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import { AuthStatus } from "@/hooks/auth-status";
@@ -36,6 +36,31 @@ export const Router = () => {
   const { locale } = useAuth();
 
   const location = useLocation();
+
+  useEffect(() => {
+    const handleTokenRefresh = (token: string, userName: string) => {
+      if (window.$wujie?.props) {
+        window.$wujie.props.token = token;
+        window.$wujie.props.userName = userName;
+      }
+    };
+
+    const registerListener = () => {
+      if (window.$wujie?.bus) {
+        window.$wujie.bus.$on("token_refresh", handleTokenRefresh);
+      } else {
+        console.log("Wujie bus 未初始化");
+      }
+    };
+
+    registerListener();
+
+    return () => {
+      if (window.$wujie?.bus) {
+        window.$wujie.bus.$off("token_refresh", handleTokenRefresh);
+      }
+    };
+  }, []);
 
   const routers: IRouteItem[] = [
     {

@@ -4,60 +4,30 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { App } from "antd";
 import {
-  IAcceptWarnDataProps,
   IAcceptWarnDtoProps,
   IAddTeamDataProps,
   INewTeamDtoProps,
   ITeamListProps,
+  IUserProfileNotificationDto,
 } from "@/dtos/main";
 import {
   GetAccountInfoApi,
   GetTeamsMineApi,
+  GetUserNotificationApi,
   PostTeamCreateApi,
   PostUploadApi,
+  PostUserNotificationUpdateApi,
 } from "@/services/main";
 import { isEmpty } from "ramda";
+import { GetMineRoleList } from "@/services/default";
+import { FrontRolePermissionEnum } from "@/dtos/mine";
 
-const initAcceptWarn: IAcceptWarnDataProps = {
-  telephone: "",
-  weCom: "",
-  mailbox: "",
-};
-
-const initCurrentTeam: ITeamListProps = {
+const initAcceptWarn: IUserProfileNotificationDto = {
   id: "",
-  name: "",
-  leaderId: "",
-  tenantId: "",
-  avatarUrl: "",
+  phone: "",
+  workWechat: "",
+  email: "",
 };
-
-const mockTeamList: ITeamListProps[] = [
-  {
-    id: "1",
-    name: "Alpha Team",
-    leaderId: "leader-001",
-    tenantId: "tenant-001",
-    avatarUrl:
-      "https://smartiestest.oss-cn-hongkong.aliyuncs.com/20241217/6be331e8-0b6a-4a65-aeb8-e14f70407c33.jpeg?Expires=253402300799&OSSAccessKeyId=LTAI5tEYyDT8YqJBSXaFDtyk&Signature=zhqP7kcVoYACfR7K6rmQkC3sQSk%3D",
-  },
-  {
-    id: "2",
-    name: "Beta Team",
-    leaderId: "leader-002",
-    tenantId: "tenant-002",
-    avatarUrl:
-      "https://smartiestest.oss-cn-hongkong.aliyuncs.com/20250101/6feaeab5-920e-4073-81e1-ae305255593d.png?Expires=253402300799&OSSAccessKeyId=LTAI5tEYyDT8YqJBSXaFDtyk&Signature=JMZaXL5KBflFrNUSlowuYKhCNqk%3D",
-  },
-  {
-    id: "3",
-    name: "Gamma Team",
-    leaderId: "leader-003",
-    tenantId: "tenant-003",
-    avatarUrl:
-      "https://smartiestest.oss-cn-hongkong.aliyuncs.com/20250101/6eac6763-87a2-4958-93cc-e895de06906b.jpeg?Expires=253402300799&OSSAccessKeyId=LTAI5tEYyDT8YqJBSXaFDtyk&Signature=%2BCqlH7S0BI8sF7449SvJpyaErDo%3D",
-  },
-];
 
 export const useAction = () => {
   const { message } = App.useApp();
@@ -75,6 +45,9 @@ export const useAction = () => {
     defaultNavigatePage,
     setCurrentTeam,
     setPagePermission,
+    teamList,
+    getMineTeam,
+    setIsGetPermission,
   } = useAuth();
 
   const [openKeys, setOpenKeys] = useState<string[]>([]);
@@ -86,8 +59,6 @@ export const useAction = () => {
   const [languageStatus, setLanguageStatus] = useState<boolean>(false);
 
   const [collapsed, setCollapsed] = useState<boolean>(false);
-
-  const [teamList, setTeamList] = useState<ITeamListProps[]>([]);
 
   const [newTeamDto, setNewTeamDto] = useState<INewTeamDtoProps>({
     openNewTeam: false,
@@ -106,10 +77,13 @@ export const useAction = () => {
   });
 
   const [acceptWarnData, setAcceptWarnData] =
-    useState<IAcceptWarnDataProps>(initAcceptWarn);
+    useState<IUserProfileNotificationDto>(initAcceptWarn);
+
+  const [originAcceptWarnData, setOriginAcceptWarnData] =
+    useState<IUserProfileNotificationDto>(initAcceptWarn);
 
   const [errorMessages, setErrorMessages] =
-    useState<IAcceptWarnDataProps>(initAcceptWarn);
+    useState<IUserProfileNotificationDto>(initAcceptWarn);
 
   const updateAddTeamData = (k: keyof IAddTeamDataProps, v: string) => {
     setAddTeamData((prev) => ({
@@ -132,14 +106,20 @@ export const useAction = () => {
     }));
   };
 
-  const updateErrorMessage = (k: keyof IAcceptWarnDataProps, v: string) => {
+  const updateErrorMessage = (
+    k: keyof IUserProfileNotificationDto,
+    v: string
+  ) => {
     setErrorMessages((prev) => ({
       ...prev,
       [k]: v,
     }));
   };
 
-  const updateAcceptWarnData = (k: keyof IAcceptWarnDataProps, v: string) => {
+  const updateAcceptWarnData = (
+    k: keyof IUserProfileNotificationDto,
+    v: string
+  ) => {
     setAcceptWarnData((prev) => ({
       ...prev,
       [k]: v,
@@ -147,36 +127,47 @@ export const useAction = () => {
   };
 
   const validationRules: Record<
-    keyof IAcceptWarnDataProps,
-    { pattern: RegExp; errorMessage: string }
+    keyof IUserProfileNotificationDto,
+    { pattern: RegExp | undefined; errorMessage: string }
   > = {
-    telephone: {
+    phone: {
       pattern: /^[0-9]{7,15}$/, // 7-15位数字
       errorMessage: "請輸入正確的電話號碼",
     },
-    weCom: {
+    workWechat: {
       pattern: /^[a-zA-Z0-9_-]{4,20}$/, // 4-20位字符
       errorMessage: "請輸入正確的企業微信號碼",
     },
-    mailbox: {
+    email: {
       pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // 通用邮箱格式
       errorMessage: "請輸入正確的郵箱地址",
     },
+    id: {
+      pattern: undefined,
+      errorMessage: "",
+    },
   };
 
-  const validateFn = (type: keyof IAcceptWarnDataProps, value: string) => {
+  const validateFn = (
+    type: keyof IUserProfileNotificationDto,
+    value: string
+  ) => {
     const rule = validationRules[type];
 
     if (!rule) return;
 
     const { pattern, errorMessage } = rule;
 
-    updateErrorMessage(type, pattern.test(value) ? "" : errorMessage);
+    updateErrorMessage(type, pattern?.test(value) ? "" : errorMessage);
   };
 
   const jumpToBackstage = () => {
     if (pagePermission.canSwitchCameraAiBackend) {
-      window.open(`/backstage`, "_blank", "noopener,noreferrer");
+      if (window.__POWERED_BY_WUJIE__) {
+        window.$wujie.props?.goBackstage();
+      } else {
+        navigate("/backstage");
+      }
     } else {
       message.warning("暫無權限切換後台");
     }
@@ -240,7 +231,7 @@ export const useAction = () => {
 
       PostTeamCreateApi({ team: addTeamData })
         .then(() => {
-          getMineTeam();
+          getMineTeam(userName);
 
           message.success("創建團隊成功");
         })
@@ -264,36 +255,25 @@ export const useAction = () => {
     () => {
       updateAcceptWarnDto("acceptWarnLoading", true);
 
-      setTimeout(() => {
-        message.success("接收预警成功");
+      PostUserNotificationUpdateApi({
+        userProfileNotificationDto: acceptWarnData,
+      })
+        .then(() => {
+          getUserNotification();
 
-        updateAcceptWarnDto("acceptWarnLoading", false);
+          message.success("保存成功");
+        })
+        .catch((err) => {
+          message.error(`保存失敗：${err}`);
+        })
+        .finally(() => {
+          updateAcceptWarnDto("acceptWarnLoading", false);
 
-        updateAcceptWarnDto("openAcceptWran", false);
-
-        updateAcceptWarnData("mailbox", initAcceptWarn.mailbox);
-
-        updateAcceptWarnData("telephone", initAcceptWarn.telephone);
-
-        updateAcceptWarnData("weCom", initAcceptWarn.weCom);
-      }, 3000);
+          updateAcceptWarnDto("openAcceptWran", false);
+        });
     },
     { wait: 500 }
   );
-
-  const getMineTeam = () => {
-    GetTeamsMineApi({})
-      .then((res) => {
-        if (!isEmpty(res)) {
-          setTeamList(res);
-
-          setCurrentTeam(res[0] ?? initCurrentTeam);
-        }
-      })
-      .catch((err) => {
-        message.error(`獲取團隊失敗：${err}`);
-      });
-  };
 
   const getMineInfo = () => {
     GetAccountInfoApi({})
@@ -310,10 +290,24 @@ export const useAction = () => {
       });
   };
 
-  useEffect(() => {
-    getMineTeam();
+  const getUserNotification = () => {
+    GetUserNotificationApi({
+      TeamId: currentTeam.id,
+    })
+      .then((res) => {
+        setAcceptWarnData(res?.userProfileNotificationDto);
 
+        setOriginAcceptWarnData(res?.userProfileNotificationDto);
+      })
+      .catch((err) => {
+        message.error(`獲取預警信息失敗：${err}`);
+      });
+  };
+
+  useEffect(() => {
     getMineInfo();
+
+    // getUserNotification();
 
     handleResize();
 
@@ -325,6 +319,8 @@ export const useAction = () => {
   }, []);
 
   useUpdateEffect(() => {
+    getUserNotification();
+
     localStorage.setItem("currentTeam", JSON.stringify(currentTeam));
   }, [currentTeam]);
 
@@ -393,5 +389,9 @@ export const useAction = () => {
     defaultNavigatePage,
     setCurrentTeam,
     setPagePermission,
+    setIsGetPermission,
+    originAcceptWarnData,
+    setAcceptWarnData,
+    setErrorMessages,
   };
 };

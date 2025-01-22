@@ -1,9 +1,3 @@
-export interface IAcceptWarnDataProps {
-  telephone: string;
-  weCom: string;
-  mailbox: string;
-}
-
 export interface INewTeamDtoProps {
   openNewTeam: boolean;
   isUploading: boolean;
@@ -69,4 +63,20 @@ export interface IUserDataItem {
   from: UserProfileOriginType;
   isDeleted: boolean;
   createdTime: string;
+}
+
+export interface IGetUserNotificationRequest {
+  UserProfileId?: string;
+  TeamId: string;
+}
+
+export interface IGetUserNotificationResponse {
+  userProfileNotificationDto: IUserProfileNotificationDto;
+}
+
+export interface IUserProfileNotificationDto {
+  id: string;
+  email: string;
+  phone: string;
+  workWechat: string;
 }

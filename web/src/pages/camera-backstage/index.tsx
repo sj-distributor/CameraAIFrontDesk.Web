@@ -52,7 +52,7 @@ export const CameraBackstage = () => {
               height="100%"
               name="CameraBackstage"
               url={(window as any).appsettings.cameraAIBackstageDomain}
-              sync={true}
+              // sync={true}
               alive={true}
               fiber={true}
               activated={() => setPreLoading(false)}
