@@ -352,7 +352,7 @@ export const AuthProvider = (props: { children: ReactElement }) => {
   }, [isLogin]);
 
   useUpdateEffect(() => {
-    getMinePermission(currentTeam.id);
+    if (currentTeam.id) getMinePermission(currentTeam.id);
   }, [currentTeam]);
 
   useUpdateEffect(() => {
