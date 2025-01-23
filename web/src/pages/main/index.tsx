@@ -403,16 +403,24 @@ export const Main = () => {
                           }
                         },
                       },
-                    ].map((item, index) => (
-                      <div
-                        key={index}
-                        className="h-9 flex items-center space-x-2 bg-white hover:bg-[#EBF1FF] hover:text-[#2866F1] rounded-lg cursor-pointer select-none pl-2 dropdown"
-                        onClick={item.function}
-                      >
-                        {item.component}
-                        <span className="text-sm">{item.name}</span>
-                      </div>
-                    ))}
+                    ]
+                      .filter(
+                        (item) =>
+                          !(
+                            userName.toLowerCase() === "admin" &&
+                            item.name === "預覽接收"
+                          )
+                      )
+                      .map((item, index) => (
+                        <div
+                          key={index}
+                          className="h-9 flex items-center space-x-2 bg-white hover:bg-[#EBF1FF] hover:text-[#2866F1] rounded-lg cursor-pointer select-none pl-2 dropdown"
+                          onClick={item.function}
+                        >
+                          {item.component}
+                          <span className="text-sm">{item.name}</span>
+                        </div>
+                      ))}
                   </div>
                 </div>
               )}
