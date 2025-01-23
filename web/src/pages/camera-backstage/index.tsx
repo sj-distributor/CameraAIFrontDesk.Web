@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/use-auth";
 import { LoadingSvg } from "@/icon/main";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import WujieReact from "wujie-react";
 import { None } from "../none";
