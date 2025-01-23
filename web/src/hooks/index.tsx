@@ -176,14 +176,6 @@ export const AuthProvider = (props: { children: ReactElement }) => {
 
     setIsGetPermission(true);
 
-    // if (
-    //   rolePermissionData?.some((item) =>
-    //     item.permissions.some(
-    //       (permission) =>
-    //         permission.name === FrontRolePermissionEnum.CanEnterCameraAi
-    //     )
-    //   )
-    // ) {
     setMineRoles({
       count: count ?? 0,
       rolePermissionData: rolePermissionData ?? [],
@@ -193,26 +185,21 @@ export const AuthProvider = (props: { children: ReactElement }) => {
 
     setPagePermission(permissions);
 
-    const defaultPage = permissions["canViewHome"]
-      ? "/home"
-      : permissions["canViewMonitor"]
-      ? "/monitor"
-      : permissions["canViewReplay"]
-      ? "/replay"
-      : permissions["canViewWarning"]
-      ? "/warning"
-      : permissions["canViewFeedback"]
-      ? "/feedback"
-      : "/none";
+    if (isLogin) {
+      const defaultPage = permissions["canViewHome"]
+        ? "/home"
+        : permissions["canViewMonitor"]
+        ? "/monitor"
+        : permissions["canViewReplay"]
+        ? "/replay"
+        : permissions["canViewWarning"]
+        ? "/warning"
+        : permissions["canViewFeedback"]
+        ? "/feedback"
+        : "/none";
 
-    navigate(defaultPage);
-    // } else {
-    //   navigate("/none");
-
-    //   setDefaultNavigatePage("/none");
-
-    //   message.warning("當前帳號在該團隊中無操作權限");
-    // }
+      navigate(defaultPage);
+    }
   };
 
   const changeLanguage = (language: "en" | "ch") => {

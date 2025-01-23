@@ -16,8 +16,6 @@ export const CameraBackstage = () => {
 
   const userNameKey = (window as any).appsettings.userNameKey;
 
-  const [preloading, setPreLoading] = useState<boolean>(true);
-
   useEffect(() => {
     const handleStorageChange = () => {
       try {
@@ -41,21 +39,14 @@ export const CameraBackstage = () => {
       {isGetPermission ? (
         pagePermission.canSwitchCameraAiBackend ? (
           <>
-            {preloading && (
-              <div className="absolute inset-0 flex justify-center items-center z-10 bg-white">
-                <LoadingSvg />
-              </div>
-            )}
-
             <WujieReact
               width="100%"
               height="100%"
               name="CameraBackstage"
               url={(window as any).appsettings.cameraAIBackstageDomain}
-              // sync={true}
-              alive={true}
+              sync={true}
+              alive={false}
               fiber={true}
-              activated={() => setPreLoading(false)}
               props={{
                 userName: localStorage.getItem(userNameKey),
                 token: localStorage.getItem(tokenKey),
