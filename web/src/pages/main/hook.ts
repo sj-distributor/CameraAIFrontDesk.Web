@@ -162,7 +162,7 @@ export const useAction = () => {
       if (window.__POWERED_BY_WUJIE__) {
         window.$wujie.props?.goBackstage();
       } else {
-        navigate("/backstage");
+        window.open(`/backstage`, "_blank", "noopener,noreferrer");
       }
     } else {
       message.warning("暫無權限切換後台");

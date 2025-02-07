@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { IUserInfo } from "@/dtos";
 import { useAuth } from "@/hooks/use-auth";
 import { Login } from "@/services/home";
+import { GetMineRoleList } from "@/services/default";
+import { FrontRolePermissionEnum } from "@/dtos/mine";
 
 export const useAction = () => {
   const { message, signIn } = useAuth();
@@ -22,13 +24,13 @@ export const useAction = () => {
     }));
   };
 
-  // const hanldeNoPermission = () => {
-  //   localStorage.removeItem(
-  //     (window as any).appsettings?.tokenKey ?? "tokenKey"
-  //   );
+  const hanldeNoPermission = () => {
+    localStorage.removeItem(
+      (window as any).appsettings?.tokenKey ?? "tokenKey"
+    );
 
-  //   localStorage.removeItem((window as any).appsettings?.userNameKey);
-  // };
+    localStorage.removeItem((window as any).appsettings?.userNameKey);
+  };
 
   const onLogin = () => {
     setLoginLoading(true);
@@ -45,37 +47,34 @@ export const useAction = () => {
               userInfo.userName
             );
 
-            signIn(
-              localStorage.getItem(
-                (window as any).appsettings?.tokenKey ?? "tokenKey"
-              ) ?? "",
-              userInfo.userName
-            );
+            GetMineRoleList({})
+              .then((response) => {
+                if (
+                  response.rolePermissionData.some((item) =>
+                    item.permissions.some(
+                      (permission) =>
+                        permission.name ===
+                        FrontRolePermissionEnum.CanEnterCameraAi
+                    )
+                  )
+                ) {
+                  signIn(
+                    localStorage.getItem(
+                      (window as any).appsettings?.tokenKey ?? "tokenKey"
+                    ) ?? "",
+                    userInfo.userName
+                  );
 
-            message.success("登录成功");
+                  message.success("登录成功");
+                } else {
+                  hanldeNoPermission();
+                }
+              })
+              .catch(() => {
+                setLoginLoading(false);
 
-            // GetMineRoleList()
-            //   .then((response) => {
-            //     if (
-            //       response.rolePermissionData.some((item) =>
-            //         item.permissions.some(
-            //           (permission) =>
-            //             permission.name ===
-            //             FrontRolePermissionEnum.CanEnterCameraAi
-            //         )
-            //       )
-            //     ) {
-            //       message.success("登录成功");
-
-            //     } else {
-            //       hanldeNoPermission();
-            //     }
-            //   })
-            //   .catch(() => {
-            //     setLoginLoading(false);
-
-            //     hanldeNoPermission();
-            //   });
+                hanldeNoPermission();
+              });
           } else {
             setLoginLoading(false);
           }

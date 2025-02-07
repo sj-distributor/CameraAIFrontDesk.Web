@@ -149,7 +149,7 @@ export const AuthProvider = (props: { children: ReactElement }) => {
           setTeamList(res);
           getMinePermission(res[0].id);
 
-          if (!window.__POWERED_BY_WUJIE__) {
+          if (!window.__POWERED_BY_WUJIE__ && !localCurrentTeam.id) {
             localStorage.setItem(
               "currentTeam",
               JSON.stringify(res[0] ?? initCurrentTeam)
@@ -158,6 +158,10 @@ export const AuthProvider = (props: { children: ReactElement }) => {
             setCurrentTeam(res[0] ?? initCurrentTeam);
           }
         } else {
+          setTeamList([]);
+
+          setPagePermission(checkRole([]));
+
           setIsGetPermission(true);
 
           navigate("/home");
