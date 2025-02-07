@@ -67,6 +67,8 @@ export const useAction = () => {
 
                   message.success("登录成功");
                 } else {
+                  message.info("您没有访问权限");
+
                   hanldeNoPermission();
                 }
               })
