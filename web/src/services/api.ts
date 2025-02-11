@@ -11,11 +11,19 @@ api.interceptors.request.use(
 
     const tokenKey = (window as any).appsettings?.tokenKey;
 
-    const token = localStorage.getItem(tokenKey);
+    const token = window.__POWERED_BY_WUJIE__
+      ? window.$wujie.props?.token
+      : localStorage.getItem(tokenKey);
 
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    const localCurrentTeam = JSON.parse(
+      localStorage.getItem("currentTeam") ?? "{}"
+    );
+
+    config.headers["X-TeamId-Header"] = localCurrentTeam.id;
 
     return config;
   },
@@ -34,10 +42,13 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response.status === 401) {
-      localStorage.removeItem((window as any).appsettings?.tokenKey);
-
       message.error("登录已过期，请重新登录", 1, () => {
         window.location.reload();
+        if (window.__POWERED_BY_WUJIE__) {
+          window.$wujie.props?.signOut();
+        } else {
+          localStorage.removeItem((window as any).appsettings?.tokenKey);
+        }
       });
     } else {
       // if (error) {
@@ -94,12 +105,13 @@ export async function base<T>(
   data?: object | FormData
 ) {
   const settings = (window as any).appsettings;
+
+  const token = window.__POWERED_BY_WUJIE__
+    ? window.$wujie.props?.token
+    : localStorage.getItem((window as any).appsettings?.tokenKey);
+
   const headers: { Authorization: string; "Content-Type"?: string } = {
-    Authorization:
-      "Bearer " +
-      (localStorage.getItem("token")
-        ? (localStorage.getItem("token") as string)
-        : ""),
+    Authorization: "Bearer " + token,
   };
   const isFormData = data instanceof FormData;
   if (!isFormData) headers["Content-Type"] = "application/json";

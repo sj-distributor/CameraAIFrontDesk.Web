@@ -11,13 +11,14 @@ import { GetRecordList } from "@/services/default";
 
 import { FeedbackSearchDataContext } from "../..";
 import { useAuth } from "@/hooks/use-auth";
+import { message } from "antd";
 
 interface IDto extends IPageDto, IRecordResponse {
   loading: boolean;
 }
 
 export const useAction = () => {
-  const { t, navigate, pagePermission } = useAuth();
+  const { t, navigate, pagePermission, currentTeam } = useAuth();
 
   const { selectValues, timeDto } = useContext(FeedbackSearchDataContext);
 
@@ -58,10 +59,16 @@ export const useAction = () => {
     endTime?: string,
     selectValues?: number[]
   ) => {
+    if (!currentTeam.id) {
+      message.error("TeamId not found！");
+      return;
+    }
+
     const data: IRecordRequest = {
       PageIndex: pageIndex,
       PageSize: pageSize,
       Status: IStatusType.Exception,
+      TeamId: currentTeam.id,
     };
 
     if (startTime && endTime) {

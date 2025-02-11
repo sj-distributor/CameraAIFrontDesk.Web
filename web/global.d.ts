@@ -19,7 +19,12 @@ interface Window {
   $wujie: {
     bus: EventBus;
     shadowRoot?: ShadowRoot;
-    props?: { [key: string]: string };
+    props?: {
+      userName: string;
+      token: string;
+      signOut: (callback?: VoidFunction) => void;
+      goBackstage: () => void;
+    };
     location?: object;
   };
 }

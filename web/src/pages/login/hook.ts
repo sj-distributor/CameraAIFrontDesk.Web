@@ -8,14 +8,14 @@ import { GetMineRoleList } from "@/services/default";
 import { FrontRolePermissionEnum } from "@/dtos/mine";
 
 export const useAction = () => {
-  const { signIn, message } = useAuth();
+  const { message, signIn } = useAuth();
+
+  const [loginLoading, setLoginLoading] = useState<boolean>(false);
 
   const [userInfo, setUserInfo] = useState<IUserInfo>({
     userName: "",
     password: "",
   });
-
-  const [loginLoading, setLoginLoading] = useState<boolean>(false);
 
   const updateUserInfo = (k: keyof IUserInfo, v: string) => {
     setUserInfo((prev) => ({
@@ -25,8 +25,6 @@ export const useAction = () => {
   };
 
   const hanldeNoPermission = () => {
-    message.error("您没有访问权限");
-
     localStorage.removeItem(
       (window as any).appsettings?.tokenKey ?? "tokenKey"
     );
@@ -49,7 +47,7 @@ export const useAction = () => {
               userInfo.userName
             );
 
-            GetMineRoleList()
+            GetMineRoleList({})
               .then((response) => {
                 if (
                   response.rolePermissionData.some((item) =>
@@ -60,23 +58,24 @@ export const useAction = () => {
                     )
                   )
                 ) {
-                  message.success("登录成功");
-
                   signIn(
                     localStorage.getItem(
                       (window as any).appsettings?.tokenKey ?? "tokenKey"
                     ) ?? "",
                     userInfo.userName
                   );
+
+                  message.success("登录成功");
                 } else {
+                  message.info("您没有访问权限");
+
                   hanldeNoPermission();
                 }
               })
               .catch(() => {
-                hanldeNoPermission();
-              })
-              .finally(() => {
                 setLoginLoading(false);
+
+                hanldeNoPermission();
               });
           } else {
             setLoginLoading(false);
@@ -86,7 +85,8 @@ export const useAction = () => {
           setLoginLoading(false);
 
           message.error("登录失败，请重试");
-        });
+        })
+        .finally(() => setLoginLoading(false));
     } else {
       message.warning("请输入正确的用户名和密码");
     }

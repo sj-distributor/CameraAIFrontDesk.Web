@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/use-auth";
 import { LoadingSvg } from "@/icon/main";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import WujieReact from "wujie-react";
 import { None } from "../none";
@@ -15,8 +15,6 @@ export const CameraBackstage = () => {
   const tokenKey = (window as any).appsettings.tokenKey;
 
   const userNameKey = (window as any).appsettings.userNameKey;
-
-  const [preloading, setPreLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -41,21 +39,14 @@ export const CameraBackstage = () => {
       {isGetPermission ? (
         pagePermission.canSwitchCameraAiBackend ? (
           <>
-            {preloading && (
-              <div className="absolute inset-0 flex justify-center items-center z-10 bg-white">
-                <LoadingSvg />
-              </div>
-            )}
-
             <WujieReact
               width="100%"
               height="100%"
               name="CameraBackstage"
               url={(window as any).appsettings.cameraAIBackstageDomain}
               sync={true}
-              alive={true}
+              alive={false}
               fiber={true}
-              activated={() => setPreLoading(false)}
               props={{
                 userName: localStorage.getItem(userNameKey),
                 token: localStorage.getItem(tokenKey),

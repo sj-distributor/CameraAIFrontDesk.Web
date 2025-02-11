@@ -1,5 +1,4 @@
 import {
-  CodeSandboxCircleFilled,
   DeleteOutlined,
   LoadingOutlined,
   SwapOutlined,
@@ -14,6 +13,9 @@ import {
   Modal,
   Popover,
   Image,
+  Tooltip,
+  Spin,
+  message,
 } from "antd";
 import { useMemo } from "react";
 import { Link, Outlet } from "react-router-dom";
@@ -67,24 +69,23 @@ export const Main = () => {
     handleOnSignOut,
     pagePermission,
     handleJumpToBackstage,
-    clickIndex,
     addTeamData,
     acceptWarnData,
     errorMessages,
     onAddTeamDebounceFn,
     onAcceptWarnDebounceFn,
     teamList,
-    teamSelect,
     newTeamDto,
     acceptWarnDto,
+    currentTeam,
+    defaultNavigatePage,
+    originAcceptWarnData,
     initAcceptWarn,
     updateAcceptWarnDto,
     updateNewTeamDto,
-    setTeamSelect,
     updateErrorMessage,
     updateAcceptWarnData,
     updateAddTeamData,
-    setClickIndex,
     navigate,
     setStatus,
     setOpenKeys,
@@ -94,6 +95,10 @@ export const Main = () => {
     setLanguageStatus,
     onUpload,
     validateFn,
+    setCurrentTeam,
+    setIsGetPermission,
+    setAcceptWarnData,
+    setErrorMessages,
   } = useAction();
 
   const items: MenuItem[] = useMemo(() => {
@@ -240,7 +245,12 @@ export const Main = () => {
       }
     });
 
-    return filteredItems;
+    // 过滤掉 children 是空数组的项
+    const filteredItems1 = filteredItems.filter((item) => {
+      return !(item.children && item.children.length === 0);
+    });
+
+    return filteredItems1;
   }, [pagePermission, location.pathname, selectedKeys, t]);
 
   return (
@@ -316,7 +326,9 @@ export const Main = () => {
                 }}
                 size="default"
               >
-                {userName.charAt(0)}
+                {window.__POWERED_BY_WUJIE__
+                  ? window.$wujie.props?.userName?.charAt(0)
+                  : userName.charAt(0)}
               </Avatar>
             </div>
 
@@ -327,7 +339,9 @@ export const Main = () => {
             >
               <div className="flex relative items-center space-x-1 cursor-pointer w-[5.5rem] justify-center">
                 <div className="text-sm relative select-none w-16 text-center truncate">
-                  {userName}
+                  {window.__POWERED_BY_WUJIE__
+                    ? window.$wujie.props?.userName
+                    : userName}
                 </div>
                 <img
                   src={chevronDownImg}
@@ -345,16 +359,19 @@ export const Main = () => {
                       }}
                       size="large"
                     >
-                      {userName.charAt(0)}
+                      {window.__POWERED_BY_WUJIE__
+                        ? window.$wujie.props?.userName?.charAt(0)
+                        : userName.charAt(0)}
                     </Avatar>
 
                     <div className="flex flex-col w-36 ml-2">
                       <div className="text-lg font-semibold relative select-none w-16 text-center">
-                        {userName}
+                        {window.__POWERED_BY_WUJIE__
+                          ? window.$wujie.props?.userName
+                          : userName}
                       </div>
                       <div className="flex flex-wrap text-[#8B98AD] text-[0.88rem] mt-1">
-                        PERATION INC./IS Office/WT
-                        OSC/品牌數字化賦能中心/集團產品組/UI/UX組
+                        {currentTeam.name}
                       </div>
                     </div>
                   </div>
@@ -379,19 +396,31 @@ export const Main = () => {
                         name: "退出登陸",
                         component: <LogoutIcon />,
                         function: () => {
-                          handleOnSignOut(() => navigate("/login"));
+                          if (window.__POWERED_BY_WUJIE__) {
+                            window.$wujie.props?.signOut();
+                          } else {
+                            handleOnSignOut(() => navigate("/login"));
+                          }
                         },
                       },
-                    ].map((item, index) => (
-                      <div
-                        key={index}
-                        className="h-9 flex items-center space-x-2 bg-white hover:bg-[#EBF1FF] hover:text-[#2866F1] rounded-lg cursor-pointer select-none pl-2 dropdown"
-                        onClick={item.function}
-                      >
-                        {item.component}
-                        <span className="text-sm">{item.name}</span>
-                      </div>
-                    ))}
+                    ]
+                      .filter(
+                        (item) =>
+                          !(
+                            userName.toLowerCase() === "admin" &&
+                            item.name === "預覽接收"
+                          )
+                      )
+                      .map((item, index) => (
+                        <div
+                          key={index}
+                          className="h-9 flex items-center space-x-2 bg-white hover:bg-[#EBF1FF] hover:text-[#2866F1] rounded-lg cursor-pointer select-none pl-2 dropdown"
+                          onClick={item.function}
+                        >
+                          {item.component}
+                          <span className="text-sm">{item.name}</span>
+                        </div>
+                      ))}
                   </div>
                 </div>
               )}
@@ -401,62 +430,97 @@ export const Main = () => {
       </div>
 
       <main className="grow flex overflow-hidden">
-        {location.pathname !== "/none" && (
-          <div
-            className={`h-full overflow-y-auto no-scrollbar box-border pt-12 flex flex-col justify-between ${
-              !collapsed && "!min-w-60 w-60"
-            }`}
-          >
-            <Menu
-              className="select-none"
-              mode="inline"
-              items={items}
-              openKeys={openKeys}
-              selectedKeys={selectedKeys}
-              onSelect={(e) => {
-                setSelectedKeys(e.selectedKeys);
-                filterSelectKey(e.selectedKeys[0]);
-              }}
-              onOpenChange={(e) => {
-                setOpenKeys([e[e.length > 0 ? e.length - 1 : 0]]);
-              }}
-              inlineCollapsed={collapsed}
-            />
-            <div>
-              {
-                <Popover
-                  className="cursor-pointer"
-                  placement="right"
-                  arrow={false}
-                  content={
-                    <div className="flex flex-col w-[10rem] teamList">
-                      <div className="max-h-72 overflow-y-auto">
-                        {teamList.map((item, index) => {
-                          return (
-                            <div
-                              className={`hover:text-[#2866F1] text-[0.88rem] flex flex-row justify-between items-center cursor-pointer p-2 rounded-lg mb-1 ${
-                                index === clickIndex &&
-                                "text-[#2866F1] bg-[#EBF1FF]"
-                              }`}
-                              onClick={() => {
-                                setClickIndex(index);
-                                setTeamSelect({ teamName: item?.teamName });
-                              }}
-                              key={index}
-                            >
-                              <div className="flex">
-                                <div className="mr-3 h-5 w-5">
-                                  <CodeSandboxCircleFilled className="text-[#5092b9] text-xl" />
+        <div
+          className={`h-full overflow-y-auto no-scrollbar box-border pt-12 flex flex-col justify-between ${
+            !collapsed && "!min-w-60 w-60"
+          }`}
+        >
+          <Menu
+            className="select-none"
+            mode="inline"
+            items={items}
+            openKeys={openKeys}
+            selectedKeys={selectedKeys}
+            onSelect={(e) => {
+              setSelectedKeys(e.selectedKeys);
+              filterSelectKey(e.selectedKeys[0]);
+            }}
+            onOpenChange={(e) => {
+              setOpenKeys([e[e.length > 0 ? e.length - 1 : 0]]);
+            }}
+            inlineCollapsed={collapsed}
+          />
+
+          <div>
+            {
+              <Popover
+                className="cursor-pointer"
+                placement="right"
+                arrow={false}
+                content={
+                  <div className="flex flex-col w-[10rem] teamList">
+                    <div className="max-h-72 overflow-y-auto">
+                      {teamList.map((item, index) => {
+                        return (
+                          <div
+                            className={`hover:text-[#2866F1] text-[0.88rem] flex flex-row justify-between items-center cursor-pointer p-2 rounded-lg mb-1 ${
+                              item.id === currentTeam.id &&
+                              "text-[#2866F1] bg-[#EBF1FF]"
+                            }`}
+                            onClick={() => {
+                              if (
+                                item.id !== currentTeam.id &&
+                                defaultNavigatePage
+                              ) {
+                                setCurrentTeam(item);
+
+                                setIsGetPermission(false);
+
+                                message.info(
+                                  `即将切换到 ${item.name} ......`,
+                                  0
+                                );
+
+                                const interval = setInterval(() => {
+                                  if (isGetPermission) {
+                                    clearInterval(interval);
+                                    message.destroy();
+                                    navigate(defaultNavigatePage, {
+                                      replace: true,
+                                    });
+                                  }
+                                }, 100);
+                              }
+                            }}
+                            key={index}
+                          >
+                            <div className="flex">
+                              <Avatar size="small" src={item.avatarUrl} />
+                              <Tooltip
+                                title={item?.name}
+                                placement="rightTop"
+                                arrow={false}
+                                color="#F5F7FB"
+                                overlayStyle={{
+                                  paddingLeft: "1rem",
+                                  paddingRight: "1rem",
+                                }}
+                                overlayInnerStyle={{ color: "#18283C" }}
+                              >
+                                <div className="w-[5.5rem] ml-[0.75rem] line-clamp-1">
+                                  {item?.name}
                                 </div>
-                                <div className="w-[5.5rem] line-clamp-1">
-                                  {item?.teamName}
-                                </div>
-                              </div>
-                              {index === clickIndex && <SelectedIcon />}
+                              </Tooltip>
                             </div>
-                          );
-                        })}
-                      </div>
+                            {item.id === currentTeam.id && <SelectedIcon />}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {/* 有团队：有权限才可以创建
+                    无团队：不需要权限也可以创建 */}
+                    {(pagePermission.canCreateCameraAiTeam ||
+                      isEmpty(teamList)) && (
                       <div
                         className="text-[#5F6279] text-[0.88rem] flex items-center cursor-pointer border-t p-2 mt-6"
                         onClick={() => updateNewTeamDto("openNewTeam", true)}
@@ -464,38 +528,28 @@ export const Main = () => {
                         <AddTeamIcon />
                         <span className="ml-1">創建新團隊</span>
                       </div>
-                    </div>
-                  }
-                >
-                  <div className="flex items-center justify-between mx-4 border-t py-6 mb-2">
-                    <div className="flex items-center">
-                      <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-3">
-                        <Avatar
-                          style={{
-                            backgroundColor: `${
-                              teamList ? "#2853E4" : "#F8F8FD"
-                            }`,
-                            verticalAlign: "middle",
-                          }}
-                          size="default"
-                        >
-                          {teamList && userName.charAt(0)}
-                        </Avatar>
-                      </div>
-                      <div className="text-base font-semibold text-[#18283C] line-clamp-1 w-[8.5rem]">
-                        {!isEmpty(teamList) ? teamSelect?.teamName : "暫無團隊"}
-                      </div>
-                    </div>
-                    <UserArrowRightIcon />
+                    )}
                   </div>
-                </Popover>
-              }
-            </div>
+                }
+              >
+                <div className="flex items-center justify-between mx-4 border-t py-6 mb-2">
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-3">
+                      <Avatar size="default" src={currentTeam.avatarUrl} />
+                    </div>
+                    <div className="text-base font-semibold text-[#18283C] line-clamp-1 w-[8.5rem]">
+                      {!isEmpty(teamList) ? currentTeam?.name : "暫無團隊"}
+                    </div>
+                  </div>
+                  <UserArrowRightIcon />
+                </div>
+              </Popover>
+            }
           </div>
-        )}
+        </div>
 
         <div className="w-[calc(100%-15rem)] flex-1 bg-[#F5F7FB] p-1">
-          {isGetPermission && (
+          {isGetPermission ? (
             <>
               {!isEmpty(teamList) ? (
                 <Outlet />
@@ -516,6 +570,11 @@ export const Main = () => {
                 </div>
               )}
             </>
+          ) : (
+            <Spin
+              className="h-screen flex items-center justify-center"
+              size="large"
+            />
           )}
         </div>
       </main>
@@ -529,13 +588,13 @@ export const Main = () => {
           <div className="flex flex-row justify-end box-border border-t py-4 pr-8">
             <Button
               className={`rounded-[3.5rem] py-2 px-4 bg-[#2866F1] text-white text-xs ${
-                addTeamData.logoUrl &&
-                addTeamData?.teamName &&
+                addTeamData.avatarUrl &&
+                addTeamData?.name &&
                 "hover:!bg-[#2866F1] hover:!text-white"
               }`}
               onClick={onAddTeamDebounceFn}
               loading={newTeamDto.addTeamLoading}
-              disabled={!addTeamData.logoUrl || !addTeamData?.teamName}
+              disabled={!addTeamData.avatarUrl || !addTeamData?.name}
             >
               創建團隊
             </Button>
@@ -560,10 +619,10 @@ export const Main = () => {
               <div className="min-w-16 flex justify-end mr-4 text-[#18283C] mb-10">
                 LOGO
               </div>
-              {addTeamData?.logoUrl ? (
+              {addTeamData?.avatarUrl ? (
                 <>
                   <Image
-                    src={addTeamData?.logoUrl}
+                    src={addTeamData?.avatarUrl}
                     className="bg-center bg-no-repeat bg-cover object-cover w-[5.5rem] h-[5.5rem]"
                     preview={true}
                     width={100}
@@ -571,7 +630,7 @@ export const Main = () => {
                   />
                   <DeleteOutlined
                     className="text-gray-400 ml-3 cursor-pointer"
-                    onClick={() => updateAddTeamData("logoUrl", "")}
+                    onClick={() => updateAddTeamData("avatarUrl", "")}
                   />
                 </>
               ) : (
@@ -611,12 +670,12 @@ export const Main = () => {
               )}
             </div>
             <div className="flex items-center mt-6">
-              <div className="min-w-16 flex justify-end mr-4"> 團隊名稱</div>
+              <div className="min-w-16 flex justify-end mr-4">團隊名稱</div>
               <Input
                 placeholder="請輸入團隊名稱"
                 className="w-[21.56rem] py-2"
-                value={addTeamData.teamName}
-                onChange={(e) => updateAddTeamData("teamName", e.target.value)}
+                value={addTeamData.name}
+                onChange={(e) => updateAddTeamData("name", e.target.value)}
               />
             </div>
           </div>
@@ -625,24 +684,24 @@ export const Main = () => {
 
       <Modal
         className="newTeamModel"
-        title={<div className="select-none">預警接受</div>}
+        title={<div className="select-none">預警接收</div>}
         open={acceptWarnDto.openAcceptWran}
         closeIcon={<CloseNewTeamIcon />}
         footer={
           <div className="flex flex-row justify-end box-border border-t py-4 pr-8">
             <Button
               className={`rounded-[3.5rem] py-2 px-4 bg-[#2866F1] text-white text-xs ${
-                isEmpty(errorMessages.weCom) &&
-                isEmpty(errorMessages.telephone) &&
-                isEmpty(errorMessages.mailbox) &&
+                isEmpty(errorMessages.workWechat) &&
+                isEmpty(errorMessages.phone) &&
+                isEmpty(errorMessages.email) &&
                 "hover:!bg-[#2866F1] hover:!text-white"
               }`}
               onClick={onAcceptWarnDebounceFn}
               loading={acceptWarnDto.acceptWarnLoading}
               disabled={
-                !isEmpty(errorMessages.weCom) ||
-                !isEmpty(errorMessages.telephone) ||
-                !isEmpty(errorMessages.mailbox)
+                !isEmpty(errorMessages.workWechat) ||
+                !isEmpty(errorMessages.phone) ||
+                !isEmpty(errorMessages.email)
               }
             >
               保存
@@ -651,7 +710,11 @@ export const Main = () => {
         }
         centered
         width={680}
-        onCancel={() => updateAcceptWarnDto("openAcceptWran", false)}
+        onCancel={() => {
+          updateAcceptWarnDto("openAcceptWran", false);
+          setAcceptWarnData(originAcceptWarnData);
+          setErrorMessages(initAcceptWarn);
+        }}
       >
         <ConfigProvider
           theme={{
@@ -669,17 +732,17 @@ export const Main = () => {
                 <div className="min-w-24 flex justify-end">通知電話</div>
                 <Input
                   className="w-[21.56rem] mx-4 py-2"
-                  value={acceptWarnData.telephone}
+                  value={acceptWarnData.phone}
                   onChange={(e) => {
-                    updateAcceptWarnData("telephone", e.target.value);
-                    validateFn("telephone", e.target.value);
+                    updateAcceptWarnData("phone", e.target.value);
+                    validateFn("phone", e.target.value);
                   }}
                 />
                 <div
                   className="text-[#2866F1] text-sm flex items-center cursor-pointer"
                   onClick={() => {
-                    updateAcceptWarnData("telephone", initAcceptWarn.telephone);
-                    updateErrorMessage("telephone", "");
+                    updateAcceptWarnData("phone", originAcceptWarnData.phone);
+                    updateErrorMessage("phone", "");
                   }}
                 >
                   <RefreshIcon /> 恢復默認
@@ -688,10 +751,10 @@ export const Main = () => {
 
               <div
                 className={`${
-                  errorMessages.telephone ? "text-[#FF706C]" : "text-[#8B98AD]"
+                  errorMessages.phone ? "text-[#FF706C]" : "text-[#8B98AD]"
                 } text-sm mt-1 ml-[7.5rem]`}
               >
-                {errorMessages.telephone ||
+                {errorMessages.phone ||
                   "如沒有設置通知電話，默認使用用戶信息的電話"}
               </div>
             </div>
@@ -701,18 +764,21 @@ export const Main = () => {
                 <div className="min-w-24 flex justify-end">通知企業微信</div>
                 <Input
                   className="w-[21.56rem] py-2 mx-4"
-                  value={acceptWarnData.weCom}
+                  value={acceptWarnData.workWechat}
                   onChange={(e) => {
-                    updateAcceptWarnData("weCom", e.target.value);
+                    updateAcceptWarnData("workWechat", e.target.value);
 
-                    validateFn("weCom", e.target.value);
+                    validateFn("workWechat", e.target.value);
                   }}
                 />
                 <div
                   className="text-[#2866F1] text-sm flex items-center cursor-pointer"
                   onClick={() => {
-                    updateAcceptWarnData("weCom", initAcceptWarn.weCom);
-                    updateErrorMessage("weCom", "");
+                    updateAcceptWarnData(
+                      "workWechat",
+                      originAcceptWarnData.workWechat
+                    );
+                    updateErrorMessage("workWechat", "");
                   }}
                 >
                   <RefreshIcon /> 恢復默認
@@ -721,10 +787,10 @@ export const Main = () => {
 
               <div
                 className={`${
-                  errorMessages.weCom ? "text-[#FF706C]" : "text-[#8B98AD]"
+                  errorMessages.workWechat ? "text-[#FF706C]" : "text-[#8B98AD]"
                 } text-sm mt-1 ml-[7.5rem]`}
               >
-                {errorMessages.weCom ||
+                {errorMessages.workWechat ||
                   "如沒有設置通知企業微信，默認使用用戶信息的企業微信"}
               </div>
             </div>
@@ -734,17 +800,17 @@ export const Main = () => {
                 <div className="min-w-24 flex justify-end">通知郵箱</div>
                 <Input
                   className="w-[21.56rem] py-2 mx-4"
-                  value={acceptWarnData.mailbox}
+                  value={acceptWarnData.email}
                   onChange={(e) => {
-                    updateAcceptWarnData("mailbox", e.target.value);
-                    validateFn("mailbox", e.target.value);
+                    updateAcceptWarnData("email", e.target.value);
+                    validateFn("email", e.target.value);
                   }}
                 />
                 <div
                   className="text-[#2866F1] text-sm flex items-center cursor-pointer"
                   onClick={() => {
-                    updateAcceptWarnData("mailbox", initAcceptWarn.mailbox);
-                    updateErrorMessage("mailbox", "");
+                    updateAcceptWarnData("email", originAcceptWarnData.email);
+                    updateErrorMessage("email", "");
                   }}
                 >
                   <RefreshIcon /> 恢復默認
@@ -753,10 +819,10 @@ export const Main = () => {
 
               <div
                 className={`${
-                  errorMessages.mailbox ? "text-[#FF706C]" : "text-[#8B98AD]"
+                  errorMessages.email ? "text-[#FF706C]" : "text-[#8B98AD]"
                 } text-sm mt-1 ml-[7.5rem]`}
               >
-                {errorMessages.mailbox ||
+                {errorMessages.email ||
                   "如沒有設置通知郵箱，默認使用用戶信息的關聯郵箱"}
               </div>
             </div>

@@ -10,6 +10,7 @@ export interface IRecordRequest extends IPageDto {
   EndTime?: string;
   StartTime?: string;
   Status?: IStatusType;
+  TeamId: string;
 }
 
 export enum IStatusType {

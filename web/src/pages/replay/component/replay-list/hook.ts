@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { GetReplayList } from "@/services/replay";
 
 import { ReplaySearchDataContext } from "../..";
+import { message } from "antd";
 
 interface IDto extends IPageDto, IReplayResponse {
   scrollLoading: boolean;
@@ -19,7 +20,7 @@ export const useAction = () => {
     ReplaySearchDataContext
   );
 
-  const { navigate } = useAuth();
+  const { navigate, currentTeam } = useAuth();
 
   const [replayDto, setReplayDto] = useState<IDto>({
     PageIndex: 1,
@@ -64,6 +65,7 @@ export const useAction = () => {
     const data: IRecordRequest = {
       PageIndex: replayDto.PageIndex,
       PageSize: replayDto.PageSize,
+      TeamId: currentTeam.id,
     };
 
     if (timeDto.startTime && timeDto.endTime) {
@@ -99,6 +101,11 @@ export const useAction = () => {
   };
 
   useEffect(() => {
+    if (!currentTeam.id) {
+      message.error("TeamId not found！");
+      return;
+    }
+
     const data = getRequestPrams();
 
     let loadingState = 0;

@@ -4,6 +4,7 @@ import { IPageDto } from "@/dtos/default";
 import { IRegionItem, IRegionListResponse } from "@/dtos/monitor";
 import { useAuth } from "@/hooks/use-auth";
 import { GetRegionList } from "@/services/monitor";
+import { message } from "antd";
 
 interface IDto extends IRegionListResponse, IPageDto {
   loading: boolean;
@@ -13,7 +14,7 @@ interface IDto extends IRegionListResponse, IPageDto {
 }
 
 export const useAction = () => {
-  const { navigate } = useAuth();
+  const { navigate, currentTeam } = useAuth();
 
   const [regionDto, setRegionDto] = useState<IDto>({
     PageIndex: 1,
@@ -69,6 +70,11 @@ export const useAction = () => {
   };
 
   useEffect(() => {
+    if (!currentTeam.id) {
+      message.error("TeamId not found！");
+      return;
+    }
+
     !regionDto.isFirstGet
       ? updateRegionDto("loading", true)
       : updateRegionDto("isScorllDown", true);
@@ -76,6 +82,7 @@ export const useAction = () => {
     GetRegionList({
       PageIndex: regionDto.PageIndex,
       PageSize: regionDto.PageSize,
+      TeamId: currentTeam.id,
     })
       .then((res) => {
         setData(

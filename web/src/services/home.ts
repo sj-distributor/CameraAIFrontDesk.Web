@@ -13,25 +13,32 @@ export const Login = async (data: { userName: string; password: string }) => {
   return response.data;
 };
 
-export const GetCameraList = async () => {
+export const GetCameraList = async (data: { TeamId: string }) => {
   const response = await api.get<ICameraListResponse>(
-    "/api/CameraAi/region/camera/page"
+    "/api/CameraAi/region/camera/page",
+    { params: data }
   );
 
   return response.data;
 };
 
-export const GetEquipmentOnlineList = async () => {
+export const GetEquipmentOnlineList = async (data: { TeamId: string }) => {
   const response = await api.get<IEquipmentOnlineCountItem[]>(
-    "/api/CameraAi/equipment/online/count"
+    "/api/CameraAi/equipment/online/count",
+    {
+      params: data,
+    }
   );
 
   return response.data;
 };
 
-export const GetRecordTop5CountList = async () => {
+export const GetRecordTop5CountList = async (data: { TeamId: string }) => {
   const response = await api.get<IRecordTop5CountListResponse>(
-    "/api/CameraAi/monitor/record/count?TimeZone=America/Los_Angeles"
+    "/api/CameraAi/monitor/record/count?TimeZone=America/Los_Angeles",
+    {
+      params: data,
+    }
   );
 
   return response.data;
