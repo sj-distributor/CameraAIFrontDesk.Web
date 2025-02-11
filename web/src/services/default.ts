@@ -5,9 +5,10 @@ import { IMineRoleResponse } from "@/dtos/mine";
 
 import { api } from "./api";
 
-export const GetMineRoleList = async () => {
+export const GetMineRoleList = async (data: { TeamId?: string }) => {
   const response = await api.get<IMineRoleResponse>(
-    "/api/Security/mine/roles?SystemSource=2"
+    "/api/CameraAi/mine/roles",
+    { params: data }
   );
 
   return response.data;

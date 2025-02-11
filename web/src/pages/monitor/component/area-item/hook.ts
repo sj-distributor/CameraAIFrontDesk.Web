@@ -10,6 +10,7 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { GetRegionEquipmentList } from "@/services/monitor";
 import { ScreenType } from "@/entity/screen-type";
+import { message } from "antd";
 
 interface IDto extends IRegionEquipmentListResponse, IPageDto {
   loading: boolean;
@@ -21,7 +22,8 @@ interface IDto extends IRegionEquipmentListResponse, IPageDto {
 }
 
 export const useAction = () => {
-  const { location, navigate, parseQueryParams, parseQuery } = useAuth();
+  const { location, navigate, parseQueryParams, parseQuery, currentTeam } =
+    useAuth();
 
   const [layoutMode, setLayoutMode] = useState<ScreenType | null>(null);
 
@@ -120,6 +122,11 @@ export const useAction = () => {
   }, []);
 
   useEffect(() => {
+    if (!currentTeam.id) {
+      message.error("TeamId not found！");
+      return;
+    }
+
     if (regionEquipmentDto.regionId) {
       !regionEquipmentDto.isFirstGet
         ? updateRegionEquipmentDto("loading", true)
@@ -130,6 +137,7 @@ export const useAction = () => {
         PageSize: regionEquipmentDto.PageSize,
         RegionId: regionEquipmentDto.regionId,
         TypeLabel: ICameraAiEquipmentTypeLabel.Camera,
+        TeamId: currentTeam.id,
       })
         .then((res) => {
           setData(
