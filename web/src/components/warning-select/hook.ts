@@ -45,6 +45,10 @@ export const useAction = () => {
             },
           ],
         },
+        {
+          label: "觸摸二層貨物規範檢測",
+          value: ICameraAiMonitorType.TouchGoods,
+        },
       ],
     },
     {
@@ -59,6 +63,10 @@ export const useAction = () => {
         {
           label: t(KEYS.ABNORMALVEHICLES, { ns: "alertList" }),
           value: ICameraAiMonitorType.AbnormalVehicles,
+        },
+        {
+          label: "叉車熒光帶匹配檢測",
+          value: ICameraAiMonitorType.Forklift,
         },
       ],
     },

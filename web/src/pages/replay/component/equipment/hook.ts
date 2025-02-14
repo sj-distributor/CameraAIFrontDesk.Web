@@ -147,6 +147,7 @@ export const useAction = () => {
   const getGenerateParams = (replayDetailDto: IReplayDetailResponse) => {
     const data: IPlayBackGenerateRequest = {
       locationId: replayDetailDto?.equipment?.locationId ?? "",
+      equipmentId: String(replayDetailDto?.equipment?.id) ?? "",
       equipmentCode: replayDetailDto?.equipment?.equipmentCode ?? "",
       startTime: dayjs
         .utc(replayDetailDto?.totalRecord?.occurrenceTime)
@@ -367,8 +368,13 @@ export const useAction = () => {
   // 導出視頻接口邏輯
   const handelGetVideoPlayBackUrl = () => {
     {
-      const { equipmentCode, monitorTypes, locationId, startTime } =
-        getGenerateParams(replayDetailDto);
+      const {
+        equipmentId,
+        equipmentCode,
+        monitorTypes,
+        locationId,
+        startTime,
+      } = getGenerateParams(replayDetailDto);
 
       if (palyBackDate.endTime && palyBackDate.startTime) {
         const startDate = dayjs(startTime);
@@ -394,6 +400,7 @@ export const useAction = () => {
         }
 
         const data = {
+          equipmentId,
           equipmentCode,
           monitorTypes,
           locationId,

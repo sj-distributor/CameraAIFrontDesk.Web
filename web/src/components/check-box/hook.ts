@@ -40,6 +40,14 @@ export const useAction = (monitorSummary?: boolean) => {
       label: t(KEYS.COSTUME, { ns: "alertList" }),
       value: ICameraAiMonitorType.Costume,
     },
+    {
+      label: "觸摸二層貨物規範檢測",
+      value: ICameraAiMonitorType.TouchGoods,
+    },
+    {
+      label: "叉車熒光帶匹配檢測",
+      value: ICameraAiMonitorType.Forklift,
+    },
   ];
 
   const securityItem = {

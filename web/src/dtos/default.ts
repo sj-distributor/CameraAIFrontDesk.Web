@@ -36,6 +36,12 @@ export enum ICameraAiMonitorType {
   Cat = 701,
   Dog = 702,
   Bird = 703,
+  Forklift = 8, // 叉车荧光带匹配
+  DoorRolling = 9, // 卷帘门
+  DoorSafety = 10, // 安全门
+  FloorWater = 11, // 地面水迹
+  FloorIce = 12, // 地面结冰
+  TouchGoods = 13, // 触摸二层货物规范
 }
 
 export interface IRecordResponse {

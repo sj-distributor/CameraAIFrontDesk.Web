@@ -79,6 +79,7 @@ export interface IReplayTotalRecordItem {
 
 export interface IPlayBackGenerateRequest {
   locationId: string;
+  equipmentId: string;
   equipmentCode: string;
   startTime: string;
   endTime: string;
@@ -88,6 +89,7 @@ export interface IPlayBackGenerateRequest {
 
 export interface IGeneratePlayBackRequest {
   locationId: string;
+  equipmentId: string;
   equipmentCode: string;
   startTime: string;
   endTime: string;

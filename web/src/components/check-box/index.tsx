@@ -30,7 +30,7 @@ export const CheckBoxComponent = (props: ICheckBoxComponentProps) => {
           <DownOutlined className="text-xs" />
         </div>
         {isOpen && (
-          <div className="absolute max-h-60 overflow-auto bg-white mt-1 p-2 rounded-lg box-content w-[11rem] space-y-1 -left-[50%] z-50">
+          <div className="absolute max-h-60 overflow-auto bg-white mt-1 p-2 rounded-lg box-content w-[14rem] space-y-1 -left-[50%] z-50">
             {checkTypeList.map((item, index) => (
               <div
                 key={index}
