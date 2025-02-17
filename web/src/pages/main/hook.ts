@@ -44,6 +44,8 @@ export const useAction = () => {
     teamList,
     getMineTeam,
     setIsGetPermission,
+    currentAccount,
+    setCurrentAccount,
   } = useAuth();
 
   const [openKeys, setOpenKeys] = useState<string[]>([]);
@@ -252,7 +254,10 @@ export const useAction = () => {
       updateAcceptWarnDto("acceptWarnLoading", true);
 
       PostUserNotificationUpdateApi({
-        userProfileNotificationDto: acceptWarnData,
+        userProfileNotificationDto: {
+          ...acceptWarnData,
+          id: String(currentAccount.id),
+        },
       })
         .then(() => {
           getUserNotification();
@@ -275,6 +280,8 @@ export const useAction = () => {
     GetAccountInfoApi({})
       .then((res) => {
         if (!isEmpty(res)) {
+          setCurrentAccount(res.userProfile);
+
           localStorage.setItem(
             "currentAccount",
             JSON.stringify(res.userProfile)
@@ -289,6 +296,7 @@ export const useAction = () => {
   const getUserNotification = () => {
     GetUserNotificationApi({
       TeamId: currentTeam.id,
+      UserProfileId: String(currentAccount.id),
     })
       .then((res) => {
         setAcceptWarnData(res?.userProfileNotificationDto);
@@ -303,8 +311,6 @@ export const useAction = () => {
   useEffect(() => {
     getMineInfo();
 
-    // getUserNotification();
-
     handleResize();
 
     window.addEventListener("resize", handleResize);
@@ -315,8 +321,6 @@ export const useAction = () => {
   }, []);
 
   useUpdateEffect(() => {
-    getUserNotification();
-
     localStorage.setItem("currentTeam", JSON.stringify(currentTeam));
   }, [currentTeam]);
 
@@ -393,5 +397,6 @@ export const useAction = () => {
     originAcceptWarnData,
     setAcceptWarnData,
     setErrorMessages,
+    getUserNotification,
   };
 };
