@@ -66,7 +66,7 @@ export interface IUserDataItem {
 }
 
 export interface IGetUserNotificationRequest {
-  UserProfileId?: string;
+  UserProfileId: string;
   TeamId: string;
 }
 

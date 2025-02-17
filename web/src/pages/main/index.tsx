@@ -99,6 +99,7 @@ export const Main = () => {
     setIsGetPermission,
     setAcceptWarnData,
     setErrorMessages,
+    getUserNotification,
   } = useAction();
 
   const items: MenuItem[] = useMemo(() => {
@@ -386,9 +387,11 @@ export const Main = () => {
                         },
                       },
                       {
-                        name: "預覽接收",
+                        name: "預警接收",
                         component: <PreviewAndAcceptIcon />,
                         function: () => {
+                          getUserNotification();
+
                           updateAcceptWarnDto("openAcceptWran", true);
                         },
                       },
@@ -408,7 +411,7 @@ export const Main = () => {
                         (item) =>
                           !(
                             userName.toLowerCase() === "admin" &&
-                            item.name === "預覽接收"
+                            item.name === "預警接收"
                           )
                       )
                       .map((item, index) => (
