@@ -170,7 +170,7 @@ export const useAction = () => {
           newWindow.document.write(`
             <script>
               sessionStorage.setItem("backstage", "admin");
-              window.location.href = "backstage";
+              window.location.href = "/backstage";
             </script>
           `);
         }
