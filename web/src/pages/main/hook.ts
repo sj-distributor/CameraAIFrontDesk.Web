@@ -254,10 +254,7 @@ export const useAction = () => {
       updateAcceptWarnDto("acceptWarnLoading", true);
 
       PostUserNotificationUpdateApi({
-        userProfileNotificationDto: {
-          ...acceptWarnData,
-          id: String(currentAccount.id),
-        },
+        userProfileNotificationDto: acceptWarnData,
       })
         .then(() => {
           getUserNotification();
