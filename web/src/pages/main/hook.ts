@@ -164,7 +164,16 @@ export const useAction = () => {
       if (window.__POWERED_BY_WUJIE__) {
         window.$wujie.props?.goBackstage();
       } else {
-        window.open(`/backstage`, "_blank", "noopener,noreferrer");
+        const newWindow = window.open(`/backstage`, "_blank");
+
+        if (newWindow) {
+          newWindow.document.write(`
+            <script>
+              sessionStorage.setItem("backstage", "admin");
+              window.location.href = "backstage";
+            </script>
+          `);
+        }
       }
     } else {
       message.warning("暫無權限切換後台");
