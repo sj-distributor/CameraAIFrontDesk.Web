@@ -92,6 +92,14 @@ export const useAction = () => {
             },
           ],
         },
+        {
+          label: "識別地面水跡",
+          value: ICameraAiMonitorType.FloorWater,
+        },
+        {
+          label: "識別地面結冰",
+          value: ICameraAiMonitorType.FloorIce,
+        },
       ],
     },
   ];

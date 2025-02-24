@@ -48,6 +48,14 @@ export const useAction = (monitorSummary?: boolean) => {
       label: "叉車熒光帶匹配檢測",
       value: ICameraAiMonitorType.Forklift,
     },
+    {
+      label: "識別地面水跡",
+      value: ICameraAiMonitorType.FloorWater,
+    },
+    {
+      label: "識別地面結冰",
+      value: ICameraAiMonitorType.FloorIce,
+    },
   ];
 
   const securityItem = {
