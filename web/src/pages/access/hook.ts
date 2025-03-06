@@ -14,6 +14,7 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { KeysOf, ValuesOf } from "@/utils/type";
 import { GetDoorListApi } from "@/services/access";
+import { isEmpty } from "ramda";
 
 const initDoorData: IAccessDataProps = {
   count: 0,
@@ -63,6 +64,12 @@ export const useAction = () => {
 
   const { run: handleOnExportDebounceFn } = useDebounceFn(
     () => {
+      if (isEmpty(doorData.doors)) {
+        message.warning("暫無數據");
+
+        return;
+      }
+
       const exportData =
         doorData.doors &&
         doorData.doors.map((item: IAccessTableProps) => ({
@@ -108,10 +115,6 @@ export const useAction = () => {
     { wait: 500 }
   );
 
-  const searchValueDebounce = useDebounce(paginationDto.Keyword, {
-    wait: 500,
-  });
-
   const getDoorList = () => {
     setPageLoading(true);
 
@@ -121,7 +124,6 @@ export const useAction = () => {
         paginationDto.DoorType === AccessTypeEnum.All
           ? undefined
           : paginationDto.DoorType,
-      Keyword: searchValueDebounce,
       CreatedDate: dayjs(paginationDto.CreatedDate).format("YYYY/MM/DD"),
     })
       .then((res) => {

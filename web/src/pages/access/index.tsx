@@ -281,7 +281,6 @@ export const Access = () => {
             type="primary"
             className="w-[6.25rem] h-[3rem] rounded-[3.5rem]"
             onClick={handleOnExportDebounceFn}
-            disabled={isEmpty(doorData.doors)}
           >
             导出
           </Button>
