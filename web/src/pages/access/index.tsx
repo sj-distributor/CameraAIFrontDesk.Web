@@ -1,10 +1,7 @@
+import dayjs, { Dayjs } from "dayjs";
+import { isEmpty, isNil } from "ramda";
 import { BreadcrumbComponent } from "@/components/breadcrumb";
-import {
-  CloseCircleFilled,
-  DownOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
-
+import { CloseCircleFilled, DownOutlined } from "@ant-design/icons";
 import {
   Button,
   Input,
@@ -15,52 +12,63 @@ import {
   Calendar,
 } from "antd";
 
+import { useAction } from "./hook";
 import importImg from "../../assets/import.png";
 import { AccessTypeEnum, AccessTypeLabel } from "./props";
-import { useAction } from "./hook";
-import { isNil } from "ramda";
 
 export const Access = () => {
   const {
-    mockTableList,
+    doorData,
+    onSearchFn,
+    pageLoading,
     paginationDto,
     yesterday,
     showPopover,
+    handleOnExportDebounceFn,
     updatePaginationDto,
     updateShowPopover,
   } = useAction();
 
   const items = [
     {
-      value: AccessTypeEnum.SafeDoor,
-      label: AccessTypeLabel[AccessTypeEnum.SafeDoor],
+      value: AccessTypeEnum.Rolling,
+      label: AccessTypeLabel[AccessTypeEnum.Rolling],
     },
     {
-      value: AccessTypeEnum.RollDoor,
-      label: AccessTypeLabel[AccessTypeEnum.RollDoor],
+      value: AccessTypeEnum.Safety,
+      label: AccessTypeLabel[AccessTypeEnum.Safety],
     },
   ];
 
   const columns: TableProps<any>["columns"] = [
     {
       title: "出入口类型",
-      dataIndex: "type",
+      dataIndex: "doorType",
+      render: (value) => {
+        return (
+          <div>
+            {value === AccessTypeEnum.Rolling
+              ? AccessTypeLabel[AccessTypeEnum.Rolling]
+              : AccessTypeLabel[AccessTypeEnum.Safety]}
+          </div>
+        );
+      },
     },
     {
       title: "出入口名称",
-      dataIndex: "name",
+      dataIndex: "doorName",
     },
     {
       title: "开门次数",
-      dataIndex: "openTimes",
+      dataIndex: "openCount",
     },
     {
       title: "合计时长",
-      dataIndex: "continue",
+      dataIndex: "totalOpenDuration",
     },
     {
       title: "图片",
-      dataIndex: "picture",
+      dataIndex: "previewUrl",
       render: (value) => {
         return (
           <Image src={value} style={{ width: "2.69rem", height: "2.63rem" }} />
@@ -69,7 +77,10 @@ export const Access = () => {
     },
     {
       title: "更新时间",
-      dataIndex: "updateTime",
+      dataIndex: "createdDate",
+      render: (value) => {
+        return <div>{dayjs(value).format("YYYY/MM/DD")}</div>;
+      },
     },
   ];
 
@@ -81,12 +92,12 @@ export const Access = () => {
             <div
               key={index}
               className={`cursor-pointer hover:bg-[#EBF1FF] h-[2.2rem] flex items-center pl-2 rounded-md ${
-                item.value === paginationDto.accessType && "bg-[#EBF1FF]"
+                item.value === paginationDto.DoorType && "bg-[#EBF1FF]"
               }`}
               onClick={() => {
                 updateShowPopover("accessTypeOpen", false);
 
-                updatePaginationDto("accessType", item.value);
+                updatePaginationDto("DoorType", item.value);
               }}
             >
               {item.label}
@@ -104,6 +115,10 @@ export const Access = () => {
         <Input
           placeholder="請輸入出入口名稱"
           className="rounded-[3rem] text-base w-[9.88rem] h-[3rem] mr-[2rem]"
+          value={paginationDto.Keyword}
+          onChange={(e) => {
+            updatePaginationDto("Keyword", e.target.value);
+          }}
         />
 
         <div className="flex items-center mr-[2rem]">
@@ -118,13 +133,13 @@ export const Access = () => {
           >
             <div className="text-[#2866F1] cursor-pointer group relative flex items-center text-[1rem]">
               <div className="mr-3">
-                {AccessTypeLabel[paginationDto.accessType]}
+                {AccessTypeLabel[paginationDto.DoorType ?? AccessTypeEnum.All]}
               </div>
 
               <div className="w-[1rem] flex items-center justify-center">
                 <DownOutlined
                   className={`${
-                    paginationDto.accessType !== AccessTypeEnum.All &&
+                    paginationDto.DoorType !== AccessTypeEnum.All &&
                     "group-hover:hidden"
                   }`}
                   style={{
@@ -132,7 +147,7 @@ export const Access = () => {
                     fontSize: "0.7rem",
                   }}
                 />
-                {paginationDto.accessType !== AccessTypeEnum.All && (
+                {paginationDto.DoorType !== AccessTypeEnum.All && (
                   <CloseCircleFilled
                     className="hidden group-hover:block"
                     style={{
@@ -140,7 +155,7 @@ export const Access = () => {
                       color: "#B8B9BC",
                     }}
                     onClick={() => {
-                      updatePaginationDto("accessType", AccessTypeEnum.All);
+                      updatePaginationDto("DoorType", AccessTypeEnum.All);
                     }}
                   />
                 )}
@@ -159,11 +174,11 @@ export const Access = () => {
                 <div className="bg-white w-[8rem] flex flex-col justify-between rounded-md">
                   <div
                     className={`cursor-pointer hover:bg-[#EBF1FF] h-[2.2rem] flex items-center pl-2 rounded-md ${
-                      yesterday.isSame(paginationDto.time, "day") &&
+                      yesterday.isSame(paginationDto.CreatedDate, "day") &&
                       "bg-[#EBF1FF]"
                     }`}
                     onClick={() => {
-                      updatePaginationDto("time", yesterday);
+                      updatePaginationDto("CreatedDate", yesterday);
 
                       setTimeout(
                         () => updateShowPopover("datePickerOpen", false),
@@ -181,11 +196,11 @@ export const Access = () => {
                     content={() => {
                       return (
                         <Calendar
-                          value={paginationDto.time}
+                          value={paginationDto.CreatedDate as Dayjs}
                           fullscreen={false}
                           className="w-[18.75rem] h-[20rem] customCalendar"
                           onSelect={(value) => {
-                            updatePaginationDto("time", value);
+                            updatePaginationDto("CreatedDate", value);
 
                             updateShowPopover("showCalendar", false);
 
@@ -203,8 +218,8 @@ export const Access = () => {
                   >
                     <div
                       className={`cursor-pointer hover:bg-[#EBF1FF] h-[2.2rem] flex items-center pl-2 rounded-md ${
-                        !yesterday.isSame(paginationDto.time, "day") &&
-                        !isNil(paginationDto.time) &&
+                        !yesterday.isSame(paginationDto.CreatedDate, "day") &&
+                        !isNil(paginationDto.CreatedDate) &&
                         "bg-[#EBF1FF]"
                       }`}
                     >
@@ -220,22 +235,22 @@ export const Access = () => {
           >
             <div className="text-[#2866F1] cursor-pointer group relative flex items-center text-[1rem]">
               <div className="mr-3">
-                {isNil(paginationDto.time)
+                {isNil(paginationDto.CreatedDate)
                   ? "请选择"
-                  : paginationDto.time.format("YYYY-MM-DD")}
+                  : (paginationDto.CreatedDate as Dayjs).format("YYYY-MM-DD")}
               </div>
 
               <div className="w-[1rem] flex items-center justify-center">
                 <DownOutlined
                   className={`${
-                    !isNil(paginationDto.time) && "group-hover:hidden"
+                    !isNil(paginationDto.CreatedDate) && "group-hover:hidden"
                   }`}
                   style={{
                     color: "#18283C",
                     fontSize: "0.7rem",
                   }}
                 />
-                {!isNil(paginationDto.time) && (
+                {!isNil(paginationDto.CreatedDate) && (
                   <CloseCircleFilled
                     className="hidden group-hover:block"
                     style={{
@@ -243,7 +258,7 @@ export const Access = () => {
                       color: "#B8B9BC",
                     }}
                     onClick={() => {
-                      updatePaginationDto("time", undefined);
+                      updatePaginationDto("CreatedDate", undefined);
                     }}
                   />
                 )}
@@ -255,20 +270,18 @@ export const Access = () => {
         <Button
           type="primary"
           className="w-[6.25rem] h-[3rem] rounded-[3.5rem]"
+          onClick={onSearchFn}
         >
           查询
         </Button>
 
         <div className="flex items-center ml-auto">
-          <Input
-            placeholder="搜索设备名称"
-            className="rounded-[3rem] text-base w-[12.5rem] h-[3rem] mr-[1.5rem]"
-            suffix={<SearchOutlined />}
-          />
           <Button
             icon={<img src={importImg} />}
             type="primary"
             className="w-[6.25rem] h-[3rem] rounded-[3.5rem]"
+            onClick={handleOnExportDebounceFn}
+            disabled={isEmpty(doorData.doors)}
           >
             导出
           </Button>
@@ -279,14 +292,15 @@ export const Access = () => {
         <div className="flex-1 no-scrollbar mt-[1.5rem]">
           <Table
             className="tableScroll"
-            dataSource={mockTableList.data}
+            loading={pageLoading}
+            dataSource={doorData.doors}
             columns={columns}
             rowKey={(record) => record.id}
             scroll={{ x: 800, y: "calc(100vh - 22rem)" }}
             pagination={{
               current: paginationDto.PageIndex,
               pageSize: paginationDto.PageSize,
-              total: mockTableList.count,
+              total: doorData.count,
               showQuickJumper: true,
               showSizeChanger: true,
               onChange: (page, pageSize) => {

@@ -35,7 +35,8 @@
     "swiper-react": "^1.0.0",
     "vite-plugin-cdn-import": "^0.3.5",
     "vite-plugin-compression": "^0.5.1",
-    "wujie-react": "^1.0.22"
+    "wujie-react": "^1.0.22",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@sj-distributor/eslint-plugin-react": "^0.7.1",
