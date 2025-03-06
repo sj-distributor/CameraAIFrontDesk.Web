@@ -71,6 +71,7 @@ export interface IRecordItem {
   occurrenceTime: string;
   createdTime: string;
   locationTime: string;
+  feedbackUser: string;
 }
 
 export interface IStopRealtimeResquest {
