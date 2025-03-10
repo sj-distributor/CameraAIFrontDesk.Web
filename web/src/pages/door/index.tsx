@@ -1,4 +1,4 @@
-import dayjs, { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 import { isNil } from "ramda";
 import { BreadcrumbComponent } from "@/components/breadcrumb";
 import { CloseCircleFilled, DownOutlined } from "@ant-design/icons";
