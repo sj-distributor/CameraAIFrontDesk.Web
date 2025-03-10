@@ -271,6 +271,10 @@ export const Main = () => {
             return pagePermission ? pagePermission["canViewWarning"] : false;
           } else if (child.key === "/feedback") {
             return pagePermission ? pagePermission["canViewFeedback"] : false;
+          } else if (child.key === "/door") {
+            return pagePermission
+              ? pagePermission["canViewCameraAiDoorDetection"]
+              : false;
           } else {
             return true;
           }
