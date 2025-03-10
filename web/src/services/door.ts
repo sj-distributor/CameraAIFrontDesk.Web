@@ -1,4 +1,4 @@
-import { IAccessDataProps, IPaginationDtoProps } from "@/pages/access/props";
+import { IAccessDataProps, IPaginationDtoProps } from "@/pages/door/props";
 import { api } from "./api";
 
 export const GetDoorListApi = async (data: IPaginationDtoProps) => {

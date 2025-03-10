@@ -13,10 +13,9 @@ import {
 } from "antd";
 
 import { useAction } from "./hook";
-import importImg from "../../assets/import.png";
 import { AccessTypeEnum, AccessTypeLabel } from "./props";
 
-export const Access = () => {
+export const Door = () => {
   const {
     doorData,
     onSearchFn,
@@ -24,7 +23,6 @@ export const Access = () => {
     paginationDto,
     yesterday,
     showPopover,
-    handleOnExportDebounceFn,
     updatePaginationDto,
     updateShowPopover,
   } = useAction();
@@ -77,10 +75,7 @@ export const Access = () => {
     },
     {
       title: "更新时间",
-      dataIndex: "createdDate",
-      render: (value) => {
-        return <div>{dayjs(value).format("YYYY/MM/DD")}</div>;
-      },
+      dataIndex: "lastUpdatedDate",
     },
   ];
 
@@ -274,17 +269,6 @@ export const Access = () => {
         >
           查询
         </Button>
-
-        <div className="flex items-center ml-auto">
-          <Button
-            icon={<img src={importImg} />}
-            type="primary"
-            className="w-[6.25rem] h-[3rem] rounded-[3.5rem]"
-            onClick={handleOnExportDebounceFn}
-          >
-            导出
-          </Button>
-        </div>
       </div>
 
       <div className="bg-white h-full box-border rounded-lg flex flex-col mt-[1rem] no-scrollbar">

@@ -1,20 +1,16 @@
 import dayjs from "dayjs";
-import * as XLSX from "xlsx";
 import { useEffect, useState } from "react";
 import { useDebounceFn, useMemoizedFn } from "ahooks";
 
 import {
   AccessTypeEnum,
-  AccessTypeLabel,
   IAccessDataProps,
-  IAccessTableProps,
   IPaginationDtoProps,
   IShowPopoverProps,
 } from "./props";
 import { useAuth } from "@/hooks/use-auth";
 import { KeysOf, ValuesOf } from "@/utils/type";
-import { GetDoorListApi } from "@/services/access";
-import { isEmpty } from "ramda";
+import { GetDoorListApi } from "@/services/door";
 
 const initDoorData: IAccessDataProps = {
   count: 0,
@@ -62,50 +58,6 @@ export const useAction = () => {
     }
   );
 
-  const { run: handleOnExportDebounceFn } = useDebounceFn(
-    () => {
-      if (isEmpty(doorData.doors)) {
-        message.warning("暫無數據");
-
-        return;
-      }
-
-      const exportData =
-        doorData.doors &&
-        doorData.doors.map((item: IAccessTableProps) => ({
-          出入口类型:
-            item.doorType === AccessTypeEnum.Rolling
-              ? AccessTypeLabel[AccessTypeEnum.Rolling]
-              : AccessTypeLabel[AccessTypeEnum.Safety],
-          出入口名称: item.doorName,
-          开门次数: item.openCount,
-          合计时长: item.totalOpenDuration,
-          图片: item.previewUrl,
-          更新時間: dayjs(item.createdDate).format("YYYY-MM-DD"),
-        }));
-
-      const ws = XLSX.utils.json_to_sheet(exportData);
-
-      ws["!cols"] = [
-        { wch: 20 },
-        { wch: 20 },
-        { wch: 20 },
-        { wch: 20 },
-        { wch: 20 },
-        { wch: 20 },
-      ];
-
-      const wb = XLSX.utils.book_new();
-
-      XLSX.utils.book_append_sheet(wb, ws, "出入口檢測數據");
-
-      XLSX.writeFile(wb, `出入口檢測數據.xlsx`);
-    },
-    {
-      wait: 300,
-    }
-  );
-
   const { run: onSearchFn } = useDebounceFn(
     () => {
       paginationDto.PageIndex === 1
@@ -150,7 +102,6 @@ export const useAction = () => {
     paginationDto,
     yesterday,
     showPopover,
-    handleOnExportDebounceFn,
     updatePaginationDto,
     updateShowPopover,
   };

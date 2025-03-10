@@ -43,4 +43,5 @@ export interface IAccessTableProps {
   totalOpenDuration: number;
   openCount: number;
   createdDate: string;
+  lastUpdatedDate: string;
 }

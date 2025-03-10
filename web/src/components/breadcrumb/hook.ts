@@ -60,10 +60,10 @@ export const useAction = () => {
         });
 
         break;
-      case "access":
+      case "door":
         data.push({
           title: "出入口檢測",
-          path: "/access",
+          path: "/door",
           className: "text-xl",
         });
 
