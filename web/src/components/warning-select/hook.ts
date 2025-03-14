@@ -100,6 +100,14 @@ export const useAction = () => {
           label: "識別地面結冰",
           value: ICameraAiMonitorType.FloorIce,
         },
+        {
+          label: "安全門關閉檢測",
+          value: ICameraAiMonitorType.DoorSafety,
+        },
+        {
+          label: "卷簾門關閉檢測",
+          value: ICameraAiMonitorType.DoorRolling,
+        },
       ],
     },
   ];

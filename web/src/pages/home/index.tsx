@@ -3,7 +3,7 @@ import {
   InfoCircleFilled,
   PlayCircleFilled,
 } from "@ant-design/icons";
-import { Slider, Tooltip } from "antd";
+import { Input, Slider, Tooltip } from "antd";
 import EChartsReact from "echarts-for-react";
 import React from "react";
 
@@ -37,6 +37,8 @@ export const Home = () => {
     videoFullScreen,
     setVolumeSliderStatus,
     errorMessage,
+    setCameraSearch,
+    cameraSearch,
   } = useAction();
 
   return (
@@ -56,17 +58,19 @@ export const Home = () => {
                 {t(KEYS.CAMERA, { ns: "home" })}:
               </div>
             </div>
+
             <div
               className="relative flex-1 flex select-none items-center"
               onMouseEnter={() => setSelectStatus(true)}
               onMouseLeave={() => setSelectStatus(false)}
             >
-              <div className="w-[4.375rem] truncate cursor-pointer text-center">
-                {clickCamera.equipmentName}
-              </div>
-              <DownOutlined className="cursor-pointer" />
+              <Input
+                placeholder="搜索攝像頭"
+                value={clickCamera.equipmentName || cameraSearch}
+                onChange={(e) => setCameraSearch(e.target.value)}
+              />
               {selectStatus && (
-                <div className="absolute z-50 -left-1/2 top-full w-32 h-52 bg-white rounded-lg p-2 space-y-2 overflow-y-auto no-scrollbar">
+                <div className="absolute z-50 top-full w-32 h-52 bg-white rounded-lg p-2 space-y-2 overflow-y-auto no-scrollbar">
                   {cameraList.regionCameras.map((item, index) => (
                     <div key={index} className="space-y-0.5">
                       <span className="select-none text-sm">

@@ -13,7 +13,10 @@ export const Login = async (data: { userName: string; password: string }) => {
   return response.data;
 };
 
-export const GetCameraList = async (data: { TeamId: string }) => {
+export const GetCameraList = async (data: {
+  TeamId: string;
+  KeyWord: string;
+}) => {
   const response = await api.get<ICameraListResponse>(
     "/api/CameraAi/region/camera/page",
     { params: data }

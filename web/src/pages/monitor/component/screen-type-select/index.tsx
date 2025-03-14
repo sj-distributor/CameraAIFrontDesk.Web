@@ -4,14 +4,33 @@ import { ScreenType } from "@/entity/screen-type";
 
 import { useAction } from "./hook";
 import { Input } from "antd";
+import { IRegionEquipmentListResponse } from "@/dtos/monitor";
+import { IPageDto } from "@/dtos/default";
+
+interface IDto extends IRegionEquipmentListResponse, IPageDto {
+  loading: boolean;
+  regionId: number | null;
+  regionName: string | null;
+  isFirstGet: boolean;
+  isScorllDown: boolean;
+  isEnd: boolean;
+  Keyword?: string;
+}
 
 interface IProps {
   layoutMode: ScreenType | null;
+  regionEquipmentDto: IDto;
   updateLayoutMode: (value: ScreenType | null) => void;
+  updateRegionEquipmentDto: (k: keyof IDto, v: any) => void;
 }
 
 export const ScreenTypeSelect = (data: IProps) => {
-  const { layoutMode, updateLayoutMode } = data;
+  const {
+    layoutMode,
+    regionEquipmentDto,
+    updateLayoutMode,
+    updateRegionEquipmentDto,
+  } = data;
 
   const { options, isShowOption, wrapperRef, optionsLabel, setIsShowOption } =
     useAction();
@@ -60,6 +79,8 @@ export const ScreenTypeSelect = (data: IProps) => {
         placeholder="搜索设备名称"
         className="rounded-[3rem] text-base w-[12.5rem] h-12 ml-auto"
         suffix={<SearchOutlined style={{ color: "#566172" }} />}
+        value={regionEquipmentDto.Keyword}
+        onChange={(e) => updateRegionEquipmentDto("Keyword", e.target.value)}
       />
     </div>
   );
