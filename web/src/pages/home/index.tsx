@@ -51,7 +51,7 @@ export const Home = () => {
           <strong className="select-none text-xl">
             {t(KEYS.REALTIME_MONITORING, { ns: "home" })}
           </strong>
-          <div className="w-44 flex space-x-1">
+          <div className="w-[14rem] flex space-x-1">
             <div className="flex items-center select-none space-x-0.5">
               <img src={cameraImg} alt="" className="w-4 h-4 object-cover" />
               <div className="text-[#566172] w-14 text-sm text-right">
@@ -68,9 +68,10 @@ export const Home = () => {
                 placeholder="搜索攝像頭"
                 value={clickCamera.equipmentName || cameraSearch}
                 onChange={(e) => setCameraSearch(e.target.value)}
+                suffix={<DownOutlined />}
               />
               {selectStatus && (
-                <div className="absolute z-50 top-full w-32 h-52 bg-white rounded-lg p-2 space-y-2 overflow-y-auto no-scrollbar">
+                <div className="absolute z-50 top-full w-[9rem] h-52 bg-white rounded-lg p-2 space-y-2 overflow-y-auto no-scrollbar">
                   {cameraList.regionCameras.map((item, index) => (
                     <div key={index} className="space-y-0.5">
                       <span className="select-none text-sm">
