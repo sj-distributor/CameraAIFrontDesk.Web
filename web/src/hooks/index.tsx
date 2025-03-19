@@ -113,6 +113,7 @@ export const AuthProvider = (props: { children: ReactElement }) => {
     canViewWarning: false,
     canViewFeedback: false,
     CanViewCameraAiDoorDetection: false,
+    CanViewCameraAiInAndOutRegistration: false,
   });
 
   const localCurrentTeam = JSON.parse(
@@ -267,6 +268,10 @@ export const AuthProvider = (props: { children: ReactElement }) => {
         permission: FrontRolePermissionEnum.CanViewCameraAiDoorDetection,
         variableName: "canViewCameraAiDoorDetection",
       },
+      {
+        permission: FrontRolePermissionEnum.CanViewCameraAiInAndOutRegistration,
+        variableName: "canViewCameraAiInAndOutRegistration",
+      },
       // 功能
       {
         permission: FrontRolePermissionEnum.CanSwitchCameraAiBackEnd,
@@ -366,6 +371,8 @@ export const AuthProvider = (props: { children: ReactElement }) => {
       ? "/feedback"
       : pagePermission["canViewCameraAiDoorDetection"]
       ? "/door"
+      : pagePermission["canViewCameraAiInAndOutRegistration"]
+      ? "/inout"
       : "/none";
 
     setDefaultNavigatePage(defaultPage);

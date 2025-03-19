@@ -22,7 +22,7 @@ import { useDebounceFn } from "ahooks";
 import { getErrorMessage } from "@/utils/error-message";
 
 export const useAction = () => {
-  const { t } = useAuth();
+  const { t, currentTeam } = useAuth();
 
   const { warningId } = useParams();
 
@@ -261,6 +261,7 @@ export const useAction = () => {
   /* 獲取生成請求的參數 */
   const getGenerateParams = (replayDetailDto: any) => {
     const data: IPostPlayBackGenerateRequest = {
+      teamId: currentTeam.id,
       locationId: replayDetailDto.locationId ?? "",
       equipmentId: replayDetailDto.equipmentId ?? "",
       equipmentCode: replayDetailDto.equipmentCode ?? "",

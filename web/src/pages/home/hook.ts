@@ -169,6 +169,7 @@ export const useAction = () => {
       });
 
       const data: IRealtimeGenerateRequest = {
+        teamId: currentTeam.id,
         lives: [
           {
             locationId: locationId ?? "",

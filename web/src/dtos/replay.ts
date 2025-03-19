@@ -78,6 +78,7 @@ export interface IReplayTotalRecordItem {
 }
 
 export interface IPlayBackGenerateRequest {
+  teamId?: string;
   locationId: string;
   equipmentId: string;
   equipmentCode: string;

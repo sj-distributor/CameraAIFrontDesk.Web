@@ -18,7 +18,7 @@ const initDoorData: IAccessDataProps = {
 };
 
 export const useAction = () => {
-  const { message } = useAuth();
+  const { message, currentTeam } = useAuth();
 
   const yesterday = dayjs().subtract(1, "day");
 
@@ -77,6 +77,7 @@ export const useAction = () => {
           ? undefined
           : paginationDto.DoorType,
       CreatedDate: dayjs(paginationDto.CreatedDate).format("YYYY/MM/DD"),
+      TeamId: currentTeam.id,
     })
       .then((res) => {
         setDoorData(res ?? initDoorData);

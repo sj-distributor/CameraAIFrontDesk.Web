@@ -18,6 +18,7 @@ export interface IPaginationDtoProps {
   DoorType?: AccessTypeEnum;
   CreatedDate: Dayjs | string | undefined;
   Keyword: string;
+  TeamId?: string;
 }
 
 export interface IShowPopoverProps {

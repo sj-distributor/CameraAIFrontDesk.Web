@@ -1,46 +1,28 @@
 import { useState } from "react";
-import { IPaginationDtoProps, IShowPopoverProps } from "./props";
-import { useMemoizedFn } from "ahooks";
+import { IInoutProps, IPaginationDtoProps, IShowPopoverProps } from "./props";
+import { useMemoizedFn, useRequest } from "ahooks";
 import { KeysOf, ValuesOf } from "@/utils/type";
 import dayjs from "dayjs";
-
-const mockTableList = {
-  count: 100,
-  data: [
-    {
-      id: 1,
-      userName: "HENRY.W",
-      picture:
-        "https://smartiestest.oss-cn-hongkong.aliyuncs.com/20241217/6be331e8-0b6a-4a65-aeb8-e14f70407c33.jpeg?Expires=253402300799&OSSAccessKeyId=LTAI5tEYyDT8YqJBSXaFDtyk&Signature=zhqP7kcVoYACfR7K6rmQkC3sQSk%3D",
-      arrivalTime: "2023/09/21 18:05:12",
-      departureTime: "2023/09/21 19:05:12",
-    },
-    {
-      id: 2,
-      userName: "AAA",
-      picture:
-        "https://smartiestest.oss-cn-hongkong.aliyuncs.com/20241217/6be331e8-0b6a-4a65-aeb8-e14f70407c33.jpeg?Expires=253402300799&OSSAccessKeyId=LTAI5tEYyDT8YqJBSXaFDtyk&Signature=zhqP7kcVoYACfR7K6rmQkC3sQSk%3D",
-      arrivalTime: "2023/09/21 19:05:12",
-      departureTime: "",
-    },
-    {
-      id: 3,
-      userName: "BBB",
-      picture:
-        "https://smartiestest.oss-cn-hongkong.aliyuncs.com/20241217/6be331e8-0b6a-4a65-aeb8-e14f70407c33.jpeg?Expires=253402300799&OSSAccessKeyId=LTAI5tEYyDT8YqJBSXaFDtyk&Signature=zhqP7kcVoYACfR7K6rmQkC3sQSk%3D",
-      arrivalTime: "2023/09/21 18:05:12",
-      departureTime: "2023/09/21 19:05:12",
-    },
-  ],
-};
+import { GetInoutListApi } from "@/services/inout";
+import { message } from "antd";
+import { useAuth } from "@/hooks/use-auth";
 
 export const useAction = () => {
+  const { currentTeam } = useAuth();
+
   const yesterday = dayjs().subtract(1, "day");
 
   const [paginationDto, setPaginationDto] = useState<IPaginationDtoProps>({
     PageIndex: 1,
     PageSize: 10,
     time: dayjs(),
+    Keyword: "",
+    CreatedDate: "",
+  });
+
+  const [doorList, setDoorList] = useState<IInoutProps>({
+    count: 0,
+    data: [],
   });
 
   const [showPopover, setShowPopover] = useState<IShowPopoverProps>({
@@ -66,12 +48,40 @@ export const useAction = () => {
     }
   );
 
+  const { loading: listLoading, run: getInoutList } = useRequest(
+    () =>
+      GetInoutListApi({
+        ...paginationDto,
+        time: undefined,
+        CreatedDate: dayjs(paginationDto.time).format("YYYY/MM/DD"),
+        TeamId: currentTeam.id,
+      }),
+    {
+      refreshDeps: [paginationDto.PageIndex, paginationDto.PageSize],
+      onSuccess: (res) => {
+        setDoorList({
+          count: res?.count ?? 0,
+          data: res?.data ?? [],
+        });
+      },
+      onError: () => {
+        setDoorList({
+          count: 0,
+          data: [],
+        });
+        message.error("獲取數據失敗");
+      },
+    }
+  );
+
   return {
-    mockTableList,
+    doorList,
     paginationDto,
     showPopover,
     yesterday,
+    listLoading,
     updatePaginationDto,
     updateShowPopover,
+    getInoutList,
   };
 };

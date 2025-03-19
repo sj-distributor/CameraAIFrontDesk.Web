@@ -275,6 +275,10 @@ export const Main = () => {
             return pagePermission
               ? pagePermission["canViewCameraAiDoorDetection"]
               : false;
+          } else if (child.key === "/inout") {
+            return pagePermission
+              ? pagePermission["canViewCameraAiInAndOutRegistration"]
+              : false;
           } else {
             return true;
           }

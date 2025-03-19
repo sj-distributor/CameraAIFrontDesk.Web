@@ -45,4 +45,5 @@ export enum FrontRolePermissionEnum {
   CanEnterCameraAi = "CanEnterCameraAi",
   CanCreateCameraAiTeam = "CanCreateCameraAiTeam",
   CanViewCameraAiDoorDetection = "CanViewCameraAiDoorDetection",
+  CanViewCameraAiInAndOutRegistration = "CanViewCameraAiInAndOutRegistration",
 }

@@ -14,12 +14,14 @@ import { isNil } from "ramda";
 
 export const InoutRegistration = () => {
   const {
-    mockTableList,
+    doorList,
     paginationDto,
     showPopover,
     yesterday,
+    listLoading,
     updatePaginationDto,
     updateShowPopover,
+    getInoutList,
   } = useAction();
 
   const columns: TableProps<any>["columns"] = [
@@ -53,6 +55,8 @@ export const InoutRegistration = () => {
         <Input
           placeholder="請輸入用户名"
           className="rounded-[3rem] text-base w-[7.94rem] h-[3rem] mr-[2rem]"
+          value={paginationDto.Keyword}
+          onChange={(e) => updatePaginationDto("Keyword", e.target.value)}
         />
 
         <div className="flex items-center mr-[1.5rem] w-[12rem]">
@@ -161,6 +165,13 @@ export const InoutRegistration = () => {
         <Button
           type="primary"
           className="w-[6.25rem] h-[3rem] rounded-[3.5rem]"
+          onClick={() => {
+            if (paginationDto.PageIndex === 1) {
+              getInoutList();
+            } else {
+              updatePaginationDto("PageIndex", 1);
+            }
+          }}
         >
           查询
         </Button>
@@ -170,14 +181,15 @@ export const InoutRegistration = () => {
         <div className="flex-1 no-scrollbar mt-[1.5rem]">
           <Table
             className="tableScroll"
-            dataSource={mockTableList.data}
+            dataSource={doorList.data}
             columns={columns}
             rowKey={(record) => record.id}
+            loading={listLoading}
             scroll={{ x: 800, y: "calc(100vh - 22rem)" }}
             pagination={{
               current: paginationDto.PageIndex,
               pageSize: paginationDto.PageSize,
-              total: mockTableList.count,
+              total: doorList.count,
               showQuickJumper: true,
               showSizeChanger: true,
               onChange: (page, pageSize) => {

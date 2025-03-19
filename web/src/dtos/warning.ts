@@ -7,6 +7,7 @@ export interface IRegisterRecordRequest {
 }
 
 export interface IPostPlayBackGenerateRequest {
+  teamId?: string;
   locationId: string;
   equipmentId: string;
   equipmentCode: string;

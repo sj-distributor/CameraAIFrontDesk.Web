@@ -21,7 +21,7 @@ import {
 import { getErrorMessage } from "@/utils/error-message";
 
 export const useAction = () => {
-  const { location, message, pagePermission } = useAuth();
+  const { location, message, pagePermission, currentTeam } = useAuth();
 
   const { typeList } = checkBoxUseAction();
 
@@ -146,6 +146,7 @@ export const useAction = () => {
   // 获取生成请求的参数
   const getGenerateParams = (replayDetailDto: IReplayDetailResponse) => {
     const data: IPlayBackGenerateRequest = {
+      teamId: currentTeam.id,
       locationId: replayDetailDto?.equipment?.locationId ?? "",
       equipmentId: String(replayDetailDto?.equipment?.id) ?? "",
       equipmentCode: replayDetailDto?.equipment?.equipmentCode ?? "",
