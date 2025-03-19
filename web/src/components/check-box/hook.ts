@@ -64,6 +64,10 @@ export const useAction = (monitorSummary?: boolean) => {
       label: "卷簾門關閉檢測",
       value: ICameraAiMonitorType.DoorRolling,
     },
+    {
+      label: "進出時間登記",
+      value: ICameraAiMonitorType.Attendance,
+    },
   ];
 
   const securityItem = {

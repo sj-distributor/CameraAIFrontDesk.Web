@@ -49,6 +49,10 @@ export const useAction = () => {
           label: "觸摸二層貨物規範檢測",
           value: ICameraAiMonitorType.TouchGoods,
         },
+        {
+          label: "進出時間登記",
+          value: ICameraAiMonitorType.Attendance,
+        },
       ],
     },
     {
