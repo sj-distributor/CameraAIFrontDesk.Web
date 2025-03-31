@@ -45,7 +45,7 @@ export const GetGenerateUrl = async (generateTaskId: string) => {
   return response.data;
 };
 
-export const PostBatchMark = async (data?: Object) => {
+export const PostBatchMark = async (data?: object) => {
   const response = await api.post(
     "/api/CameraAi/monitor/record/unread/batch/mark",
     data
