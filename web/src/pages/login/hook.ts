@@ -1,7 +1,7 @@
 import { useDebounceFn } from "ahooks";
 import { useEffect, useState } from "react";
 
-import { IUserInfo } from "@/dtos";
+import { IUserInfo, LoginTypeEnum } from "@/dtos";
 import { useAuth } from "@/hooks/use-auth";
 import { Login } from "@/services/home";
 import { GetMineRoleList } from "@/services/default";
@@ -15,6 +15,7 @@ export const useAction = () => {
   const [userInfo, setUserInfo] = useState<IUserInfo>({
     userName: "",
     password: "",
+    loginType: LoginTypeEnum.OME,
   });
 
   const updateUserInfo = (k: keyof IUserInfo, v: string) => {
