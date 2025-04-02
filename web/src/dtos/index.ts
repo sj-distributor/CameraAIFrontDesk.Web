@@ -1,7 +1,7 @@
 export interface IUserInfo {
   userName: string;
   password: string;
-  loginType: LoginTypeEnum;
+  loginType?: LoginTypeEnum;
 }
 
 export enum LoginTypeEnum {
