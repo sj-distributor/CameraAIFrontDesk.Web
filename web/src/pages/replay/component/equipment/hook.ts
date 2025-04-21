@@ -213,6 +213,22 @@ export const useAction = () => {
 
   useEffect(() => {
     if (
+      replayDetailDto.records[0]?.monitorType === ICameraAiMonitorType.Security
+    ) {
+      if (replayDetailDto.records[0].replayUrl) {
+        setSuccessUrl(replayDetailDto.records[0].replayUrl);
+        setIsSuccess(true);
+      } else {
+        setIsStopLoadingDto(() => ({
+          isStopLoading: true,
+          message: "回放URL為空",
+        }));
+      }
+
+      return;
+    }
+
+    if (
       replayDetailDto.equipment &&
       replayDetailDto.totalRecord &&
       replayDetailDto.records &&
