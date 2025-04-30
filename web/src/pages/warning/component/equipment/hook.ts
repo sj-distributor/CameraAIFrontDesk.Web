@@ -203,8 +203,8 @@ export const useAction = () => {
         .then((res) => {
           if (res && res.record && res.regionAndArea) {
             if (res.record.monitorType === ICameraAiMonitorType.Security) {
-              if (res.record.replayUrl) {
-                setSuccessUrl(res.record.replayUrl);
+              if (res.record.playBackUrl) {
+                setSuccessUrl(res.record.playBackUrl);
                 setIsShow(true);
               } else {
                 setStopLoadingDto({

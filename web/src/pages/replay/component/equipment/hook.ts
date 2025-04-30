@@ -215,8 +215,8 @@ export const useAction = () => {
     if (
       replayDetailDto.records[0]?.monitorType === ICameraAiMonitorType.Security
     ) {
-      if (replayDetailDto.records[0].replayUrl) {
-        setSuccessUrl(replayDetailDto.records[0].replayUrl);
+      if (replayDetailDto.records[0].playBackUrl) {
+        setSuccessUrl(replayDetailDto.records[0].playBackUrl);
         setIsSuccess(true);
       } else {
         setIsStopLoadingDto(() => ({
