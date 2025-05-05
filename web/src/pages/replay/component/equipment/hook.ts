@@ -213,22 +213,6 @@ export const useAction = () => {
 
   useEffect(() => {
     if (
-      replayDetailDto.records[0]?.monitorType === ICameraAiMonitorType.Security
-    ) {
-      if (replayDetailDto.records[0].playBackUrl) {
-        setSuccessUrl(replayDetailDto.records[0].playBackUrl);
-        setIsSuccess(true);
-      } else {
-        setIsStopLoadingDto(() => ({
-          isStopLoading: true,
-          message: "回放URL為空",
-        }));
-      }
-
-      return;
-    }
-
-    if (
       replayDetailDto.equipment &&
       replayDetailDto.totalRecord &&
       replayDetailDto.records &&
@@ -253,6 +237,13 @@ export const useAction = () => {
           new Set(replayDetailDto.records.map((item) => item.monitorType))
         )
       );
+
+      if (replayDetailDto.records[0].playBackUrl) {
+        setSuccessUrl(replayDetailDto.records[0].playBackUrl);
+        setIsSuccess(true);
+
+        return;
+      }
 
       // 调用生成回放;
       PostPlayBackGenerate(data)

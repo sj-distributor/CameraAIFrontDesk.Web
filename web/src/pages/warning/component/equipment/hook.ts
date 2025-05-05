@@ -202,20 +202,6 @@ export const useAction = () => {
       GetRecordDetailApi({ RecordId: warningId })
         .then((res) => {
           if (res && res.record && res.regionAndArea) {
-            if (res.record.monitorType === ICameraAiMonitorType.Security) {
-              if (res.record.playBackUrl) {
-                setSuccessUrl(res.record.playBackUrl);
-                setIsShow(true);
-              } else {
-                setStopLoadingDto({
-                  isStopLoading: true,
-                  message: "回放Url為空",
-                });
-              }
-
-              return;
-            }
-
             const resData = {
               areaAdress: res.regionAndArea.regionAddress,
               locationId: res.regionAndArea.locationId,
@@ -227,6 +213,13 @@ export const useAction = () => {
             };
 
             setWarningRecordDetail(res);
+
+            if (res.record.playBackUrl) {
+              setSuccessUrl(res.record.playBackUrl);
+              setIsShow(true);
+
+              return;
+            }
 
             setPlayDetailData(() => resData);
 
