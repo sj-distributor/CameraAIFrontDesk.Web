@@ -29,7 +29,7 @@ export const useAction = () => {
 
   const navigate = useNavigate();
 
-  const { message } = useAuth();
+  const { message, currentTeam } = useAuth();
 
   const [numberDto, setNumberDto] = useState<{
     number: number;
@@ -115,11 +115,17 @@ export const useAction = () => {
 
       setNowRegionId(regionId);
 
+      if (!currentTeam.id) {
+        message.error("TeamId not found！");
+        return;
+      }
+
       GetRegionEquipmentList({
         PageIndex: 1,
         PageSize: 2147483647,
         RegionId: Number(regionId),
         TypeLabel: ICameraAiEquipmentTypeLabel.Camera,
+        TeamId: currentTeam.id,
       })
         .then((res) => {
           setIsGenerate(false);
@@ -187,11 +193,17 @@ export const useAction = () => {
   const loadEquipmentList = () => {
     if (!continueExecution.current) return;
 
+    if (!currentTeam.id) {
+      message.error("TeamId not found！");
+      return;
+    }
+
     GetRegionEquipmentList({
       PageIndex: 1,
       PageSize: 2147483647,
       RegionId: nowRegionId ? Number(nowRegionId) : 0,
       TypeLabel: ICameraAiEquipmentTypeLabel.Camera,
+      TeamId: currentTeam.id,
     })
       .then((res) => {
         const equipments = res.equipments.map((item, index) => {

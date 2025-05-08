@@ -65,3 +65,22 @@ p {
 .rangePickerComponent .ant-picker-input input {
   min-width: min-content !important;
 }
+
+.teamList ::-webkit-scrollbar {
+  width: 0.2rem;
+  height: 0.2rem;
+}
+
+.teamList ::-webkit-scrollbar-track {
+  background: #f8f8f8;
+  border-radius: 0.5rem;
+}
+
+.teamList ::-webkit-scrollbar-thumb {
+  background: #e7e8ee;
+  border-radius: 0.5rem;
+}
+
+.teamList ::-webkit-scrollbar-thumb:hover {
+  background: #cdcdd0;
+}
