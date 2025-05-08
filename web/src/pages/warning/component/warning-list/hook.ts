@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 import {
   IPageDto,
@@ -47,6 +47,12 @@ export const useAction = () => {
     window.dispatchEvent(e);
   };
 
+  const isStopLoadingList = useRef<boolean>(false);
+
+  const isFirstLoad = useRef<boolean>(true);
+
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const loadWarningData = async (
     pageIndex: number,
     pageSize: number,
@@ -56,6 +62,8 @@ export const useAction = () => {
     searchKeyWord?: string,
     selectValues?: number[]
   ) => {
+    if (isStopLoadingList.current) return;
+
     if (!currentTeam.id) {
       message.error("TeamId not found！");
       return;
@@ -84,12 +92,28 @@ export const useAction = () => {
       data.MonitorTypes = selectValues;
     }
 
-    updateData("loading", true);
+    isFirstLoad.current && updateData("loading", true);
 
     try {
       const { count, records } = (await GetRecordList(data)) || {};
       updateData("records", records);
       updateData("count", count);
+
+      isFirstLoad.current = false;
+
+      timeoutRef.current = setTimeout(
+        () =>
+          loadWarningData(
+            data.PageIndex,
+            data.PageSize,
+            data.StartTime,
+            data.EndTime,
+            data.Status,
+            data.EquipmentName,
+            data.MonitorTypes
+          ),
+        5000
+      );
     } catch {
       message.error("获取数据失败");
       updateData("records", []);
@@ -103,9 +127,23 @@ export const useAction = () => {
 
   useEffect(() => {
     loadWarningData(dto.PageIndex, dto.PageSize);
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      isStopLoadingList.current = true;
+    };
   }, []);
 
   const onChangePage = (pageIndex: number, pageSize: number) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    isFirstLoad.current = true;
+
     loadWarningData(
       pageIndex,
       pageSize,
@@ -118,6 +156,12 @@ export const useAction = () => {
   };
 
   useUpdateEffect(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    isFirstLoad.current = true;
+
     loadWarningData(
       1,
       dto.PageSize,

@@ -53,7 +53,7 @@ import { isEmpty } from "ramda";
 type MenuItem = Required<MenuProps>["items"][number];
 
 export const Main = () => {
-  const { isGetPermission } = useAuth();
+  const { isGetPermission, unreadyCount } = useAuth();
 
   const {
     t,
@@ -175,7 +175,12 @@ export const Main = () => {
             key: "/warning",
             label: (
               <Link to="/warning/list">
-                {t(KEYS.WARNING_LIST, { ns: "main" })}
+                <div className="flex">
+                  {t(KEYS.WARNING_LIST, { ns: "main" })}
+                  <div className="bg-[#FF706C] h-5 min-w-5 px-1 rounded-full border-[0.1rem] border-white text-white text-[0.65rem] flex justify-center items-center">
+                    {unreadyCount}
+                  </div>
+                </div>
               </Link>
             ),
             icon: !collapsed ? (
