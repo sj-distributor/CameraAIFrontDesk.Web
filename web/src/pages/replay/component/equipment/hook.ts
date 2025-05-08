@@ -1,6 +1,6 @@
 import { useDebounceFn, useUpdateEffect } from "ahooks";
 import dayjs from "dayjs";
-import { clone } from "ramda";
+import { clone, isEmpty, isNil } from "ramda";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useAction as checkBoxUseAction } from "@/components/check-box/hook";
@@ -238,7 +238,10 @@ export const useAction = () => {
         )
       );
 
-      if (replayDetailDto.records[0].playBackUrl) {
+      if (
+        !isNil(replayDetailDto?.records?.[0]?.playBackUrl) &&
+        !isEmpty(replayDetailDto?.records?.[0]?.playBackUrl)
+      ) {
         setSuccessUrl(replayDetailDto.records[0].playBackUrl);
         setIsSuccess(true);
 

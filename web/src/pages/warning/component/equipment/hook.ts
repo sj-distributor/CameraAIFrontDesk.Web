@@ -20,6 +20,7 @@ import {
 } from "@/services/warning";
 import { useDebounceFn } from "ahooks";
 import { getErrorMessage } from "@/utils/error-message";
+import { isEmpty, isNil } from "ramda";
 
 export const useAction = () => {
   const { t, currentTeam } = useAuth();
@@ -214,7 +215,10 @@ export const useAction = () => {
 
             setWarningRecordDetail(res);
 
-            if (res.record.playBackUrl) {
+            if (
+              !isNil(res?.record?.playBackUrl) &&
+              !isEmpty(res?.record?.playBackUrl)
+            ) {
               setSuccessUrl(res.record.playBackUrl);
               setIsShow(true);
 
