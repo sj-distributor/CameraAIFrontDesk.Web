@@ -1,6 +1,6 @@
 import { useDebounceFn, useUpdateEffect } from "ahooks";
 import dayjs from "dayjs";
-import { clone } from "ramda";
+import { clone, isEmpty, isNil } from "ramda";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useAction as checkBoxUseAction } from "@/components/check-box/hook";
@@ -235,6 +235,16 @@ export const useAction = () => {
           new Set(replayDetailDto.records.map((item) => item.monitorType))
         )
       );
+
+      if (
+        !isNil(replayDetailDto?.records?.[0]?.playBackUrl) &&
+        !isEmpty(replayDetailDto?.records?.[0]?.playBackUrl)
+      ) {
+        setSuccessUrl(replayDetailDto.records[0].playBackUrl);
+        setIsSuccess(true);
+
+        return;
+      }
 
       // 调用生成回放;
       PostPlayBackGenerate(data)
