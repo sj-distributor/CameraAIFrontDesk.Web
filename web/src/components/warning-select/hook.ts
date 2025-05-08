@@ -114,6 +114,16 @@ export const useAction = () => {
         },
       ],
     },
+    {
+      label: "防盜功能",
+      value: IWarningType.Security,
+      children: [
+        {
+          label: "防盜功能",
+          value: ICameraAiMonitorType.Security,
+        },
+      ],
+    },
   ];
 
   const [selectValues, setSelectValues] = useState<ICameraAiMonitorType[]>([]);
