@@ -213,10 +213,10 @@ export const useAction = () => {
             setWarningRecordDetail(res);
 
             if (
-              !isNil(res?.record?.playBackUrl) &&
-              !isEmpty(res?.record?.playBackUrl)
+              !isNil(res?.record?.playbackUrl) &&
+              !isEmpty(res?.record?.playbackUrl)
             ) {
-              setSuccessUrl(res.record.playBackUrl);
+              setSuccessUrl(res.record.playbackUrl);
               setIsShow(true);
 
               return;
