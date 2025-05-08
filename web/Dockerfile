@@ -1,23 +1,25 @@
-FROM node:18-alpine AS node
+FROM node:18-alpine AS build
+
+WORKDIR /web
+
+COPY package.json ./
+
+RUN yarn install
+
+COPY . .
+
+RUN yarn build
 
 FROM nginx:stable-alpine
 
-COPY --from=node /usr/lib /usr/lib
-COPY --from=node /usr/local/lib /usr/local/lib
-COPY --from=node /usr/local/include /usr/local/include
-COPY --from=node /usr/local/bin /usr/local/bin
+COPY --from=build /web/build /usr/share/nginx/html
 
-COPY ./ /usr/share/nginx/html
+RUN  sed -i '12a error_page 404 /index.html;' /etc/nginx/conf.d/default.conf
 
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+RUN sed -i '/^http {/a \
+    gzip on;\n\
+    gzip_static on;' /etc/nginx/nginx.conf
 
-WORKDIR /usr/share/nginx/html
+EXPOSE 80
 
-RUN apk add --no-cache git && \
-    npm install --force && npm run build
-
-RUN echo "#!/bin/sh" >> /init.sh &&\
-    echo "nginx -g 'daemon off;'" >> /init.sh &&\
-    chmod +x /init.sh
-
-CMD ["/init.sh"]
+CMD ["nginx", "-g", "daemon off;"]
