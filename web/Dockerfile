@@ -19,7 +19,6 @@ RUN apk add --no-cache git && \
 RUN echo "#!/bin/sh" >> /init.sh &&\
     echo "cd /usr/share/nginx/html" >> /init.sh &&\
     echo "npx @import-meta-env/cli -x .env -e .env -p dist/index.html" >> /init.sh &&\
-    echo "nginx -g 'daemon off;'" >> /init.sh &&\
     chmod +x /init.sh
 
 CMD ["/init.sh"]
