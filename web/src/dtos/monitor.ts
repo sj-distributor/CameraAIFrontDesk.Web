@@ -126,6 +126,7 @@ export interface IMonitorDetailResponse {
 }
 
 export interface IRealtimeGenerateRequest {
+  teamId?: string;
   lives: ILiveItem[];
 }
 

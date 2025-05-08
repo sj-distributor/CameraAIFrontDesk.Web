@@ -45,6 +45,14 @@ export const useAction = () => {
             },
           ],
         },
+        {
+          label: "觸摸二層貨物規範檢測",
+          value: ICameraAiMonitorType.TouchGoods,
+        },
+        {
+          label: "進出時間登記",
+          value: ICameraAiMonitorType.Attendance,
+        },
       ],
     },
     {
@@ -59,6 +67,10 @@ export const useAction = () => {
         {
           label: t(KEYS.ABNORMALVEHICLES, { ns: "alertList" }),
           value: ICameraAiMonitorType.AbnormalVehicles,
+        },
+        {
+          label: "叉車熒光帶匹配檢測",
+          value: ICameraAiMonitorType.Forklift,
         },
       ],
     },
@@ -83,6 +95,32 @@ export const useAction = () => {
               value: ICameraAiMonitorType.Bird,
             },
           ],
+        },
+        {
+          label: "識別地面水跡",
+          value: ICameraAiMonitorType.FloorWater,
+        },
+        {
+          label: "識別地面結冰",
+          value: ICameraAiMonitorType.FloorIce,
+        },
+        {
+          label: "安全門關閉檢測",
+          value: ICameraAiMonitorType.DoorSafety,
+        },
+        {
+          label: "卷簾門關閉檢測",
+          value: ICameraAiMonitorType.DoorRolling,
+        },
+      ],
+    },
+    {
+      label: "防盜功能",
+      value: IWarningType.Security,
+      children: [
+        {
+          label: "防盜功能",
+          value: ICameraAiMonitorType.Security,
         },
       ],
     },

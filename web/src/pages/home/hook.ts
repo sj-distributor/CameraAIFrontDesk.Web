@@ -1,4 +1,4 @@
-import { useDebounceFn, useUpdateEffect } from "ahooks";
+import { useDebounce, useDebounceFn, useUpdateEffect } from "ahooks";
 import Mpegts from "mpegts.js";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -57,6 +57,12 @@ export const useAction = () => {
   const [errorFlv, setErrorFlv] = useState<boolean>(false);
 
   const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const [cameraSearch, setCameraSearch] = useState<string>("");
+
+  const cameraSearchDebounce = useDebounce(cameraSearch, {
+    wait: 500,
+  });
 
   const [clickCamera, setClickCamera] = useState<{
     locationId: string;
@@ -163,6 +169,7 @@ export const useAction = () => {
       });
 
       const data: IRealtimeGenerateRequest = {
+        teamId: currentTeam.id,
         lives: [
           {
             locationId: locationId ?? "",
@@ -392,13 +399,15 @@ export const useAction = () => {
     };
   }, [recordTop5Obj.topCount]);
 
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   // 轮训获取摄像头List
   const getCameraList = () => {
     if (!continueExecution.current) return;
 
     if (!currentTeam.id) return;
 
-    GetCameraList({ TeamId: currentTeam.id })
+    GetCameraList({ TeamId: currentTeam.id, KeyWord: cameraSearch })
       .then((res) => {
         generateError.current = false;
 
@@ -416,11 +425,17 @@ export const useAction = () => {
         });
       })
       .finally(() => {
-        setTimeout(() => {
-          getCameraList();
-        }, 5000);
+        timeoutRef.current = setTimeout(getCameraList, 5000);
       });
   };
+
+  useUpdateEffect(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    getCameraList();
+  }, [cameraSearchDebounce]);
 
   useEffect(() => {
     getCameraList();
@@ -621,5 +636,7 @@ export const useAction = () => {
     videoFullScreen,
     setVolumeSliderStatus,
     errorMessage,
+    setCameraSearch,
+    cameraSearch,
   };
 };

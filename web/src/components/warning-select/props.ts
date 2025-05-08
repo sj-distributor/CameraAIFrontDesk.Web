@@ -4,6 +4,7 @@ export enum IWarningType {
   People,
   Vehicles,
   Element,
+  Security,
 }
 
 export interface IItemProps {

@@ -14,13 +14,16 @@ export const AreaItem = () => {
     updateLayoutMode,
     onScroll,
     onClickEquipmentItem,
+    updateRegionEquipmentDto,
   } = useAction();
 
   return (
     <div className="flex-1 flex flex-col space-y-1 h-full w-full">
       <ScreenTypeSelect
         layoutMode={layoutMode}
+        regionEquipmentDto={regionEquipmentDto}
         updateLayoutMode={updateLayoutMode}
+        updateRegionEquipmentDto={updateRegionEquipmentDto}
       />
 
       {!regionEquipmentDto.isFirstGet && regionEquipmentDto.loading ? (

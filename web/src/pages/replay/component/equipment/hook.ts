@@ -21,7 +21,7 @@ import {
 import { getErrorMessage } from "@/utils/error-message";
 
 export const useAction = () => {
-  const { location, message, pagePermission } = useAuth();
+  const { location, message, pagePermission, currentTeam } = useAuth();
 
   const { typeList } = checkBoxUseAction();
 
@@ -146,7 +146,9 @@ export const useAction = () => {
   // 获取生成请求的参数
   const getGenerateParams = (replayDetailDto: IReplayDetailResponse) => {
     const data: IPlayBackGenerateRequest = {
+      teamId: currentTeam.id,
       locationId: replayDetailDto?.equipment?.locationId ?? "",
+      equipmentId: String(replayDetailDto?.equipment?.id) ?? "",
       equipmentCode: replayDetailDto?.equipment?.equipmentCode ?? "",
       startTime: dayjs
         .utc(replayDetailDto?.totalRecord?.occurrenceTime)
@@ -377,8 +379,13 @@ export const useAction = () => {
   // 導出視頻接口邏輯
   const handelGetVideoPlayBackUrl = () => {
     {
-      const { equipmentCode, monitorTypes, locationId, startTime } =
-        getGenerateParams(replayDetailDto);
+      const {
+        equipmentId,
+        equipmentCode,
+        monitorTypes,
+        locationId,
+        startTime,
+      } = getGenerateParams(replayDetailDto);
 
       if (palyBackDate.endTime && palyBackDate.startTime) {
         const startDate = dayjs(startTime);
@@ -404,6 +411,7 @@ export const useAction = () => {
         }
 
         const data = {
+          equipmentId,
           equipmentCode,
           monitorTypes,
           locationId,

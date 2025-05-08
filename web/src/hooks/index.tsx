@@ -112,6 +112,8 @@ export const AuthProvider = (props: { children: ReactElement }) => {
     canViewReplay: false,
     canViewWarning: false,
     canViewFeedback: false,
+    CanViewCameraAiDoorDetection: false,
+    CanViewCameraAiInAndOutRegistration: false,
   });
 
   const localCurrentTeam = JSON.parse(
@@ -262,6 +264,14 @@ export const AuthProvider = (props: { children: ReactElement }) => {
         permission: FrontRolePermissionEnum.CanViewCameraAiFeedbackListPage,
         variableName: "canViewFeedback",
       },
+      {
+        permission: FrontRolePermissionEnum.CanViewCameraAiDoorDetection,
+        variableName: "canViewCameraAiDoorDetection",
+      },
+      {
+        permission: FrontRolePermissionEnum.CanViewCameraAiInAndOutRegistration,
+        variableName: "canViewCameraAiInAndOutRegistration",
+      },
       // 功能
       {
         permission: FrontRolePermissionEnum.CanSwitchCameraAiBackEnd,
@@ -347,6 +357,8 @@ export const AuthProvider = (props: { children: ReactElement }) => {
   }, [currentTeam]);
 
   useUpdateEffect(() => {
+    console.log(pagePermission);
+
     const defaultPage = pagePermission["canViewHome"]
       ? "/home"
       : pagePermission["canViewMonitor"]
@@ -357,6 +369,10 @@ export const AuthProvider = (props: { children: ReactElement }) => {
       ? "/warning"
       : pagePermission["canViewFeedback"]
       ? "/feedback"
+      : pagePermission["canViewCameraAiDoorDetection"]
+      ? "/door"
+      : pagePermission["canViewCameraAiInAndOutRegistration"]
+      ? "/inout"
       : "/none";
 
     setDefaultNavigatePage(defaultPage);

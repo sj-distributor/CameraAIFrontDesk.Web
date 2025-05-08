@@ -1,7 +1,7 @@
 import { useDebounceFn } from "ahooks";
 import { useEffect, useState } from "react";
 
-import { IUserInfo } from "@/dtos";
+import { IUserInfo, LoginTypeEnum } from "@/dtos";
 import { useAuth } from "@/hooks/use-auth";
 import { Login } from "@/services/home";
 import { GetMineRoleList } from "@/services/default";
@@ -38,7 +38,16 @@ export const useAction = () => {
       userInfo.userName.trim().length !== 0 &&
       userInfo.password.trim().length !== 0
     ) {
-      Login(userInfo)
+      const loginParams = {
+        userName: userInfo.userName,
+        password: userInfo.password,
+        loginType:
+          userInfo.userName.toLowerCase() === "admin"
+            ? undefined
+            : LoginTypeEnum.OME,
+      };
+
+      Login(loginParams)
         .then((res) => {
           if (res) {
             localStorage.setItem((window as any).appsettings?.tokenKey, res);

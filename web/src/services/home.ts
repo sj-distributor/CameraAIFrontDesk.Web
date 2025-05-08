@@ -6,14 +6,18 @@ import {
 import { IRealtimeGenerateRequest } from "@/dtos/monitor";
 
 import { api } from "./api";
+import { IUserInfo } from "@/dtos";
 
-export const Login = async (data: { userName: string; password: string }) => {
+export const Login = async (data: IUserInfo) => {
   const response = await api.post<string>("/auth/login", data);
 
   return response.data;
 };
 
-export const GetCameraList = async (data: { TeamId: string }) => {
+export const GetCameraList = async (data: {
+  TeamId: string;
+  KeyWord: string;
+}) => {
   const response = await api.get<ICameraListResponse>(
     "/api/CameraAi/region/camera/page",
     { params: data }

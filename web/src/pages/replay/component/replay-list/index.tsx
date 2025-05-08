@@ -40,7 +40,7 @@ export const ReplayList = () => {
                       }}
                     >
                       <Img
-                        url={item.equipment.previewImg}
+                        url={item?.equipment?.previewImg}
                         title={
                           item.duration ? formatSeconds(item.duration) : ""
                         }
@@ -50,11 +50,11 @@ export const ReplayList = () => {
                     </div>
                     <div className="w-full">
                       <div className="text-lg w-full truncate">
-                        {item.equipment.equipmentName}
+                        {item?.equipment?.equipmentName}
                       </div>
                       <div className="flex flex-row items-center space-x-1">
                         <div className="space-x-1 flex w-9">
-                          {showCircle(item.records, [
+                          {showCircle(item?.records, [
                             ICameraAiMonitorType.People,
                             ICameraAiMonitorType.Smoke,
                             ICameraAiMonitorType.Fight,
@@ -65,13 +65,13 @@ export const ReplayList = () => {
                           ]) && (
                             <div className="w-4 h-4 rounded-full bg-[#2866F1]" />
                           )}
-                          {showCircle(item.records, [
+                          {showCircle(item?.records, [
                             ICameraAiMonitorType.Vehicles,
                             ICameraAiMonitorType.AbnormalVehicles,
                           ]) && (
                             <div className="w-4 h-4 rounded-full bg-[#04B6B5]" />
                           )}
-                          {showCircle(item.records, [
+                          {showCircle(item?.records, [
                             ICameraAiMonitorType.Animal,
                             ICameraAiMonitorType.Cat,
                             ICameraAiMonitorType.Dog,
@@ -81,7 +81,10 @@ export const ReplayList = () => {
                           )}
                         </div>
                         <div className="flex-1 truncate text-base">
-                          {item.records[0].locationTime.replace(/[+-].*/, "")}
+                          {item?.records?.[0]?.locationTime.replace(
+                            /[+-].*/,
+                            ""
+                          )}
                         </div>
                       </div>
                     </div>

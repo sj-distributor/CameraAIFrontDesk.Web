@@ -87,6 +87,12 @@ export const WarningSelect = forwardRef((_, ref) => {
                         ...prev,
                         ICameraAiMonitorType.Vehicles,
                       ]);
+
+                    item.value === IWarningType.Security &&
+                      setSelectValues((prev) => [
+                        ...prev,
+                        ICameraAiMonitorType.Security,
+                      ]);
                   } else {
                     setCheckIndex((prev) => {
                       let newCheckIndex = clone(prev);
@@ -111,7 +117,11 @@ export const WarningSelect = forwardRef((_, ref) => {
               />
             </div>
 
-            <div className="flex flex-col space-y-[.75rem] mt-[.63rem] ml-[2.63rem]">
+            <div
+              className={`flex-col space-y-[.75rem] mt-[.63rem] ml-[2.63rem] ${
+                item.value === IWarningType.Security ? "hidden" : "flex"
+              }`}
+            >
               {item.children?.map((monitorType, monitorTypeIndex) => {
                 return (
                   <Fragment key={monitorTypeIndex}>

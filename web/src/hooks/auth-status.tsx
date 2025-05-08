@@ -19,7 +19,11 @@ export const AuthStatus = (props: { children: JSX.Element }) => {
       (location.pathname.includes("/warning") &&
         !pagePermission.canViewWarning) ||
       (location.pathname.includes("/feedback") &&
-        !pagePermission.canViewFeedback))
+        !pagePermission.canViewFeedback) ||
+      (location.pathname.includes("/door") &&
+        !pagePermission.canViewCameraAiDoorDetection) ||
+      (location.pathname.includes("/inout") &&
+        !pagePermission.canViewCameraAiInAndOutRegistration))
   ) {
     return <Navigate to="/none" state={{ from: location }} replace={true} />;
   }

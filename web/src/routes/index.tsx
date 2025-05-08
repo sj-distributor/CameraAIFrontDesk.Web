@@ -23,6 +23,8 @@ import { ReplayList } from "@/pages/replay/component/replay-list";
 import { Warning } from "@/pages/warning";
 import { Equipment } from "@/pages/warning/component/equipment";
 import { WarningList } from "@/pages/warning/component/warning-list";
+import { Door } from "@/pages/door";
+import { InoutRegistration } from "@/pages/inout-registration";
 import { CameraBackstage } from "@/pages/camera-backstage";
 
 export interface IRouteItem {
@@ -154,6 +156,18 @@ export const Router = () => {
           element: <FeedbackList />,
         },
       ],
+    },
+    // 出入口检测
+    {
+      path: "/door",
+      element: <Door />,
+      icon: "",
+    },
+    // 进入登记
+    {
+      path: "/inout",
+      element: <InoutRegistration />,
+      icon: "",
     },
     {
       path: "/none",

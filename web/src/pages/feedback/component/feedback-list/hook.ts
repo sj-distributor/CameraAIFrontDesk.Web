@@ -82,13 +82,19 @@ export const useAction = () => {
 
     updateData("loading", true);
 
-    const { count, records } = await GetRecordList(data);
-
-    updateData("records", records ?? []);
-    updateData("count", count ?? 0);
-    updateData("PageIndex", data.PageIndex);
-    updateData("PageSize", data.PageSize);
-    updateData("loading", false);
+    try {
+      const { count, records } = (await GetRecordList(data)) || {};
+      updateData("records", records);
+      updateData("count", count);
+    } catch {
+      message.error("获取数据失败");
+      updateData("records", []);
+      updateData("count", 0);
+    } finally {
+      updateData("PageIndex", data.PageIndex);
+      updateData("PageSize", data.PageSize);
+      updateData("loading", false);
+    }
   };
 
   useEffect(() => {

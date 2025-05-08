@@ -120,6 +120,12 @@ export const FeedbackList = () => {
         );
       },
     },
+    {
+      title: "提出人",
+      dataIndex: "feedbackUser",
+      key: "feedbackUser",
+      width: 180,
+    },
   ];
 
   return (

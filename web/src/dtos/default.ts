@@ -36,6 +36,14 @@ export enum ICameraAiMonitorType {
   Cat = 701,
   Dog = 702,
   Bird = 703,
+  Forklift = 8, // 叉车荧光带匹配
+  DoorRolling = 9, // 卷帘门
+  DoorSafety = 10, // 安全门
+  Floor = 11, // 地面监测
+  FloorWater = 1101, // 地面水迹
+  FloorIce = 1102, // 地面结冰
+  TouchGoods = 13, // 触摸二层货物规范
+  Attendance = 14, // 进出登记
 }
 
 export interface IRecordResponse {
@@ -64,6 +72,8 @@ export interface IRecordItem {
   occurrenceTime: string;
   createdTime: string;
   locationTime: string;
+  feedbackUser: string;
+  isRead?: boolean;
 }
 
 export interface IStopRealtimeResquest {
