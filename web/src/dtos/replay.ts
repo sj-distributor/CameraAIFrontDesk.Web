@@ -57,6 +57,7 @@ export interface IReplayRecordItem {
   occurrenceTime: string;
   createdTime: string;
   locationTime: string;
+  playBackUrl?: string;
 }
 
 export interface IReplayDetailResponse {
