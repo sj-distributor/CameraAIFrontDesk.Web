@@ -239,10 +239,10 @@ export const useAction = () => {
       );
 
       if (
-        !isNil(replayDetailDto?.records?.[0]?.playBackUrl) &&
-        !isEmpty(replayDetailDto?.records?.[0]?.playBackUrl)
+        !isNil(replayDetailDto?.records?.[0]?.playbackUrl) &&
+        !isEmpty(replayDetailDto?.records?.[0]?.playbackUrl)
       ) {
-        setSuccessUrl(replayDetailDto.records[0].playBackUrl);
+        setSuccessUrl(replayDetailDto.records[0].playbackUrl);
         setIsSuccess(true);
 
         return;
