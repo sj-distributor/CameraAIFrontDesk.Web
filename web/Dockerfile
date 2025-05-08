@@ -9,8 +9,6 @@ COPY --from=node /usr/local/bin /usr/local/bin
 
 COPY ./ /usr/share/nginx/html
 
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
-
 WORKDIR /usr/share/nginx/html
 
 RUN apk add --no-cache git && \
