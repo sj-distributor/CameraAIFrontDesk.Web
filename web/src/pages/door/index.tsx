@@ -169,11 +169,11 @@ export const Door = () => {
                 <div className="bg-white w-[8rem] flex flex-col justify-between rounded-md">
                   <div
                     className={`cursor-pointer hover:bg-[#EBF1FF] h-[2.2rem] flex items-center pl-2 rounded-md ${
-                      yesterday.isSame(paginationDto.CreatedDate, "day") &&
+                      yesterday.isSame(paginationDto.Date, "day") &&
                       "bg-[#EBF1FF]"
                     }`}
                     onClick={() => {
-                      updatePaginationDto("CreatedDate", yesterday);
+                      updatePaginationDto("Date", yesterday);
 
                       setTimeout(
                         () => updateShowPopover("datePickerOpen", false),
@@ -191,11 +191,11 @@ export const Door = () => {
                     content={() => {
                       return (
                         <Calendar
-                          value={paginationDto.CreatedDate as Dayjs}
+                          value={paginationDto.Date as Dayjs}
                           fullscreen={false}
                           className="w-[18.75rem] h-[20rem] customCalendar"
                           onSelect={(value) => {
-                            updatePaginationDto("CreatedDate", value);
+                            updatePaginationDto("Date", value);
 
                             updateShowPopover("showCalendar", false);
 
@@ -213,8 +213,8 @@ export const Door = () => {
                   >
                     <div
                       className={`cursor-pointer hover:bg-[#EBF1FF] h-[2.2rem] flex items-center pl-2 rounded-md ${
-                        !yesterday.isSame(paginationDto.CreatedDate, "day") &&
-                        !isNil(paginationDto.CreatedDate) &&
+                        !yesterday.isSame(paginationDto.Date, "day") &&
+                        !isNil(paginationDto.Date) &&
                         "bg-[#EBF1FF]"
                       }`}
                     >
@@ -230,22 +230,22 @@ export const Door = () => {
           >
             <div className="text-[#2866F1] cursor-pointer group relative flex items-center text-[1rem]">
               <div className="mr-3">
-                {isNil(paginationDto.CreatedDate)
+                {isNil(paginationDto.Date)
                   ? "请选择"
-                  : (paginationDto.CreatedDate as Dayjs).format("YYYY-MM-DD")}
+                  : (paginationDto.Date as Dayjs).format("YYYY-MM-DD")}
               </div>
 
               <div className="w-[1rem] flex items-center justify-center">
                 <DownOutlined
                   className={`${
-                    !isNil(paginationDto.CreatedDate) && "group-hover:hidden"
+                    !isNil(paginationDto.Date) && "group-hover:hidden"
                   }`}
                   style={{
                     color: "#18283C",
                     fontSize: "0.7rem",
                   }}
                 />
-                {!isNil(paginationDto.CreatedDate) && (
+                {!isNil(paginationDto.Date) && (
                   <CloseCircleFilled
                     className="hidden group-hover:block"
                     style={{
@@ -253,7 +253,7 @@ export const Door = () => {
                       color: "#B8B9BC",
                     }}
                     onClick={() => {
-                      updatePaginationDto("CreatedDate", undefined);
+                      updatePaginationDto("Date", undefined);
                     }}
                   />
                 )}
