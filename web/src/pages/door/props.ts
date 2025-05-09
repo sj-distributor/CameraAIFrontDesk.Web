@@ -16,7 +16,7 @@ export interface IPaginationDtoProps {
   PageIndex: number;
   PageSize: number;
   DoorType?: AccessTypeEnum;
-  CreatedDate: Dayjs | string | undefined;
+  Date: Dayjs | string | undefined;
   Keyword: string;
   TeamId?: string;
 }

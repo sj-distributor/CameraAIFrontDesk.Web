@@ -36,7 +36,7 @@ export const useAction = () => {
     PageIndex: 1,
     PageSize: 10,
     DoorType: AccessTypeEnum.All,
-    CreatedDate: dayjs(),
+    Date: dayjs(),
     Keyword: "",
   });
 
@@ -76,7 +76,7 @@ export const useAction = () => {
         paginationDto.DoorType === AccessTypeEnum.All
           ? undefined
           : paginationDto.DoorType,
-      CreatedDate: dayjs(paginationDto.CreatedDate).format("YYYY/MM/DD"),
+      Date: dayjs(paginationDto.Date).format("YYYY/MM/DD"),
       TeamId: currentTeam.id,
     })
       .then((res) => {
