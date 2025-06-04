@@ -160,7 +160,13 @@ export const AuthProvider = (props: { children: ReactElement }) => {
             if (!localCurrentTeam?.id)
               localStorage.setItem("currentTeam", JSON.stringify(teamToSet));
 
-            setCurrentTeam(teamToSet);
+            setCurrentTeam((prev) => {
+              if (!prev || prev.id !== teamToSet.id) {
+                return teamToSet;
+              }
+
+              return prev;
+            });
           }
         } else {
           setTeamList([]);
