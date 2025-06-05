@@ -356,11 +356,12 @@ export const AuthProvider = (props: { children: ReactElement }) => {
   }, [isLogin]);
 
   useUpdateEffect(() => {
+    console.log(currentTeam, "currentTeam");
     if (currentTeam.id) getMinePermission(currentTeam.id);
   }, [currentTeam]);
 
   useUpdateEffect(() => {
-    console.log(pagePermission);
+    console.log(pagePermission, "-----");
 
     const defaultPage = pagePermission["canViewHome"]
       ? "/home"
