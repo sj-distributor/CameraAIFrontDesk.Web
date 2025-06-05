@@ -360,6 +360,8 @@ export const AuthProvider = (props: { children: ReactElement }) => {
   }, [currentTeam]);
 
   useUpdateEffect(() => {
+    console.log(pagePermission);
+
     const defaultPage = pagePermission["canViewHome"]
       ? "/home"
       : pagePermission["canViewMonitor"]
