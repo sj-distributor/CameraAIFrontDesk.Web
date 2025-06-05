@@ -152,13 +152,6 @@ export const AuthProvider = (props: { children: ReactElement }) => {
 
           getMinePermission(localCurrentTeam?.id ?? res[0].id);
 
-          console.log(
-            window.__POWERED_BY_WUJIE__,
-            localCurrentTeam,
-            res[0],
-            "GetTeamsMineApi"
-          );
-
           if (!window.__POWERED_BY_WUJIE__) {
             const teamToSet = localCurrentTeam?.id
               ? localCurrentTeam
@@ -363,13 +356,10 @@ export const AuthProvider = (props: { children: ReactElement }) => {
   }, [isLogin]);
 
   useUpdateEffect(() => {
-    console.log(currentTeam, "currentTeam");
     if (currentTeam.id) getMinePermission(currentTeam.id);
   }, [currentTeam]);
 
   useUpdateEffect(() => {
-    console.log(pagePermission, "-----");
-
     const defaultPage = pagePermission["canViewHome"]
       ? "/home"
       : pagePermission["canViewMonitor"]
