@@ -23,6 +23,7 @@ const statusComponent = (
   text: string,
   icon: ReactElement,
   canViewDetailWarning: boolean,
+  isRead: boolean | undefined,
   func: VoidFunction
 ) => {
   const handleClick = () => {
@@ -31,11 +32,14 @@ const statusComponent = (
 
   return (
     <span
-      className={`py-[0.25rem] px-[0.625rem] border border-solid rounded-lg space-x-1 cursor-pointer ${boxBorderColor}`}
+      className={`relative py-[0.25rem] px-[0.625rem] border border-solid rounded-lg space-x-1 cursor-pointer ${boxBorderColor}`}
       onClick={handleClick}
     >
       {icon}
       <span className={`${textColor} select-none`}>{text}</span>
+      {!isRead && (
+        <div className="absolute -right-1 -top-1 w-2 h-2 bg-red-500 rounded-full" />
+      )}
     </span>
   );
 };
@@ -122,6 +126,7 @@ export const WarningList = () => {
               "待標記",
               <PlusOutlined className="text-[#18283C] text-sm" />,
               pagePermission.canViewDetailWarning,
+              record.isRead,
               () =>
                 navigate(`/warning/${record.id}`, {
                   state: {
@@ -137,6 +142,7 @@ export const WarningList = () => {
               "通過",
               <CheckOutlined className="text-[#04B6B5] text-sm" />,
               pagePermission.canViewDetailWarning,
+              record.isRead ?? false,
               () =>
                 navigate(`/warning/${record.id}`, {
                   state: {
@@ -152,6 +158,7 @@ export const WarningList = () => {
               "異常",
               <ExclamationCircleOutlined className="text-[#FF908C] text-sm" />,
               pagePermission.canViewDetailWarning,
+              record.isRead ?? false,
               () =>
                 navigate(`/warning/${record.id}`, {
                   state: {

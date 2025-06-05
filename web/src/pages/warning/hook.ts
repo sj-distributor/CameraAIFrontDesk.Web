@@ -1,4 +1,4 @@
-import { useDebounceEffect, useDebounceFn } from "ahooks";
+import { useDebounceEffect, useDebounceFn, useRequest } from "ahooks";
 import dayjs, { Dayjs } from "dayjs";
 import { clone } from "ramda";
 import { useEffect, useRef, useState } from "react";
@@ -7,7 +7,7 @@ import { IRecordRequest, IStatusType } from "@/dtos/default";
 import { IRegisterRecordRequest } from "@/dtos/warning";
 import { useAuth } from "@/hooks/use-auth";
 import { GetRecordList } from "@/services/default";
-import { PostRegisterRecord } from "@/services/warning";
+import { PostBatchMark, PostRegisterRecord } from "@/services/warning";
 import { onDownLoadWorkbook } from "@/utils";
 
 interface IKey {
@@ -29,7 +29,8 @@ const keyName: IKey = {
 };
 
 export const useAction = () => {
-  const { location, message, t, pagePermission, currentTeam } = useAuth();
+  const { location, message, t, pagePermission, currentTeam, unreadyCount } =
+    useAuth();
 
   const state = location.state as {
     status: IStatusType;
@@ -70,6 +71,8 @@ export const useAction = () => {
   const [keyWord, setKeyWord] = useState<string>("");
 
   const [searchKeyWord, setSearchKeyWord] = useState<string>("");
+
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
 
   const onStatusClick = (value: IStatusType) => {
     setStatus(value);
@@ -301,6 +304,21 @@ export const useAction = () => {
     }
   );
 
+  const { run: onDelete, loading: deleteLoading } = useRequest(
+    () => PostBatchMark({}),
+    {
+      manual: true,
+      debounceWait: 500,
+      debounceLeading: false,
+      onSuccess: () => {
+        message.success("清除未讀成功");
+      },
+      onError: (err) => {
+        message.success(`清除未讀失敗：${err}`);
+      },
+    }
+  );
+
   useEffect(() => {
     getHeight();
 
@@ -351,6 +369,12 @@ export const useAction = () => {
     handleOnExportDebounceFn,
     markedStatus,
     pagePermission,
+    deleteLoading,
+    message,
+    unreadyCount,
+    openDelete,
+    setOpenDelete,
+    onDelete,
     setTimeDto,
     setKeyWord,
     onTypeClick,

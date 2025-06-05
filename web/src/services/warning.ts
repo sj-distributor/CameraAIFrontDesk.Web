@@ -44,3 +44,18 @@ export const GetGenerateUrl = async (generateTaskId: string) => {
 
   return response.data;
 };
+
+export const PostBatchMark = async (data?: object) => {
+  const response = await api.post(
+    "/api/CameraAi/monitor/record/unread/batch/mark",
+    data
+  );
+
+  return response.data;
+};
+
+export const GetUnreadCountApi = async () => {
+  const response = await api.get("/api/CameraAi/monitor/record/unread/count");
+
+  return response.data;
+};

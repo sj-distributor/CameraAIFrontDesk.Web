@@ -1,4 +1,4 @@
-import { useUpdateEffect } from "ahooks";
+import { useRequest, useUpdateEffect } from "ahooks";
 import { App } from "antd";
 import type { Locale } from "antd/es/locale";
 import enUS from "antd/es/locale/en_US";
@@ -24,6 +24,7 @@ import { GetMineRoleList } from "@/services/default";
 import { ITeamListProps, IUserDataItem } from "@/dtos/main";
 import { GetTeamsMineApi } from "@/services/main";
 import { isEmpty } from "ramda";
+import { GetUnreadCountApi } from "@/services/warning";
 
 interface IAuthContextType {
   navigate: NavigateFunction;
@@ -50,6 +51,7 @@ interface IAuthContextType {
   setCurrentAccount: React.Dispatch<React.SetStateAction<IUserDataItem>>;
   teamList: ITeamListProps[];
   getMineTeam: (name: string) => void;
+  unreadyCount: number;
 }
 
 interface IPermissions {
@@ -80,6 +82,8 @@ export const AuthProvider = (props: { children: ReactElement }) => {
   );
 
   const [locale, setLocal] = useState<Locale>(zhCN);
+
+  const [unreadyCount, setUnreadyCount] = useState<number>(0);
 
   const [isGetPermission, setIsGetPermission] = useState<boolean>(false);
 
@@ -336,6 +340,24 @@ export const AuthProvider = (props: { children: ReactElement }) => {
     return location.pathname.split("/").filter((item) => item.trim() !== "");
   };
 
+  const { run: getUnreadCount } = useRequest(GetUnreadCountApi, {
+    manual: true,
+    pollingInterval: 5000,
+    pollingWhenHidden: false,
+    onSuccess: (res) => {
+      setUnreadyCount(res ?? 0);
+    },
+    onError: (err) => {
+      message.error("獲取未獨數量數據失敗" + `：${err?.message}`);
+
+      setUnreadyCount(0);
+    },
+  });
+
+  useEffect(() => {
+    token && getUnreadCount();
+  }, [token]);
+
   useEffect(() => {
     if (language) {
       i18n.changeLanguage(language);
@@ -406,6 +428,7 @@ export const AuthProvider = (props: { children: ReactElement }) => {
     setCurrentAccount,
     teamList,
     getMineTeam,
+    unreadyCount,
   };
 
   return (

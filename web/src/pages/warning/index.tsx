@@ -1,5 +1,5 @@
-import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Modal, Radio } from "antd";
+import Icon, { SearchOutlined } from "@ant-design/icons";
+import { Button, Input, Modal, Radio, Popconfirm } from "antd";
 import { createContext } from "react";
 import { useOutlet } from "react-router-dom";
 
@@ -14,6 +14,7 @@ import importImg from "../../assets/import.png";
 import pinImg from "../../assets/pin.png";
 import { useAction } from "./hook";
 import { IWarningSearchDataContext } from "./props";
+import { CleanIcon } from "@/icon/warning";
 
 const { TextArea } = Input;
 
@@ -36,6 +37,12 @@ export const Warning = () => {
     handleOnExportDebounceFn,
     markedStatus,
     pagePermission,
+    deleteLoading,
+    message,
+    unreadyCount,
+    openDelete,
+    setOpenDelete,
+    onDelete,
     setTimeDto,
     setKeyWord,
     onTypeClick,
@@ -76,6 +83,34 @@ export const Warning = () => {
                 value={status}
                 onClick={onStatusClick}
               />
+              <div
+                className="flex items-center pl-[0.5rem] cursor-pointer"
+                onClick={() => {
+                  unreadyCount === 0
+                    ? message.warning("当前没有未读信息")
+                    : setOpenDelete(true);
+                }}
+              >
+                <Popconfirm
+                  title="確定要清除未讀嗎？"
+                  onConfirm={onDelete}
+                  placement="bottom"
+                  okText="確定"
+                  cancelText="取消"
+                  okButtonProps={{ loading: deleteLoading }}
+                  open={openDelete}
+                >
+                  <div className="flex items-center pl-[0.5rem] cursor-pointer">
+                    <Icon
+                      component={CleanIcon}
+                      className="pt-[0.1rem] text-[1rem]"
+                    />
+                    <span className="text-[#8d8f93] font-bold text-[0.88rem] whitespace-nowrap">
+                      清除未讀
+                    </span>
+                  </div>
+                </Popconfirm>
+              </div>
             </div>
           )}
         </div>
