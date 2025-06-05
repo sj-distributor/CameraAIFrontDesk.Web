@@ -149,15 +149,18 @@ export const AuthProvider = (props: { children: ReactElement }) => {
       .then(async (res) => {
         if (!isEmpty(res)) {
           setTeamList(res);
-          getMinePermission(res[0].id);
 
-          if (!window.__POWERED_BY_WUJIE__ && !localCurrentTeam.id) {
-            localStorage.setItem(
-              "currentTeam",
-              JSON.stringify(res[0] ?? initCurrentTeam)
-            );
+          getMinePermission(localCurrentTeam?.id ?? res[0].id);
 
-            setCurrentTeam(res[0] ?? initCurrentTeam);
+          if (!window.__POWERED_BY_WUJIE__) {
+            const teamToSet = localCurrentTeam?.id
+              ? localCurrentTeam
+              : res[0] ?? initCurrentTeam;
+
+            if (!localCurrentTeam?.id)
+              localStorage.setItem("currentTeam", JSON.stringify(teamToSet));
+
+            setCurrentTeam(teamToSet);
           }
         } else {
           setTeamList([]);
