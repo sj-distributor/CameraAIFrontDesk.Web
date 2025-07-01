@@ -1,5 +1,5 @@
 export interface IMineRoleResponse {
-  count: 0;
+  count: number;
   rolePermissionData: IRolePermissionItem[];
 }
 
@@ -43,4 +43,7 @@ export enum FrontRolePermissionEnum {
   CanExportExcelCameraAiFeedback = "CanExportExcelCameraAiFeedback",
   CanViewDetailCameraAiFeedback = "CanViewDetailCameraAiFeedback",
   CanEnterCameraAi = "CanEnterCameraAi",
+  CanCreateCameraAiTeam = "CanCreateCameraAiTeam",
+  CanViewCameraAiDoorDetection = "CanViewCameraAiDoorDetection",
+  CanViewCameraAiInAndOutRegistration = "CanViewCameraAiInAndOutRegistration",
 }

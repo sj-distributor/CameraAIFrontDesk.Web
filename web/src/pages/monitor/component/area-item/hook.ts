@@ -10,6 +10,8 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { GetRegionEquipmentList } from "@/services/monitor";
 import { ScreenType } from "@/entity/screen-type";
+import { message } from "antd";
+import { useDebounce } from "ahooks";
 
 interface IDto extends IRegionEquipmentListResponse, IPageDto {
   loading: boolean;
@@ -18,10 +20,12 @@ interface IDto extends IRegionEquipmentListResponse, IPageDto {
   isFirstGet: boolean;
   isScorllDown: boolean;
   isEnd: boolean;
+  Keyword?: string;
 }
 
 export const useAction = () => {
-  const { location, navigate, parseQueryParams, parseQuery } = useAuth();
+  const { location, navigate, parseQueryParams, parseQuery, currentTeam } =
+    useAuth();
 
   const [layoutMode, setLayoutMode] = useState<ScreenType | null>(null);
 
@@ -36,6 +40,7 @@ export const useAction = () => {
     isFirstGet: false,
     isScorllDown: false,
     isEnd: false,
+    Keyword: "",
   });
 
   const updateLayoutMode = (value: any) => {
@@ -119,7 +124,16 @@ export const useAction = () => {
       updateRegionEquipmentDto("regionName", params.regionName);
   }, []);
 
+  const debounceKeyword = useDebounce(regionEquipmentDto.Keyword, {
+    wait: 500,
+  });
+
   useEffect(() => {
+    if (!currentTeam.id) {
+      message.error("TeamId not found！");
+      return;
+    }
+
     if (regionEquipmentDto.regionId) {
       !regionEquipmentDto.isFirstGet
         ? updateRegionEquipmentDto("loading", true)
@@ -130,6 +144,8 @@ export const useAction = () => {
         PageSize: regionEquipmentDto.PageSize,
         RegionId: regionEquipmentDto.regionId,
         TypeLabel: ICameraAiEquipmentTypeLabel.Camera,
+        TeamId: currentTeam.id,
+        Keyword: regionEquipmentDto.Keyword,
       })
         .then((res) => {
           setData(
@@ -150,6 +166,34 @@ export const useAction = () => {
   ]);
 
   useEffect(() => {
+    if (!currentTeam.id) {
+      message.error("TeamId not found！");
+      return;
+    }
+
+    if (regionEquipmentDto.regionId) {
+      !regionEquipmentDto.isFirstGet
+        ? updateRegionEquipmentDto("loading", true)
+        : updateRegionEquipmentDto("isScorllDown", true);
+
+      GetRegionEquipmentList({
+        PageIndex: regionEquipmentDto.PageIndex,
+        PageSize: regionEquipmentDto.PageSize,
+        RegionId: regionEquipmentDto.regionId,
+        TypeLabel: ICameraAiEquipmentTypeLabel.Camera,
+        TeamId: currentTeam.id,
+        Keyword: regionEquipmentDto.Keyword,
+      })
+        .then((res) => {
+          setData(res?.count ?? 0, false, res?.equipments ?? [], true);
+        })
+        .catch(() => {
+          setData(0, false, [], true);
+        });
+    }
+  }, [debounceKeyword]);
+
+  useEffect(() => {
     console.log(regionEquipmentDto.equipments);
   }, [regionEquipmentDto.equipments]);
 
@@ -159,5 +203,6 @@ export const useAction = () => {
     updateLayoutMode,
     onScroll,
     onClickEquipmentItem,
+    updateRegionEquipmentDto,
   };
 };

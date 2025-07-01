@@ -11,17 +11,20 @@ import { GetRecordList } from "@/services/default";
 import { useUpdateEffect } from "ahooks";
 
 import { WarningSearchDataContext } from "../..";
+import { App } from "antd";
 
 interface IDto extends IPageDto, IRecordResponse {
   loading: boolean;
 }
 
 export const useAction = () => {
+  const { message } = App.useApp();
+
   const { status, selectValues, timeDto, searchKeyWord } = useContext(
     WarningSearchDataContext
   );
 
-  const { navigate, t, pagePermission } = useAuth();
+  const { navigate, t, pagePermission, currentTeam } = useAuth();
 
   const [dto, setDto] = useState<IDto>({
     PageIndex: 1,
@@ -53,9 +56,15 @@ export const useAction = () => {
     searchKeyWord?: string,
     selectValues?: number[]
   ) => {
+    if (!currentTeam.id) {
+      message.error("TeamId not found！");
+      return;
+    }
+
     const data: IRecordRequest = {
       PageIndex: pageIndex,
       PageSize: pageSize,
+      TeamId: currentTeam.id,
     };
 
     if (startTime && endTime) {
@@ -77,13 +86,19 @@ export const useAction = () => {
 
     updateData("loading", true);
 
-    const { count, records } = await GetRecordList(data);
-
-    updateData("records", records ?? []);
-    updateData("count", count ?? 0);
-    updateData("PageIndex", data.PageIndex);
-    updateData("PageSize", data.PageSize);
-    updateData("loading", false);
+    try {
+      const { count, records } = (await GetRecordList(data)) || {};
+      updateData("records", records);
+      updateData("count", count);
+    } catch {
+      message.error("获取数据失败");
+      updateData("records", []);
+      updateData("count", 0);
+    } finally {
+      updateData("PageIndex", data.PageIndex);
+      updateData("PageSize", data.PageSize);
+      updateData("loading", false);
+    }
   };
 
   useEffect(() => {

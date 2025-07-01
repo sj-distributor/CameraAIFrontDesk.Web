@@ -1,5 +1,9 @@
-import { DownOutlined, PlayCircleFilled } from "@ant-design/icons";
-import { Slider } from "antd";
+import {
+  DownOutlined,
+  InfoCircleFilled,
+  PlayCircleFilled,
+} from "@ant-design/icons";
+import { Input, Slider, Tooltip } from "antd";
 import EChartsReact from "echarts-for-react";
 import React from "react";
 
@@ -33,6 +37,8 @@ export const Home = () => {
     videoFullScreen,
     setVolumeSliderStatus,
     errorMessage,
+    setCameraSearch,
+    cameraSearch,
   } = useAction();
 
   return (
@@ -45,24 +51,27 @@ export const Home = () => {
           <strong className="select-none text-xl">
             {t(KEYS.REALTIME_MONITORING, { ns: "home" })}
           </strong>
-          <div className="w-44 flex space-x-1">
+          <div className="w-[14rem] flex space-x-1">
             <div className="flex items-center select-none space-x-0.5">
               <img src={cameraImg} alt="" className="w-4 h-4 object-cover" />
               <div className="text-[#566172] w-14 text-sm text-right">
                 {t(KEYS.CAMERA, { ns: "home" })}:
               </div>
             </div>
+
             <div
               className="relative flex-1 flex select-none items-center"
               onMouseEnter={() => setSelectStatus(true)}
               onMouseLeave={() => setSelectStatus(false)}
             >
-              <div className="w-[4.375rem] truncate cursor-pointer text-center">
-                {clickCamera.equipmentName}
-              </div>
-              <DownOutlined className="cursor-pointer" />
+              <Input
+                placeholder="搜索攝像頭"
+                value={clickCamera.equipmentName || cameraSearch}
+                onChange={(e) => setCameraSearch(e.target.value)}
+                suffix={<DownOutlined />}
+              />
               {selectStatus && (
-                <div className="absolute z-50 -left-1/2 top-full w-32 h-52 bg-white rounded-lg p-2 space-y-2 overflow-y-auto no-scrollbar">
+                <div className="absolute z-50 top-full w-[9rem] h-52 bg-white rounded-lg p-2 space-y-2 overflow-y-auto no-scrollbar">
                   {cameraList.regionCameras.map((item, index) => (
                     <div key={index} className="space-y-0.5">
                       <span className="select-none text-sm">
@@ -169,9 +178,24 @@ export const Home = () => {
         id="box"
       >
         <div className="flex-grow w-[100%] bg-white flex flex-col xl:max-w-[50%] sm:px-6 py-4 rounded-lg">
-          <strong className="text-xl select-none">
-            {t(KEYS.TODAY_ALERT, { ns: "home" })} TOP 5
-          </strong>
+          <div className="flex items-center">
+            <strong className="text-xl select-none">
+              {t(KEYS.TODAY_ALERT, { ns: "home" })} TOP 5
+            </strong>
+            <Tooltip
+              title="本平臺提供全球服務，統一按照太平洋時間（PST）進行統計和紀錄"
+              color="#6F6F6F"
+            >
+              <InfoCircleFilled
+                style={{
+                  fontSize: "1.25rem",
+                  marginLeft: "1rem",
+                  color: "#6F6F6F",
+                }}
+              />
+            </Tooltip>
+          </div>
+
           <div className="w-full md:flex md:max-h-[15rem]">
             <div id="echart-main" className="w-full md:w-3/4 overflow-hidden">
               <EChartsReact

@@ -5,6 +5,7 @@ export interface IRegionListRequest extends IPageDto {
   RegionId?: number;
   RegionAddress?: string;
   Keyword?: string;
+  TeamId: string;
 }
 
 export interface IRegionListResponse {
@@ -56,6 +57,7 @@ export interface IRegionEquipmentListRequest extends IPageDto {
   TypeLabel: ICameraAiEquipmentTypeLabel;
   Keyword?: string;
   RegionId: number;
+  TeamId: string;
 }
 
 export enum ICameraAiEquipmentTypeLabel {
@@ -124,6 +126,7 @@ export interface IMonitorDetailResponse {
 }
 
 export interface IRealtimeGenerateRequest {
+  teamId?: string;
   lives: ILiveItem[];
 }
 

@@ -122,3 +122,53 @@
 .ant-checkbox-wrapper-disabled span {
   color: black;
 }
+
+.accessDatePicker,
+.accessDatePicker:hover {
+  border-width: 0;
+  background-color: transparent;
+  padding: 0;
+}
+
+.customDate .ant-popover-content {
+  margin-left: 1rem;
+  margin-top: 14rem;
+}
+
+.customCalendar .ant-radio-group {
+  display: none;
+}
+
+.tableScroll .ant-table-body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.tableScroll .ant-table-body::-webkit-scrollbar {
+  display: none;
+}
+
+.newTeamModel .ant-modal-content {
+  padding: 0;
+}
+
+.newTeamModel .ant-modal-title {
+  padding: 1.5rem 2rem;
+}
+
+.newTeamModel .ant-btn-variant-outlined:disabled {
+  border-color: transparent !important;
+  color: #8b98ad;
+  background-color: #e6eaf4;
+}
+
+.dropdown:hover svg g g path {
+  fill: #2866f1 !important;
+}
+
+.popover,
+.ant-popover-inner {
+  padding: 0.5rem !important;
+  margin-bottom: 1.5rem;
+  margin-left: 2rem;
+}

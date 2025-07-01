@@ -21,6 +21,9 @@ import {
   IRolePermissionItem,
 } from "@/dtos/mine";
 import { GetMineRoleList } from "@/services/default";
+import { ITeamListProps, IUserDataItem } from "@/dtos/main";
+import { GetTeamsMineApi } from "@/services/main";
+import { isEmpty } from "ramda";
 
 interface IAuthContextType {
   navigate: NavigateFunction;
@@ -32,20 +35,34 @@ interface IAuthContextType {
   signOut: (callback?: VoidFunction) => void;
   signIn: (token: string, name: string) => void;
   locale: Locale;
-  // locationPathname: string;
-  // token: string;
   mineRoles: IMineRoleResponse;
   userName: string;
   message: MessageInstance;
   pagePermission: IPermissions;
   changeLanguage: (language: "en" | "ch") => void;
   isGetPermission: boolean;
+  setIsGetPermission: React.Dispatch<React.SetStateAction<boolean>>;
   defaultNavigatePage: string | null;
+  currentTeam: ITeamListProps;
+  setCurrentTeam: React.Dispatch<React.SetStateAction<ITeamListProps>>;
+  setPagePermission: React.Dispatch<React.SetStateAction<IPermissions>>;
+  currentAccount: IUserDataItem;
+  setCurrentAccount: React.Dispatch<React.SetStateAction<IUserDataItem>>;
+  teamList: ITeamListProps[];
+  getMineTeam: (name: string) => void;
 }
 
 interface IPermissions {
   [key: string]: boolean;
 }
+
+const initCurrentTeam: ITeamListProps = {
+  id: "",
+  name: "",
+  leaderId: "",
+  tenantId: "",
+  avatarUrl: "",
+};
 
 export const AuthContext = createContext<IAuthContextType>(null!);
 
@@ -81,6 +98,8 @@ export const AuthProvider = (props: { children: ReactElement }) => {
 
   const [isLogin, setIsLogin] = useState<boolean>(false);
 
+  const [teamList, setTeamList] = useState<ITeamListProps[]>([]);
+
   const [isInit, setIsInit] = useState<boolean>(false);
 
   const [defaultNavigatePage, setDefaultNavigatePage] = useState<string | null>(
@@ -93,7 +112,28 @@ export const AuthProvider = (props: { children: ReactElement }) => {
     canViewReplay: false,
     canViewWarning: false,
     canViewFeedback: false,
+    CanViewCameraAiDoorDetection: false,
+    CanViewCameraAiInAndOutRegistration: false,
   });
+
+  const localCurrentTeam = JSON.parse(
+    localStorage.getItem("currentTeam") ?? "{}"
+  );
+
+  const localCurrentAccount = JSON.parse(
+    localStorage.getItem("currentAccount") ?? "{}"
+  );
+
+  const [currentTeam, setCurrentTeam] = useState<ITeamListProps>({
+    id: localCurrentTeam.id ?? "",
+    name: localCurrentTeam.name ?? "",
+    leaderId: localCurrentTeam.leaderId ?? "",
+    tenantId: localCurrentTeam.tenantId ?? "",
+    avatarUrl: localCurrentTeam.avatarUrl ?? "",
+  });
+
+  const [currentAccount, setCurrentAccount] =
+    useState<IUserDataItem>(localCurrentAccount);
 
   const signIn = async (token: string, name: string) => {
     setIsLogin(true);
@@ -101,7 +141,47 @@ export const AuthProvider = (props: { children: ReactElement }) => {
     setToken(token);
     setUserName(name);
 
-    const { count, rolePermissionData } = await GetMineRoleList();
+    getMineTeam();
+  };
+
+  const getMineTeam = () => {
+    GetTeamsMineApi({})
+      .then(async (res) => {
+        if (!isEmpty(res)) {
+          setTeamList(res);
+
+          getMinePermission(localCurrentTeam?.id ?? res[0].id);
+
+          if (!window.__POWERED_BY_WUJIE__) {
+            const teamToSet = localCurrentTeam?.id
+              ? localCurrentTeam
+              : res[0] ?? initCurrentTeam;
+
+            if (!localCurrentTeam?.id)
+              localStorage.setItem("currentTeam", JSON.stringify(teamToSet));
+
+            setCurrentTeam(teamToSet);
+          }
+        } else {
+          setTeamList([]);
+
+          setPagePermission(checkRole([]));
+
+          setIsGetPermission(true);
+
+          navigate("/home");
+        }
+      })
+      .catch((err) => {
+        message.error(`獲取團隊失敗：${err}`);
+      });
+  };
+
+  const getMinePermission = async (TeamId: string) => {
+    const { count = 0, rolePermissionData = [] } =
+      (await GetMineRoleList({
+        TeamId: TeamId,
+      })) || {};
 
     setIsGetPermission(true);
 
@@ -114,34 +194,21 @@ export const AuthProvider = (props: { children: ReactElement }) => {
 
     setPagePermission(permissions);
 
-    const defaultPage = permissions["canViewHome"]
-      ? "/home"
-      : permissions["canViewMonitor"]
-      ? "/monitor"
-      : permissions["canViewReplay"]
-      ? "/replay"
-      : permissions["canViewWarning"]
-      ? "/warning"
-      : permissions["canViewFeedback"]
-      ? "/feedback"
-      : "/none";
+    if (isLogin) {
+      const defaultPage = permissions["canViewHome"]
+        ? "/home"
+        : permissions["canViewMonitor"]
+        ? "/monitor"
+        : permissions["canViewReplay"]
+        ? "/replay"
+        : permissions["canViewWarning"]
+        ? "/warning"
+        : permissions["canViewFeedback"]
+        ? "/feedback"
+        : "/none";
 
-    navigate(defaultPage);
-  };
-
-  const getMinePermission = async () => {
-    const { count, rolePermissionData } = await GetMineRoleList();
-
-    setMineRoles({
-      count: count ?? 0,
-      rolePermissionData: rolePermissionData ?? [],
-    });
-
-    const permissions = checkRole(rolePermissionData);
-
-    setPagePermission(permissions);
-
-    return permissions;
+      navigate(defaultPage);
+    }
   };
 
   const changeLanguage = (language: "en" | "ch") => {
@@ -151,9 +218,13 @@ export const AuthProvider = (props: { children: ReactElement }) => {
   const signOut = (callback?: VoidFunction) => {
     setToken("");
     setUserName("");
+    setCurrentTeam(initCurrentTeam);
 
     localStorage.setItem((window as any).appsettings?.tokenKey, "");
     localStorage.setItem((window as any).appsettings?.userNameKey, "");
+
+    localStorage.removeItem("currentTeam");
+    localStorage.removeItem("currentAccount");
 
     setMineRoles({
       count: 0,
@@ -196,6 +267,14 @@ export const AuthProvider = (props: { children: ReactElement }) => {
         permission: FrontRolePermissionEnum.CanViewCameraAiFeedbackListPage,
         variableName: "canViewFeedback",
       },
+      {
+        permission: FrontRolePermissionEnum.CanViewCameraAiDoorDetection,
+        variableName: "canViewCameraAiDoorDetection",
+      },
+      {
+        permission: FrontRolePermissionEnum.CanViewCameraAiInAndOutRegistration,
+        variableName: "canViewCameraAiInAndOutRegistration",
+      },
       // 功能
       {
         permission: FrontRolePermissionEnum.CanSwitchCameraAiBackEnd,
@@ -229,6 +308,10 @@ export const AuthProvider = (props: { children: ReactElement }) => {
         permission: FrontRolePermissionEnum.CanViewDetailCameraAiFeedback,
         variableName: "canViewDetailFeedback",
       },
+      {
+        permission: FrontRolePermissionEnum.CanCreateCameraAiTeam,
+        variableName: "canCreateCameraAiTeam",
+      },
     ];
 
     const permissions: { [key: string]: boolean } = permissionsToCheck.reduce(
@@ -250,11 +333,6 @@ export const AuthProvider = (props: { children: ReactElement }) => {
   };
 
   const parseQuery = (): string[] => {
-    console.log(
-      "parseQuery",
-      location.pathname.split("/").filter((item) => item.trim() !== "")
-    );
-
     return location.pathname.split("/").filter((item) => item.trim() !== "");
   };
 
@@ -272,38 +350,18 @@ export const AuthProvider = (props: { children: ReactElement }) => {
   }, [language]);
 
   useEffect(() => {
-    if (userName && token && !isLogin) {
-      getMinePermission()
-        .then((res) => {
-          setIsGetPermission(true);
-          setPagePermission(res);
-        })
-        .catch(() => {
-          setPagePermission({
-            canViewHome: false,
-            canViewMonitor: false,
-            canViewReplay: false,
-            canViewWarning: false,
-            canViewFeedback: false,
-          });
-        });
-      // GetMineRoleList()
-      //   .then((res) => {
-      //     setMineRoles({
-      //       count: res?.count ?? 0,
-      //       rolePermissionData: res?.rolePermissionData ?? [],
-      //     });
-      //   })
-      //   .catch(() => {
-      //     setMineRoles({
-      //       count: 0,
-      //       rolePermissionData: [],
-      //     });
-      //   });
+    if (!isLogin && token) {
+      getMineTeam();
     }
-  }, [userName, token, isLogin]);
+  }, [isLogin]);
 
   useUpdateEffect(() => {
+    if (currentTeam.id) getMinePermission(currentTeam.id);
+  }, [currentTeam]);
+
+  useUpdateEffect(() => {
+    console.log(pagePermission);
+
     const defaultPage = pagePermission["canViewHome"]
       ? "/home"
       : pagePermission["canViewMonitor"]
@@ -314,6 +372,10 @@ export const AuthProvider = (props: { children: ReactElement }) => {
       ? "/warning"
       : pagePermission["canViewFeedback"]
       ? "/feedback"
+      : pagePermission["canViewCameraAiDoorDetection"]
+      ? "/door"
+      : pagePermission["canViewCameraAiInAndOutRegistration"]
+      ? "/inout"
       : "/none";
 
     setDefaultNavigatePage(defaultPage);
@@ -335,7 +397,15 @@ export const AuthProvider = (props: { children: ReactElement }) => {
     changeLanguage,
     parseQueryParams,
     isGetPermission,
+    setIsGetPermission,
     defaultNavigatePage,
+    currentTeam,
+    setCurrentTeam,
+    setPagePermission,
+    currentAccount,
+    setCurrentAccount,
+    teamList,
+    getMineTeam,
   };
 
   return (

@@ -23,7 +23,7 @@ import { getErrorMessage } from "@/utils/error-message";
 import { isEmpty, isNil } from "ramda";
 
 export const useAction = () => {
-  const { t } = useAuth();
+  const { t, currentTeam } = useAuth();
 
   const { warningId } = useParams();
 
@@ -32,6 +32,7 @@ export const useAction = () => {
   const [playDetailData, setPlayDetailData] = useState<IPlayDetailDataDto>({
     areaAdress: "",
     locationId: "",
+    equipmentId: "",
     equipmentCode: "",
     startTime: "",
     duration: 0,
@@ -66,6 +67,7 @@ export const useAction = () => {
     {
       if (palybackData.endTime && palybackData.startTime) {
         const data = {
+          equipmentId: playDetailData.equipmentId,
           equipmentCode: playDetailData.equipmentCode,
           monitorTypes: palybackData.monitorTypes,
           locationId: playDetailData.locationId,
@@ -204,6 +206,7 @@ export const useAction = () => {
             const resData = {
               areaAdress: res.regionAndArea.regionAddress,
               locationId: res.regionAndArea.locationId,
+              equipmentId: res.record.equipmentId,
               equipmentCode: res.record.equipmentCode,
               startTime: res.record.occurrenceTime,
               duration: res.record.duration,
@@ -269,7 +272,9 @@ export const useAction = () => {
   /* 獲取生成請求的參數 */
   const getGenerateParams = (replayDetailDto: any) => {
     const data: IPostPlayBackGenerateRequest = {
+      teamId: currentTeam.id,
       locationId: replayDetailDto.locationId ?? "",
+      equipmentId: replayDetailDto.equipmentId ?? "",
       equipmentCode: replayDetailDto.equipmentCode ?? "",
       startTime:
         dayjs.utc(replayDetailDto.startTime).format("YYYY_MM_DD_HH_mm_ss") ??
