@@ -14,7 +14,7 @@ import { useUpdateEffect } from "ahooks";
 import { getErrorMessage } from "@/utils/error-message";
 
 export const useAction = () => {
-  const { location, message, pagePermission } = useAuth();
+  const { location, message, pagePermission, currentTeam } = useAuth();
 
   const warningSelectRef = useRef({
     selectValues: [],
@@ -86,6 +86,7 @@ export const useAction = () => {
 
   const getGenerateParams = (monitorDetail: IMonitorDetailResponse) => {
     const data: IRealtimeGenerateRequest = {
+      teamId: currentTeam.id,
       lives: [
         {
           locationId: monitorDetail?.locationId ?? "",

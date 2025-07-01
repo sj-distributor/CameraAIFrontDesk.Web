@@ -211,6 +211,38 @@ export const Main = () => {
               <></>
             ),
           },
+          {
+            key: "/door",
+            label: <Link to="/door">出入口檢測</Link>,
+            icon: !collapsed ? (
+              <div className="h-full bg-[#E9EDF2] py-2 navigationIconBox">
+                {selectedKeys[0] === "/door" && (
+                  <div className="w-full h-full relative flex items-center justify-center">
+                    <div className="h-full w-[0.125rem] bg-[#2866F1] absolute" />
+                    <div className="w-[0.375rem] h-[0.375rem] bg-[#2866F1] absolute rounded-full" />
+                  </div>
+                )}
+              </div>
+            ) : (
+              <></>
+            ),
+          },
+          {
+            key: "/inout",
+            label: <Link to="/inout">进出登记</Link>,
+            icon: !collapsed ? (
+              <div className="h-full bg-[#E9EDF2] py-2 navigationIconBox">
+                {selectedKeys[0] === "/inout" && (
+                  <div className="w-full h-full relative flex items-center justify-center">
+                    <div className="h-full w-[0.125rem] bg-[#2866F1] absolute" />
+                    <div className="w-[0.375rem] h-[0.375rem] bg-[#2866F1] absolute rounded-full" />
+                  </div>
+                )}
+              </div>
+            ) : (
+              <></>
+            ),
+          },
         ],
       },
     ];
@@ -239,6 +271,14 @@ export const Main = () => {
             return pagePermission ? pagePermission["canViewWarning"] : false;
           } else if (child.key === "/feedback") {
             return pagePermission ? pagePermission["canViewFeedback"] : false;
+          } else if (child.key === "/door") {
+            return pagePermission
+              ? pagePermission["canViewCameraAiDoorDetection"]
+              : false;
+          } else if (child.key === "/inout") {
+            return pagePermission
+              ? pagePermission["canViewCameraAiInAndOutRegistration"]
+              : false;
           } else {
             return true;
           }

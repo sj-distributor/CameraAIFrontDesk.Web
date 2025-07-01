@@ -112,6 +112,8 @@ export const AuthProvider = (props: { children: ReactElement }) => {
     canViewReplay: false,
     canViewWarning: false,
     canViewFeedback: false,
+    CanViewCameraAiDoorDetection: false,
+    CanViewCameraAiInAndOutRegistration: false,
   });
 
   const localCurrentTeam = JSON.parse(
@@ -147,15 +149,18 @@ export const AuthProvider = (props: { children: ReactElement }) => {
       .then(async (res) => {
         if (!isEmpty(res)) {
           setTeamList(res);
-          getMinePermission(res[0].id);
 
-          if (!window.__POWERED_BY_WUJIE__ && !localCurrentTeam.id) {
-            localStorage.setItem(
-              "currentTeam",
-              JSON.stringify(res[0] ?? initCurrentTeam)
-            );
+          getMinePermission(localCurrentTeam?.id ?? res[0].id);
 
-            setCurrentTeam(res[0] ?? initCurrentTeam);
+          if (!window.__POWERED_BY_WUJIE__) {
+            const teamToSet = localCurrentTeam?.id
+              ? localCurrentTeam
+              : res[0] ?? initCurrentTeam;
+
+            if (!localCurrentTeam?.id)
+              localStorage.setItem("currentTeam", JSON.stringify(teamToSet));
+
+            setCurrentTeam(teamToSet);
           }
         } else {
           setTeamList([]);
@@ -262,6 +267,14 @@ export const AuthProvider = (props: { children: ReactElement }) => {
         permission: FrontRolePermissionEnum.CanViewCameraAiFeedbackListPage,
         variableName: "canViewFeedback",
       },
+      {
+        permission: FrontRolePermissionEnum.CanViewCameraAiDoorDetection,
+        variableName: "canViewCameraAiDoorDetection",
+      },
+      {
+        permission: FrontRolePermissionEnum.CanViewCameraAiInAndOutRegistration,
+        variableName: "canViewCameraAiInAndOutRegistration",
+      },
       // 功能
       {
         permission: FrontRolePermissionEnum.CanSwitchCameraAiBackEnd,
@@ -347,6 +360,8 @@ export const AuthProvider = (props: { children: ReactElement }) => {
   }, [currentTeam]);
 
   useUpdateEffect(() => {
+    console.log(pagePermission);
+
     const defaultPage = pagePermission["canViewHome"]
       ? "/home"
       : pagePermission["canViewMonitor"]
@@ -357,6 +372,10 @@ export const AuthProvider = (props: { children: ReactElement }) => {
       ? "/warning"
       : pagePermission["canViewFeedback"]
       ? "/feedback"
+      : pagePermission["canViewCameraAiDoorDetection"]
+      ? "/door"
+      : pagePermission["canViewCameraAiInAndOutRegistration"]
+      ? "/inout"
       : "/none";
 
     setDefaultNavigatePage(defaultPage);
