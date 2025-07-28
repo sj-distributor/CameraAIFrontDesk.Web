@@ -89,7 +89,11 @@ export const Warning = () => {
                 className="rounded-[3rem] text-base w-[12.5rem]"
                 suffix={<SearchOutlined className="" />}
                 value={keyWord}
-                onChange={(e) => setKeyWord(e.target.value)}
+                onChange={(e) => {
+                  setKeyWord(e.target.value);
+
+                  sessionStorage.setItem("keyWord", e.target.value);
+                }}
               />
               {pagePermission.canExportExcelWarning && (
                 <Button

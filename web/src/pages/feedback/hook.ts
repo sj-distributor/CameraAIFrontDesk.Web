@@ -1,4 +1,4 @@
-import { useDebounceFn } from "ahooks";
+import { useDebounceFn, useUpdateEffect } from "ahooks";
 import dayjs, { Dayjs } from "dayjs";
 import { clone } from "ramda";
 import { useEffect, useRef, useState } from "react";
@@ -51,6 +51,8 @@ export const useAction = () => {
 
       if (isExist) newData = newData.filter((item) => item !== id);
       else newData.push(id);
+
+      sessionStorage.setItem("feedBackSelectValues", JSON.stringify(newData));
 
       return newData;
     });
@@ -204,6 +206,12 @@ export const useAction = () => {
   };
 
   useEffect(() => {
+    const feedBackTimeDto = sessionStorage.getItem("feedBackTimeDto");
+    feedBackTimeDto && setTimeDto(JSON.parse(feedBackTimeDto));
+
+    const feedBackSelectValues = sessionStorage.getItem("feedBackSelectValues");
+    feedBackSelectValues && setSelectValues(JSON.parse(feedBackSelectValues));
+
     getHeight();
 
     window.addEventListener("resize", getHeight);
@@ -212,6 +220,16 @@ export const useAction = () => {
       window.removeEventListener("resize", getHeight);
     };
   }, []);
+
+  useUpdateEffect(() => {
+    sessionStorage.setItem(
+      "feedBackTimeDto",
+      JSON.stringify({
+        startTime: timeDto.startTime,
+        endTime: timeDto.endTime,
+      })
+    );
+  }, [timeDto]);
 
   return {
     t,

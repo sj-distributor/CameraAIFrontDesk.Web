@@ -102,7 +102,15 @@ export const useAction = () => {
   };
 
   useEffect(() => {
-    loadWarningData(dto.PageIndex, dto.PageSize);
+    loadWarningData(
+      dto.PageIndex,
+      dto.PageSize,
+      (timeDto.startTime as string) ?? "",
+      (timeDto.endTime as string) ?? "",
+      status,
+      searchKeyWord,
+      selectValues
+    );
   }, []);
 
   const onChangePage = (pageIndex: number, pageSize: number) => {
