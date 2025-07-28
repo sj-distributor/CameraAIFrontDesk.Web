@@ -1,4 +1,4 @@
-import { useDebounceEffect, useDebounceFn } from "ahooks";
+import { useDebounceEffect, useDebounceFn, useUpdateEffect } from "ahooks";
 import dayjs, { Dayjs } from "dayjs";
 import { clone } from "ramda";
 import { useEffect, useRef, useState } from "react";
@@ -73,6 +73,8 @@ export const useAction = () => {
 
   const onStatusClick = (value: IStatusType) => {
     setStatus(value);
+
+    sessionStorage.setItem("status", value.toString());
   };
 
   const onTypeClick = (id: number) => {
@@ -83,6 +85,8 @@ export const useAction = () => {
 
       if (isExist) newData = newData.filter((item) => item !== id);
       else newData.push(id);
+
+      sessionStorage.setItem("selectValues", JSON.stringify(newData));
 
       return newData;
     });
@@ -335,6 +339,32 @@ export const useAction = () => {
       }));
     }
   }, [location.pathname]);
+
+  useEffect(() => {
+    const timeDto = sessionStorage.getItem("timeDto");
+    timeDto && setTimeDto(JSON.parse(timeDto));
+
+    const selectValues = sessionStorage.getItem("selectValues");
+    selectValues && setSelectValues(JSON.parse(selectValues));
+
+    const keyWord = sessionStorage.getItem("keyWord");
+    keyWord && setKeyWord(keyWord);
+
+    const status = sessionStorage.getItem("status");
+    if (status !== null) {
+      setStatus(Number(status) as IStatusType);
+    }
+  }, []);
+
+  useUpdateEffect(() => {
+    sessionStorage.setItem(
+      "timeDto",
+      JSON.stringify({
+        startTime: timeDto.startTime,
+        endTime: timeDto.endTime,
+      })
+    );
+  }, [timeDto]);
 
   return {
     t,
