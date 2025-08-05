@@ -21,6 +21,7 @@ import {
 import { useDebounceFn } from "ahooks";
 import { getErrorMessage } from "@/utils/error-message";
 import { isEmpty, isNil } from "ramda";
+import { renderAlertText } from "@/utils/monitor-summary";
 
 export const useAction = () => {
   const { t, currentTeam } = useAuth();
@@ -173,13 +174,7 @@ export const useAction = () => {
     },
     {
       label: `${t(KEYS.ALERT_CONTENT, { ns: "alertList" })}：`,
-      value: `${record?.equipmentName},${record?.monitorTypeName}(${
-        record?.name
-      }${
-        record.monitorType === ICameraAiMonitorType.Costume
-          ? `未配戴${record?.costumesDetected}`
-          : ""
-      })出現超過${record?.settingDuration}秒`,
+      value: renderAlertText(record),
     },
     {
       label: `${t(KEYS.AREA_ADRESS, { ns: "alertList" })}：`,
