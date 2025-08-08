@@ -44,6 +44,12 @@ export enum ICameraAiMonitorType {
   FloorIce = 1102, // 地面结冰
   TouchGoods = 13, // 触摸二层货物规范
   Attendance = 14, // 进出登记
+  Move = 15, // 搬货动作监测
+  FallDown = 16, // 跌倒监测
+  Antiskid = 17, // 防滑垫使用监测
+  ForkliftFork = 18, // 叉车升降移動檢測
+  Tidy = 19, // 場地環境衛生檢測
+  TrashCanLid = 20, // 垃圾桶關閉檢測
 }
 
 export interface IRecordResponse {
