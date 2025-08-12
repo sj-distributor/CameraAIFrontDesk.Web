@@ -12,21 +12,10 @@ export const useAction = (monitorSummary?: boolean) => {
   const { t } = useAuth();
 
   const typeList = [
+    /* 人 */
     {
       label: t(KEYS.PEOPLE, { ns: "alertList" }),
       value: ICameraAiMonitorType.People,
-    },
-    {
-      label: t(KEYS.VEHICLES, { ns: "alertList" }),
-      value: ICameraAiMonitorType.Vehicles,
-    },
-    {
-      label: t(KEYS.ABNORMALVEHICLES, { ns: "alertList" }),
-      value: ICameraAiMonitorType.AbnormalVehicles,
-    },
-    {
-      label: t(KEYS.ANIMAL, { ns: "alertList" }),
-      value: ICameraAiMonitorType.Animal,
     },
     {
       label: t(KEYS.SMOKE, { ns: "alertList" }),
@@ -45,8 +34,38 @@ export const useAction = (monitorSummary?: boolean) => {
       value: ICameraAiMonitorType.TouchGoods,
     },
     {
+      label: "員工搬貨動作檢測",
+      value: ICameraAiMonitorType.Move,
+    },
+    {
+      label: "人員摔跤檢測",
+      value: ICameraAiMonitorType.FallDown,
+    },
+    /* 车辆 */
+    {
+      label: t(KEYS.VEHICLES, { ns: "alertList" }),
+      value: ICameraAiMonitorType.Vehicles,
+    },
+    {
+      label: t(KEYS.ABNORMALVEHICLES, { ns: "alertList" }),
+      value: ICameraAiMonitorType.AbnormalVehicles,
+    },
+    {
       label: "叉車熒光帶匹配檢測",
       value: ICameraAiMonitorType.Forklift,
+    },
+    {
+      label: "防滑膠墊使用檢測",
+      value: ICameraAiMonitorType.Antiskid,
+    },
+    {
+      label: "叉車升降移動檢測",
+      value: ICameraAiMonitorType.ForkliftFork,
+    },
+    /* 物體 */
+    {
+      label: t(KEYS.ANIMAL, { ns: "alertList" }),
+      value: ICameraAiMonitorType.Animal,
     },
     {
       label: "識別地面水跡",
@@ -65,8 +84,12 @@ export const useAction = (monitorSummary?: boolean) => {
       value: ICameraAiMonitorType.DoorRolling,
     },
     {
-      label: "進出時間登記",
-      value: ICameraAiMonitorType.Attendance,
+      label: "場地環境衛生檢測",
+      value: ICameraAiMonitorType.Tidy,
+    },
+    {
+      label: "垃圾桶關閉檢測",
+      value: ICameraAiMonitorType.TrashCanLid,
     },
   ];
 
