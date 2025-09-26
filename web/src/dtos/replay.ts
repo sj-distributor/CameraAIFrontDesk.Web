@@ -57,6 +57,7 @@ export interface IReplayRecordItem {
   occurrenceTime: string;
   createdTime: string;
   locationTime: string;
+  playbackStatus: IPlayBackStatus;
   playbackUrl?: string;
 }
 
