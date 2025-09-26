@@ -220,6 +220,15 @@ export const useAction = () => {
               return;
             }
 
+            if (
+              res?.record?.playbackStatus === IPlayBackStatus.Processing ||
+              (!isNil(res?.record?.replayUrl) &&
+                !isEmpty(res?.record?.replayUrl))
+            ) {
+              setIsFirstGenerate(true);
+              return;
+            }
+
             setPlayDetailData(() => resData);
 
             const data = getGenerateParams(resData);
