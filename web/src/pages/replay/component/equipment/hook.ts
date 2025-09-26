@@ -248,6 +248,16 @@ export const useAction = () => {
         return;
       }
 
+      if (
+        replayDetailDto?.records?.[0]?.playbackStatus ===
+          IPlayBackStatus.Processing ||
+        (!isNil(replayDetailDto?.records?.[0]?.replayUrl) &&
+          !isEmpty(replayDetailDto?.records?.[0]?.replayUrl))
+      ) {
+        setIsFirstGenerate(true);
+        return;
+      }
+
       // 调用生成回放;
       PostPlayBackGenerate(data)
         .then(() => {
