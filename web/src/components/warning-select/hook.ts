@@ -53,6 +53,14 @@ export const useAction = () => {
           label: "進出時間登記",
           value: ICameraAiMonitorType.Attendance,
         },
+        {
+          label: "員工搬貨動作檢測",
+          value: ICameraAiMonitorType.Move,
+        },
+        {
+          label: "人員摔跤檢測",
+          value: ICameraAiMonitorType.FallDown,
+        },
       ],
     },
     {
@@ -71,6 +79,14 @@ export const useAction = () => {
         {
           label: "叉車熒光帶匹配檢測",
           value: ICameraAiMonitorType.Forklift,
+        },
+        {
+          label: "防滑膠墊使用檢測",
+          value: ICameraAiMonitorType.Antiskid,
+        },
+        {
+          label: "叉車升降移動檢測",
+          value: ICameraAiMonitorType.ForkliftFork,
         },
       ],
     },
@@ -111,6 +127,14 @@ export const useAction = () => {
         {
           label: "卷簾門關閉檢測",
           value: ICameraAiMonitorType.DoorRolling,
+        },
+        {
+          label: "場地環境衛生檢測",
+          value: ICameraAiMonitorType.Tidy,
+        },
+        {
+          label: "垃圾桶關閉檢測",
+          value: ICameraAiMonitorType.TrashCanLid,
         },
       ],
     },
