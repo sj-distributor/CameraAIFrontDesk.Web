@@ -79,7 +79,7 @@ export const FullScreen = () => {
                     [ICameraAiMonitorType.Animal]: [],
                   },
                 }}
-                videoUrl={successUrl}
+                videoUrl="https://camera-ai-realtime-test.wiltechs.com/1800-2/2201.flv"
                 errorFlv={errorFlv}
                 setErrorFlv={setErrorFlv}
                 canExportVideo={pagePermission.canExportRealtimeVideo}
