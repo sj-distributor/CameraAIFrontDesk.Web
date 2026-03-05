@@ -6,9 +6,12 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import { AuthStatus } from "@/hooks/auth-status";
 import { useAuth } from "@/hooks/use-auth";
+import { CameraBackstage } from "@/pages/camera-backstage";
+import { Door } from "@/pages/door";
 import { Feedback } from "@/pages/feedback";
 import { FeedbackList } from "@/pages/feedback/component/feedback-list";
 import { Home } from "@/pages/home";
+import { InoutRegistration } from "@/pages/inout-registration";
 import { Login } from "@/pages/login";
 import { Main } from "@/pages/main";
 import { Monitor } from "@/pages/monitor";
@@ -20,12 +23,10 @@ import { None } from "@/pages/none";
 import { Replay } from "@/pages/replay";
 import { Equipment as ReplayEquipment } from "@/pages/replay/component/equipment";
 import { ReplayList } from "@/pages/replay/component/replay-list";
+import { TrainingPlatform } from "@/pages/training-platform";
 import { Warning } from "@/pages/warning";
 import { Equipment } from "@/pages/warning/component/equipment";
 import { WarningList } from "@/pages/warning/component/warning-list";
-import { Door } from "@/pages/door";
-import { InoutRegistration } from "@/pages/inout-registration";
-import { CameraBackstage } from "@/pages/camera-backstage";
 
 export interface IRouteItem {
   path: string;
@@ -186,6 +187,14 @@ export const Router = () => {
           element={
             <AuthStatus>
               <CameraBackstage />
+            </AuthStatus>
+          }
+        />
+        <Route
+          path="/training"
+          element={
+            <AuthStatus>
+              <TrainingPlatform />
             </AuthStatus>
           }
         />

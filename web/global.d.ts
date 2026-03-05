@@ -24,6 +24,7 @@ interface Window {
       token: string;
       signOut: (callback?: VoidFunction) => void;
       goBackstage: () => void;
+      goTrainingPlatform: () => void;
     };
     location?: object;
   };

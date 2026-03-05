@@ -7,14 +7,14 @@ import {
   Avatar,
   Button,
   ConfigProvider,
+  Image,
   Input,
   Menu,
   MenuProps,
   Modal,
   Popover,
-  Image,
-  Tooltip,
   Spin,
+  Tooltip,
   message,
 } from "antd";
 import { useMemo } from "react";
@@ -23,6 +23,17 @@ import { Link, Outlet } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import KEYS from "@/i18n/keys/main-page";
 
+import {
+  AddTeamIcon,
+  ArrowRightIcon,
+  CloseNewTeamIcon,
+  LogoutIcon,
+  PreviewAndAcceptIcon,
+  RefreshIcon,
+  SelectedIcon,
+  UpoadLogoIcon,
+  UserArrowRightIcon,
+} from "@/icon/main";
 import chevronDownImg from "../../assets/chevronDown.png";
 import homeImg from "../../assets/home.png";
 import home_clickImg from "../../assets/home_click.png";
@@ -35,20 +46,9 @@ import replayImg from "../../assets/replay.png";
 import replay_clickImg from "../../assets/replay_click.png";
 import sliceImg from "../../assets/slice.png";
 import { useAction } from "./hook";
-import {
-  AddTeamIcon,
-  ArrowRightIcon,
-  CloseNewTeamIcon,
-  LogoutIcon,
-  PreviewAndAcceptIcon,
-  RefreshIcon,
-  SelectedIcon,
-  UpoadLogoIcon,
-  UserArrowRightIcon,
-} from "@/icon/main";
 
-import Dropzone from "react-dropzone";
 import { isEmpty } from "ramda";
+import Dropzone from "react-dropzone";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -100,6 +100,7 @@ export const Main = () => {
     setAcceptWarnData,
     setErrorMessages,
     getUserNotification,
+    handleJumpToTrainingPlatform,
   } = useAction();
 
   const items: MenuItem[] = useMemo(() => {
@@ -417,7 +418,7 @@ export const Main = () => {
                     </div>
                   </div>
 
-                  <div>
+                  <div className="border-b pb-4">
                     {[
                       {
                         name: "切換後台",
@@ -452,7 +453,7 @@ export const Main = () => {
                           !(
                             userName.toLowerCase() === "admin" &&
                             item.name === "預警接收"
-                          )
+                          ),
                       )
                       .map((item, index) => (
                         <div
@@ -464,6 +465,27 @@ export const Main = () => {
                           <span className="text-sm">{item.name}</span>
                         </div>
                       ))}
+                  </div>
+
+                  <div>
+                    {[
+                      {
+                        name: "TRAINING PLATFORM",
+                        component: <SwapOutlined className="text-sm" />,
+                        function: () => {
+                          handleJumpToTrainingPlatform();
+                        },
+                      },
+                    ].map((item, index) => (
+                      <div
+                        key={index}
+                        className="h-9 flex items-center space-x-2 bg-white hover:bg-[#EBF1FF] hover:text-[#2866F1] rounded-lg cursor-pointer select-none pl-2 dropdown"
+                        onClick={item.function}
+                      >
+                        {item.component}
+                        <span className="text-sm">{item.name}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -521,7 +543,7 @@ export const Main = () => {
 
                                 message.info(
                                   `即将切换到 ${item.name} ......`,
-                                  0
+                                  0,
                                 );
 
                                 const interval = setInterval(() => {
@@ -819,7 +841,7 @@ export const Main = () => {
                   onClick={() => {
                     updateAcceptWarnData(
                       "workWechat",
-                      originAcceptWarnData.workWechat
+                      originAcceptWarnData.workWechat,
                     );
                     updateErrorMessage("workWechat", "");
                   }}
