@@ -2,5 +2,7 @@
   "serverUrl": "https://testsmarties.yamimeal.ca",
   "tokenKey": "token",
   "userNameKey": "userName",
-  "cameraAIBackstageDomain": "https://camerai-m.wiltechs.com/"
+  "cameraAIBackstageDomain": "https://camerai-m.wiltechs.com/",
+  "trainingPlatformUrl": "",
+  "omeAccountServerUrl": "https://ome-account.wiltechs.com"
 }
