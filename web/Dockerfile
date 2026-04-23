@@ -14,7 +14,6 @@ WORKDIR /usr/share/nginx/html
 RUN apk add --no-cache npm && npm install -g @import-meta-env/cli
 
 COPY --from=build /web/dist .
-COPY .env.example .
 
 RUN sed -i '12a error_page 404 /index.html;' /etc/nginx/conf.d/default.conf && \
     sed -i '/^http {/a \
