@@ -23,7 +23,6 @@ RUN sed -i '12a error_page 404 /index.html;' /etc/nginx/conf.d/default.conf && \
 
 RUN echo "#!/bin/sh" >> start.sh &&\
     echo "set -e" >> start.sh &&\
-    echo "npx @import-meta-env/cli -x .env.example -e .env -p index.html" >> start.sh &&\
     echo "gzip -kf index.html" >> start.sh &&\
     echo "nginx -g 'daemon off;'" >> start.sh &&\
     chmod +x start.sh
