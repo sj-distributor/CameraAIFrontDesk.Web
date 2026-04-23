@@ -1,7 +1,11 @@
 FROM node:20-alpine AS builder
 
 WORKDIR /app
+
+RUN apk add --no-cache git
+
 COPY . .
+
 RUN npm install --force && npm run build
 
 FROM nginx:stable-alpine
