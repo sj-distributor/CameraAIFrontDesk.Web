@@ -1,16 +1,33 @@
-FROM node:20-alpine AS builder
+FROM node:20-alpine AS build
 
-WORKDIR /app
+WORKDIR /web
+
 COPY . .
-RUN npm install --force && npm run build
+
+RUN npm ci && \
+    npm run build
 
 FROM nginx:stable-alpine
 
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder /app/dist /usr/share/nginx/html/dist
+WORKDIR /usr/share/nginx/html
 
-RUN echo "#!/bin/sh" > /init.sh && \
-    echo "nginx -g 'daemon off;'" >> /init.sh && \
-    chmod +x /init.sh
+RUN apk add --no-cache npm && npm install -g @import-meta-env/cli
 
-CMD ["/init.sh"]
+COPY --from=build /web/dist .
+COPY .env.example .
+
+RUN sed -i '12a error_page 404 /index.html;' /etc/nginx/conf.d/default.conf && \
+    sed -i '/^http {/a \
+    gzip on;\n\
+    gzip_static on;' /etc/nginx/nginx.conf
+
+RUN echo "#!/bin/sh" >> start.sh &&\
+    echo "set -e" >> start.sh &&\
+    echo "npx @import-meta-env/cli -x .env.example -e .env -p index.html" >> start.sh &&\
+    echo "gzip -kf index.html" >> start.sh &&\
+    echo "nginx -g 'daemon off;'" >> start.sh &&\
+    chmod +x start.sh
+
+EXPOSE 80
+
+CMD ["sh", "start.sh"]
