@@ -2,8 +2,6 @@ export interface IAppSettings {
   serverUrl: string;
   tokenKey: string;
   userNameKey: string;
-  trainingPlatformUrl: string;
-  omeAccountServerUrl: string;
 }
 
 const settings = (window as any).appsettings;
