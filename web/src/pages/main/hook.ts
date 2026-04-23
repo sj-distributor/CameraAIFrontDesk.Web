@@ -200,7 +200,7 @@ export const useAction = () => {
     const settings = (window as any).appsettings;
     CreateMyTicketApi()
       .then((tk) => {
-        const url = `${settings.trainingPlatformUrl}/auth?ticket=${tk?.ticket}`;
+        const url = `${settings.trainingPlatformUrl}?ticket=${tk?.ticket}`;
 
         window.open(url, "_blank");
       })

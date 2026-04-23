@@ -3,6 +3,6 @@
   "tokenKey": "token",
   "userNameKey": "userName",
   "cameraAIBackstageDomain": "https://camerai-m.wiltechs.com/",
-  "trainingPlatformUrl": "https://train-platform.wiltechs.com",
+  "trainingPlatformUrl": "https://train-platform.wiltechs.com/auth",
   "omeAccountServerUrl": "https://ome-account.wiltechs.com"
 }
