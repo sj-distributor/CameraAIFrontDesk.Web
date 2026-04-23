@@ -1,14 +1,13 @@
 import { useDebounceFn, useUpdateEffect } from "ahooks";
 import { useEffect, useState } from "react";
 
-import { useAuth } from "@/hooks/use-auth";
-import { App } from "antd";
 import {
   IAcceptWarnDtoProps,
   IAddTeamDataProps,
   INewTeamDtoProps,
   IUserProfileNotificationDto,
 } from "@/dtos/main";
+import { useAuth } from "@/hooks/use-auth";
 import {
   GetAccountInfoApi,
   GetUserNotificationApi,
@@ -16,6 +15,8 @@ import {
   PostUploadApi,
   PostUserNotificationUpdateApi,
 } from "@/services/main";
+import { CreateMyTicketApi } from "@/services/ome-account";
+import { App } from "antd";
 import { isEmpty } from "ramda";
 
 const initAcceptWarn: IUserProfileNotificationDto = {
@@ -106,7 +107,7 @@ export const useAction = () => {
 
   const updateErrorMessage = (
     k: keyof IUserProfileNotificationDto,
-    v: string
+    v: string,
   ) => {
     setErrorMessages((prev) => ({
       ...prev,
@@ -116,7 +117,7 @@ export const useAction = () => {
 
   const updateAcceptWarnData = (
     k: keyof IUserProfileNotificationDto,
-    v: string
+    v: string,
   ) => {
     setAcceptWarnData((prev) => ({
       ...prev,
@@ -148,7 +149,7 @@ export const useAction = () => {
 
   const validateFn = (
     type: keyof IUserProfileNotificationDto,
-    value: string
+    value: string,
   ) => {
     const rule = validationRules[type];
 
@@ -188,12 +189,32 @@ export const useAction = () => {
     () => location.pathname !== "/warning/list" && navigate("/warning/list"),
     {
       wait: 500,
-    }
+    },
   );
 
   const { run: handleJumpToBackstage } = useDebounceFn(jumpToBackstage, {
     wait: 500,
   });
+
+  const jumpToTrainingPlatform = () => {
+    const settings = (window as any).appsettings;
+    CreateMyTicketApi()
+      .then((tk) => {
+        const url = `${settings.trainingPlatformUrl}?ticket=${tk?.ticket}`;
+
+        window.open(url, "_blank");
+      })
+      .catch((err) => {
+        message.error(`跳轉訓練平台失敗：${err}`);
+      });
+  };
+
+  const { run: handleJumpToTrainingPlatform } = useDebounceFn(
+    jumpToTrainingPlatform,
+    {
+      wait: 500,
+    },
+  );
 
   const filterSelectKey = (key: string) => {
     if (!["/home", "/monitor", "/replay"].includes(key)) {
@@ -255,7 +276,7 @@ export const useAction = () => {
           updateAddTeamData("name", "");
         });
     },
-    { wait: 500 }
+    { wait: 500 },
   );
 
   const { run: onAcceptWarnDebounceFn } = useDebounceFn(
@@ -279,7 +300,7 @@ export const useAction = () => {
           updateAcceptWarnDto("openAcceptWran", false);
         });
     },
-    { wait: 500 }
+    { wait: 500 },
   );
 
   const getMineInfo = () => {
@@ -290,7 +311,7 @@ export const useAction = () => {
 
           localStorage.setItem(
             "currentAccount",
-            JSON.stringify(res.userProfile)
+            JSON.stringify(res.userProfile),
           );
         }
       })
@@ -372,6 +393,7 @@ export const useAction = () => {
     handleOnSignOut,
     pagePermission,
     handleJumpToBackstage,
+    handleJumpToTrainingPlatform,
     addTeamData,
     acceptWarnData,
     errorMessages,
