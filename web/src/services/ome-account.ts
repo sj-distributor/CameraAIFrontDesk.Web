@@ -1,4 +1,9 @@
-export const CreateMyTicketApi = async (): Promise<string> => {
+interface IMyTicketProps {
+  ticket: string;
+  expireIn: number;
+}
+
+export const CreateMyTicketApi = async (): Promise<IMyTicketProps> => {
   const settings = (window as any).appsettings;
 
   const token = window.__POWERED_BY_WUJIE__

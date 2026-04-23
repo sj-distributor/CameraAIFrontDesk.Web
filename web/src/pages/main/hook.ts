@@ -198,10 +198,9 @@ export const useAction = () => {
 
   const jumpToTrainingPlatform = () => {
     const settings = (window as any).appsettings;
-
     CreateMyTicketApi()
       .then((tk) => {
-        const url = `${settings.trainingPlatformUrl}?userTicket=${tk}`;
+        const url = `${settings.trainingPlatformUrl}/auth?ticket=${tk?.ticket}`;
 
         window.open(url, "_blank");
       })
