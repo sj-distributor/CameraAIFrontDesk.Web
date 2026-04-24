@@ -15,7 +15,12 @@ import KEYS from "@/i18n/keys/alert-list";
 import carImg from "../../../../assets/car.png";
 import error_carImg from "../../../../assets/error-car.png";
 import peopleImg from "../../../../assets/people.png";
+import floorIceImg from "../../../../assets/floor_ice.png";
+import floorWaterImg from "../../../../assets/floor_water.png";
+import doorSafetyImg from "../../../../assets/door-safety.png";
+import doorRollingImg from "../../../../assets/door_rolling.png";
 import { useAction } from "./hook";
+import { renderAlertText } from "@/utils/monitor-summary";
 
 const statusComponent = (
   boxBorderColor: string,
@@ -70,20 +75,52 @@ export const WarningList = () => {
       dataIndex: "monitorTypeName",
       key: "monitorTypeName",
       width: 180,
-      render: (text: string) => {
-        const img = () => {
-          if (text.includes("人員") || text.includes("人员"))
-            return <img src={peopleImg} className="w-4 h-4 img-no-darg" />;
-          else if (text.includes("異常車輛") || text.includes("异常车辆")) {
-            return <img src={error_carImg} className="w-4 h-4 img-no-darg" />;
-          } else if (text.includes("車輛") || text.includes("车辆")) {
-            return <img src={carImg} className="w-4 h-4 img-no-darg" />;
+      render: (text: string, record: IRecordItem) => {
+        const renderImage = () => {
+          switch (record.monitorType) {
+            case ICameraAiMonitorType.People:
+            case ICameraAiMonitorType.Smoke:
+            case ICameraAiMonitorType.Fight:
+            case ICameraAiMonitorType.Costume:
+            case ICameraAiMonitorType.TouchGoods:
+            case ICameraAiMonitorType.Move:
+            case ICameraAiMonitorType.FallDown:
+              return <img src={peopleImg} className="w-4 h-4 img-no-darg" />;
+
+            case ICameraAiMonitorType.Vehicles:
+            case ICameraAiMonitorType.Antiskid:
+            case ICameraAiMonitorType.ForkliftFork:
+            case ICameraAiMonitorType.Tidy:
+            case ICameraAiMonitorType.TrashCanLid:
+              return <img src={carImg} className="w-4 h-4 img-no-darg" />;
+
+            case ICameraAiMonitorType.AbnormalVehicles:
+            case ICameraAiMonitorType.Forklift:
+              return <img src={error_carImg} className="w-4 h-4 img-no-darg" />;
+
+            case ICameraAiMonitorType.FloorIce:
+              return <img src={floorIceImg} className="w-4 h-4 img-no-darg" />;
+
+            case ICameraAiMonitorType.FloorWater:
+              return (
+                <img src={floorWaterImg} className="w-4 h-4 img-no-darg" />
+              );
+
+            case ICameraAiMonitorType.DoorSafety:
+              return (
+                <img src={doorSafetyImg} className="w-4 h-4 img-no-darg" />
+              );
+
+            case ICameraAiMonitorType.DoorRolling:
+              return (
+                <img src={doorRollingImg} className="w-4 h-4 img-no-darg" />
+              );
           }
         };
 
         return (
           <div className="flex items-center space-x-2 select-none">
-            {img()}
+            {renderImage()}
             <span>{text}</span>
           </div>
         );
@@ -97,13 +134,7 @@ export const WarningList = () => {
       render: (_: string, record: IRecordItem) => {
         return (
           <div className="w-full text-wrap select-none">
-            {record.equipmentName},{record.monitorTypeName}（
-            {`${record.name}${
-              record.monitorType === ICameraAiMonitorType.Costume
-                ? `未配戴${record.costumesDetected}`
-                : ""
-            }`}
-            ）出現超過 {record.settingDuration} 秒
+            {record.equipmentName},{renderAlertText(record)}
           </div>
         );
       },
