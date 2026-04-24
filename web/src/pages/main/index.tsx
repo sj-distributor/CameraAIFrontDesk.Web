@@ -7,14 +7,14 @@ import {
   Avatar,
   Button,
   ConfigProvider,
-  Image,
   Input,
   Menu,
   MenuProps,
   Modal,
   Popover,
-  Spin,
+  Image,
   Tooltip,
+  Spin,
   message,
 } from "antd";
 import { useMemo } from "react";
@@ -23,17 +23,6 @@ import { Link, Outlet } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import KEYS from "@/i18n/keys/main-page";
 
-import {
-  AddTeamIcon,
-  ArrowRightIcon,
-  CloseNewTeamIcon,
-  LogoutIcon,
-  PreviewAndAcceptIcon,
-  RefreshIcon,
-  SelectedIcon,
-  UpoadLogoIcon,
-  UserArrowRightIcon,
-} from "@/icon/main";
 import chevronDownImg from "../../assets/chevronDown.png";
 import homeImg from "../../assets/home.png";
 import home_clickImg from "../../assets/home_click.png";
@@ -46,9 +35,20 @@ import replayImg from "../../assets/replay.png";
 import replay_clickImg from "../../assets/replay_click.png";
 import sliceImg from "../../assets/slice.png";
 import { useAction } from "./hook";
+import {
+  AddTeamIcon,
+  ArrowRightIcon,
+  CloseNewTeamIcon,
+  LogoutIcon,
+  PreviewAndAcceptIcon,
+  RefreshIcon,
+  SelectedIcon,
+  UpoadLogoIcon,
+  UserArrowRightIcon,
+} from "@/icon/main";
 
-import { isEmpty } from "ramda";
 import Dropzone from "react-dropzone";
+import { isEmpty } from "ramda";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -69,7 +69,6 @@ export const Main = () => {
     handleOnSignOut,
     pagePermission,
     handleJumpToBackstage,
-    handleJumpToTrainingPlatform,
     addTeamData,
     acceptWarnData,
     errorMessages,
@@ -427,7 +426,6 @@ export const Main = () => {
                           handleJumpToBackstage();
                         },
                       },
-
                       {
                         name: "預警接收",
                         component: <PreviewAndAcceptIcon />,
@@ -448,20 +446,13 @@ export const Main = () => {
                           }
                         },
                       },
-                      {
-                        name: "訓練平台",
-                        component: <SwapOutlined className="text-sm" />,
-                        function: () => {
-                          handleJumpToTrainingPlatform();
-                        },
-                      },
                     ]
                       .filter(
                         (item) =>
                           !(
                             userName.toLowerCase() === "admin" &&
                             item.name === "預警接收"
-                          ),
+                          )
                       )
                       .map((item, index) => (
                         <div
@@ -530,7 +521,7 @@ export const Main = () => {
 
                                 message.info(
                                   `即将切换到 ${item.name} ......`,
-                                  0,
+                                  0
                                 );
 
                                 const interval = setInterval(() => {
@@ -828,7 +819,7 @@ export const Main = () => {
                   onClick={() => {
                     updateAcceptWarnData(
                       "workWechat",
-                      originAcceptWarnData.workWechat,
+                      originAcceptWarnData.workWechat
                     );
                     updateErrorMessage("workWechat", "");
                   }}
