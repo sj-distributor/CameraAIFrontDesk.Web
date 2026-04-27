@@ -14,6 +14,8 @@ import { Router } from "./routes";
 dayjs.extend(utc);
 
 function App() {
+  console.log("test cicd");
+
   const { isLoaded } = useAction();
 
   return (
