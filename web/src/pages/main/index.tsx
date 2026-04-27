@@ -31,6 +31,7 @@ import {
   PreviewAndAcceptIcon,
   RefreshIcon,
   SelectedIcon,
+  TransformSteamSvg,
   UpoadLogoIcon,
   UserArrowRightIcon,
 } from "@/icon/main";
@@ -450,7 +451,7 @@ export const Main = () => {
                       },
                       {
                         name: "訓練平台",
-                        component: <SwapOutlined className="text-sm" />,
+                        component: <TransformSteamSvg />,
                         function: () => {
                           handleJumpToTrainingPlatform();
                         },
@@ -460,7 +461,8 @@ export const Main = () => {
                         (item) =>
                           !(
                             userName.toLowerCase() === "admin" &&
-                            item.name === "預警接收"
+                            (item.name === "預警接收" ||
+                              item.name === "訓練平台")
                           ),
                       )
                       .map((item, index) => (
